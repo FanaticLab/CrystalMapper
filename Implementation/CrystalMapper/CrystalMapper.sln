@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreSystem", "..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj", "{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper", "CrystalMapper\CrystalMapper.csproj", "{362267BA-8052-493E-A3C0-F89B0F3BF331}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.Test", "CrystalMapper.Test\CrystalMapper.Test.csproj", "{FB05239A-0E75-4E64-963C-136215002017}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{362267BA-8052-493E-A3C0-F89B0F3BF331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{362267BA-8052-493E-A3C0-F89B0F3BF331}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{362267BA-8052-493E-A3C0-F89B0F3BF331}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{362267BA-8052-493E-A3C0-F89B0F3BF331}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB05239A-0E75-4E64-963C-136215002017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB05239A-0E75-4E64-963C-136215002017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB05239A-0E75-4E64-963C-136215002017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB05239A-0E75-4E64-963C-136215002017}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
