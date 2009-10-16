@@ -1,0 +1,238 @@
+<%-- 
+ 
+ * Author: Faraz Masood Khan 
+ * 
+ * Date: 6/4/2009 4:33:36 PM
+ * 
+ * File: BusinessObjectsTemplate.cst
+ *
+ * Version: 1.0.0.0
+ * 
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+
+--%>
+<%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Optional="False" Category="1a. Source Table" Description="The source table to generate from." %>
+<%@ Property Name="ExcludedTables" Type="SchemaExplorer.TableSchemaCollection" Optional="True" Category="1b. Database Options" Description="A collection of tables to be excluded during generation." %>
+<%@ Property Name="TablePrefix" Type="System.String" Default="" Optional="True" Category="1b. Database Options" Description="A prefix that will be stripped from table names when class names are generated." %>
+<%@ Property Name="VsVersion" Type="VisualStudioVersion" Default="VS_2008" Optional="False" Category="2. Versions" Description="The version of Visual Studio to generate for." %>
+<%@ Property Name="BusinessNamespace" Type="System.String" Default="CrystalMapper.Generated.BusinessObjects" Optional="False" Category="2. Namespaces" Description="The desired Namespace for the Business Objects." %>
+<%@ Property Name="BaseNamespace" Type="System.String" Default="CrystalMapper.Generated.Base" Optional="False" Category="2. Namespaces" Description="The Namespace where the Base classes (BusinessBase & ManagerBase) are located." %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
+<% this.tablePrefix = TablePrefix; %>
+/*
+ * Author: CrystalMapper
+ * 
+ * Date:  <%= DateTime.Now.ToString("f") %>
+ * 
+ * Class: <%= GetClassName(SourceTable) %>
+ *    
+ */
+
+using System;
+using System.Data.Common;
+
+using CoreSystem.Data;
+
+using CrystalMapper;
+using CrystalMapper.Data;
+using CrystalMapper.Mapping;
+
+namespace <%= BusinessNamespace %>
+{
+	[Table(TABLE_NAME)]
+    public partial class <%= GetClassName(SourceTable) %> : Entity< <%= GetClassName(SourceTable) %>>
+    {		
+		#region Table Schema
+		
+        <% if (SourceTable.Database.Provider.Name == "OracleSchemaProvider") { %>
+		public const string TABLE_NAME = "<%= SourceTable.Name %>";	
+		<% } else if (SourceTable.Database.Provider.Name == "SqlSchemaProvider") { %>
+        public const string TABLE_NAME = "<%= SourceTable.FullName %>";	
+        <% } else { %>
+        <% throw new InvalidOperationException(string.Format("This template only support OracleSchemaProvider or SqlSchemaProvider database not '{0}'", SourceTable.Database.Provider.Name)); %>
+        <% } %>
+        
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>
+		public const string COL_<%= column.Name.ToUpper()%> = "<%= column.Name%>";
+		<% } %>		
+		
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
+        <% if (SourceTable.Database.Provider.Name == "OracleSchemaProvider") { %>
+		public const string PARAM_<%= column.Name.ToUpper()%> = ":<%= column.Name%>";	
+        <% } else if (SourceTable.Database.Provider.Name == "SqlSchemaProvider") { %>
+        public const string PARAM_<%= column.Name.ToUpper()%> = "@<%= column.Name%>";	
+		<% } else { %>
+        <% throw new InvalidOperationException(string.Format("This template only support OracleSchemaProvider or SqlSchemaProvider database not '{0}'", SourceTable.Database.Provider.Name)); %>
+        <% } %>
+        <% } %>
+		
+        #endregion
+		
+		#region Queries
+		
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable) %>;
+		
+		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper() %> = <%= GetUpdateQuery(SourceTable) %>;
+		
+		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper() %> = <%= GetDeleteQuery(SourceTable) %>;
+		
+        #endregion
+		<% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+        #region Declarations
+
+		<% // Primary Keys %>
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		protected <%= SystemCSharp[mcs.SystemType.ToString()] %> <%= GetPrivateVariableName(mcs) %> = <%= GetInitialization(mcs.SystemType) %>; 	
+		<% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>	
+		<% if (column.AllowDBNull && column.SystemType.IsValueType) { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>?);
+		<% } else { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %> <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>);
+		<% } %>
+	
+		<% } %>
+	
+		
+        #endregion
+
+ 		#region Properties	
+		
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		[Column(COL_<%=mcs.Column.Name.ToUpper()%>, PARAM_<%= mcs.Column.Name.ToUpper()%>)]
+		public virtual <%= SystemCSharp[mcs.SystemType.ToString()] %> <%= GetPropertyName(mcs) %>
+        {
+            get { return this.<%= GetPrivateVariableName(mcs) %>; }
+			set { this.<%= GetPrivateVariableName(mcs) %> = value; }
+        }					
+		<% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>
+		[Column(COL_<%=column.Name.ToUpper()%>, PARAM_<%= column.Name.ToUpper()%>)]
+		<%if(column.AllowDBNull && column.SystemType.IsValueType) {%>
+		public virtual <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPropertyName(column) %>
+		<% } else {%>		
+		public virtual <%= SystemCSharp[column.SystemType.ToString()] %> <%= GetPropertyName(column) %>
+		<% } %>		
+        {
+            get { return this.<%= GetPrivateVariableName(column) %>; }
+			set	{ this.<%= GetPrivateVariableName(column) %> = value;}
+        }	
+		<% } %>		
+		
+	
+        #endregion
+	    <% } else { %>
+        #region Properties	
+		
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		[Column(COL_<%=mcs.Column.Name.ToUpper()%>, PARAM_<%= mcs.Column.Name.ToUpper()%>)]
+		public virtual <%= SystemCSharp[mcs.SystemType.ToString()] %> <%= GetPropertyName(mcs) %> {get; set;}
+		<% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>
+		[Column(COL_<%=column.Name.ToUpper()%>, PARAM_<%= column.Name.ToUpper()%>)]
+		<%if(column.AllowDBNull && column.SystemType.IsValueType) {%>
+		public virtual <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPropertyName(column) %> {get; set;}
+		<% } else {%>		
+		public virtual <%= SystemCSharp[column.SystemType.ToString()] %> <%= GetPropertyName(column) %> {get; set;}
+		<% } %>		      
+		<% } %>		
+		
+	
+        #endregion
+        <% } %>
+        #region Methods     
+		
+		public override void Read(DbDataReader reader)
+		{
+            <% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+			<% foreach(ColumnSchema column in SourceTable.Columns) {%>		
+			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[COL_<%=column.Name.ToUpper()%>]);
+			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToString(reader[COL_<%=column.Name.ToUpper()%>]);
+			<% } else { %>
+			<% if(column.SystemType.Name == "Object") { %>
+			this.<%= GetPrivateVariableName(column) %> = reader[COL_<%=column.Name.ToUpper()%>];
+			<% } else { %>
+			this.<%= GetPrivateVariableName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[COL_<%=column.Name.ToUpper()%>];
+			<% } %>
+			<% } %>
+			<% } %>	
+            <% } else { %>	
+            <% foreach(ColumnSchema column in SourceTable.Columns) {%>		
+			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
+			this.<%= GetPropertyName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[COL_<%=column.Name.ToUpper()%>]);
+			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
+			this.<%= GetPropertyName(column) %> = DbConvert.ToString(reader[COL_<%=column.Name.ToUpper()%>]);
+			<% } else { %>
+			<% if(column.SystemType.Name == "Object") { %>
+			this.<%= GetPropertyName(column) %> = reader[COL_<%=column.Name.ToUpper()%>];
+			<% } else { %>
+			this.<%= GetPropertyName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[COL_<%=column.Name.ToUpper()%>];
+			<% } %>
+			<% } %>
+			<% } %>	
+            <% } %>	
+		}
+		
+		public override bool Create(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_<%= SourceTable.Name.ToUpper()%>))
+            {	
+				<%foreach(ColumnSchema column in SourceTable.Columns) { %>
+				<%if(column.AllowDBNull){%>
+				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.<%= GetPropertyName(column)%>), PARAM_<%=column.Name.ToUpper()%>));
+				<%}else {%>
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(column)%>, PARAM_<%=column.Name.ToUpper()%>));
+				<% } %>
+				<% } %>
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+		public override bool Update(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_<%= SourceTable.Name.ToUpper()%>))
+            {							
+                <%foreach(ColumnSchema column in SourceTable.Columns) { %>			
+				<% if(column.AllowDBNull) { %>
+				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.<%= GetPropertyName(column)%>), PARAM_<%=column.Name.ToUpper()%>));
+				<% } else { %>
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(column)%>, PARAM_<%=column.Name.ToUpper()%>));
+				<% } %>
+				<% } %>		
+			
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+		public override bool Delete(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_<%= SourceTable.Name.ToUpper()%>))
+            {							
+                <%foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>				
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(mcs)%>, PARAM_<%=mcs.Name.ToUpper()%>));				
+				<% } %>			
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+        #endregion
+       
+    }
+}
