@@ -75,12 +75,7 @@ namespace CrystalMapper.Data
         public DbParameter CreateParameter(object value, string paramName)
         {
             return this.database.CreateParameter(value, paramName);
-        }
-
-        public string ToString(object value)
-        {
-            return this.database.ToString(value);
-        }      
+        }                 
 
         public void CommitTransaction()
         {

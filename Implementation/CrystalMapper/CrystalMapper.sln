@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper", "CrystalMap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.Test", "CrystalMapper.Test\CrystalMapper.Test.csproj", "{FB05239A-0E75-4E64-963C-136215002017}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreSystemLib", "CoreSystemLib", "{C97AEABC-DACF-4A41-9A10-603CA1AD7A1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Help", "Help", "{B2EB16C2-B7E1-4A77-AAAD-424535FB6A5B}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\CoreSystem\Documentation\Help\Chm\CoreSystem Documented Class Library.chm = ..\..\..\CoreSystem\Documentation\Help\Chm\CoreSystem Documented Class Library.chm
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,5 +35,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FBBFE4AC-73C2-47CB-8925-858501D1AE8F} = {C97AEABC-DACF-4A41-9A10-603CA1AD7A1E}
+		{B2EB16C2-B7E1-4A77-AAAD-424535FB6A5B} = {C97AEABC-DACF-4A41-9A10-603CA1AD7A1E}
 	EndGlobalSection
 EndGlobal
