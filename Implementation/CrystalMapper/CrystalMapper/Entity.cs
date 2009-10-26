@@ -128,7 +128,7 @@ namespace CrystalMapper
                 }
             }
         }
-      
+
         protected string GetQuery(out Dictionary<string, object> parameterValues)
         {
             Type objectType = this.GetType();
@@ -140,18 +140,18 @@ namespace CrystalMapper
                 if ((dbColumnAttributes = (ColumnAttribute[])propertyInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null
                     && dbColumnAttributes.Length == 1)
                 {
-                    if (dbColumnAttributes[0].IsSensitiveColumn)
-                    {
-                        object propertyValue = propertyInfo.GetValue(this, null);
-                        if (StringType.Equals(propertyInfo.PropertyType))
-                            query.Append("'' ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                        else if (DecimalType.Equals(propertyInfo.PropertyType))
-                            query.Append("0 ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                        else if (DateTimeType.Equals(propertyInfo.PropertyType))
-                            query.Append("SYSDATE ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                    }
-                    else
-                        query.Append(dbColumnAttributes[0].ColumnName).Append(",");
+                    //if (dbColumnAttributes[0].IsSensitiveColumn)
+                    //{
+                    //    object propertyValue = propertyInfo.GetValue(this, null);
+                    //    if (StringType.Equals(propertyInfo.PropertyType))
+                    //        query.Append("'' ").Append(dbColumnAttributes[0].ColumnName).Append(",");
+                    //    else if (DecimalType.Equals(propertyInfo.PropertyType))
+                    //        query.Append("0 ").Append(dbColumnAttributes[0].ColumnName).Append(",");
+                    //    else if (DateTimeType.Equals(propertyInfo.PropertyType))
+                    //        query.Append("SYSDATE ").Append(dbColumnAttributes[0].ColumnName).Append(",");
+                    //}
+                    //else
+                    query.Append(dbColumnAttributes[0].ColumnName).Append(",");
                 }
             }
             query.Remove(query.Length - 1, 1).Append(SQL_FROM);
@@ -177,7 +177,7 @@ namespace CrystalMapper
                         parameterValues.Add(dbColumnAttributes[0].ParamName, propertyValue);
 
                     }
-                       
+
                     else if (propertyValue is decimal && ((decimal)propertyValue) != DefDecimal)
                     {
                         query.Append(" ").Append(dbColumnAttributes[0].ColumnName).Append(" = ").Append(dbColumnAttributes[0].ParamName).Append(SQL_AND);
