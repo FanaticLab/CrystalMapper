@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreSystem, Version=1.0.3582.40750, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="CoreSystem, Version=1.0.3592.5492, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -47,11 +48,90 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mapping\ProductReview.cs" />
+    <Compile Include="Adven\address.cs" />
+    <Compile Include="Adven\AddressType.cs" />
+    <Compile Include="Adven\AWBuildVersion.cs" />
+    <Compile Include="Adven\BillOfMaterial.cs" />
+    <Compile Include="Adven\Contact.cs" />
+    <Compile Include="Adven\ContactCreditCard.cs" />
+    <Compile Include="Adven\ContactType.cs" />
+    <Compile Include="Adven\CountryRegion.cs" />
+    <Compile Include="Adven\CountryRegionCurrency.cs" />
+    <Compile Include="Adven\CreditCard.cs" />
+    <Compile Include="Adven\Culture.cs" />
+    <Compile Include="Adven\Currency.cs" />
+    <Compile Include="Adven\CurrencyRate.cs" />
+    <Compile Include="Adven\Customer.cs" />
+    <Compile Include="Adven\CustomerAddress.cs" />
+    <Compile Include="Adven\DatabaseLog.cs" />
+    <Compile Include="Adven\Department.cs" />
+    <Compile Include="Adven\Document.cs" />
+    <Compile Include="Adven\Employee.cs" />
+    <Compile Include="Adven\EmployeeAddress.cs" />
+    <Compile Include="Adven\EmployeeDepartmentHistory.cs" />
+    <Compile Include="Adven\EmployeePayHistory.cs" />
+    <Compile Include="Adven\ErrorLog.cs" />
+    <Compile Include="Adven\Illustration.cs" />
+    <Compile Include="Adven\Individual.cs" />
+    <Compile Include="Adven\JobCandidate.cs" />
+    <Compile Include="Adven\Location.cs" />
+    <Compile Include="Adven\Product.cs" />
+    <Compile Include="Adven\ProductCategory.cs" />
+    <Compile Include="Adven\ProductCostHistory.cs" />
+    <Compile Include="Adven\ProductDescription.cs" />
+    <Compile Include="Adven\ProductDocument.cs" />
+    <Compile Include="Adven\ProductInventory.cs" />
+    <Compile Include="Adven\ProductListPriceHistory.cs" />
+    <Compile Include="Adven\ProductModel.cs" />
+    <Compile Include="Adven\ProductModelIllustration.cs" />
+    <Compile Include="Adven\ProductModelProductDescriptionCulture.cs" />
+    <Compile Include="Adven\ProductPhoto.cs" />
+    <Compile Include="Adven\ProductProductPhoto.cs" />
+    <Compile Include="Adven\ProductReview.cs" />
+    <Compile Include="Adven\ProductSubcategory.cs" />
+    <Compile Include="Adven\ProductVendor.cs" />
+    <Compile Include="Adven\PurchaseOrderDetail.cs" />
+    <Compile Include="Adven\PurchaseOrderHeader.cs" />
+    <Compile Include="Adven\SalesOrderDetail.cs" />
+    <Compile Include="Adven\SalesOrderHeader.cs" />
+    <Compile Include="Adven\SalesOrderHeaderSalesReason.cs" />
+    <Compile Include="Adven\SalesPerson.cs" />
+    <Compile Include="Adven\SalesPersonQuotaHistory.cs" />
+    <Compile Include="Adven\SalesReason.cs" />
+    <Compile Include="Adven\SalesTaxRate.cs" />
+    <Compile Include="Adven\SalesTerritory.cs" />
+    <Compile Include="Adven\SalesTerritoryHistory.cs" />
+    <Compile Include="Adven\ScrapReason.cs" />
+    <Compile Include="Adven\Shift.cs" />
+    <Compile Include="Adven\ShipMethod.cs" />
+    <Compile Include="Adven\ShoppingCartItem.cs" />
+    <Compile Include="Adven\SpecialOffer.cs" />
+    <Compile Include="Adven\SpecialOfferProduct.cs" />
+    <Compile Include="Adven\StateProvince.cs" />
+    <Compile Include="Adven\Store.cs" />
+    <Compile Include="Adven\StoreContact.cs" />
+    <Compile Include="Adven\TransactionHistory.cs" />
+    <Compile Include="Adven\TransactionHistoryArchive.cs" />
+    <Compile Include="Adven\UnitMeasure.cs" />
+    <Compile Include="Adven\Vendor.cs" />
+    <Compile Include="Adven\VendorAddress.cs" />
+    <Compile Include="Adven\VendorContact.cs" />
+    <Compile Include="Adven\WorkOrder.cs" />
+    <Compile Include="Adven\WorkOrderRouting.cs" />
+    <Compile Include="Northwind\Category.cs" />
+    <Compile Include="Northwind\Customer.cs" />
+    <Compile Include="Northwind\Employee.cs" />
+    <Compile Include="Northwind\EmployeesTerritory.cs" />
+    <Compile Include="Northwind\InternationalOrder.cs" />
+    <Compile Include="Northwind\Order.cs" />
+    <Compile Include="Northwind\OrderDetail.cs" />
+    <Compile Include="Northwind\PreviousEmployee.cs" />
+    <Compile Include="Northwind\Product.cs" />
+    <Compile Include="Northwind\Region.cs" />
+    <Compile Include="Northwind\Supplier.cs" />
+    <Compile Include="Northwind\Territory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mapping\WorkOrder.cs" />
-    <Compile Include="WorkOrder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CrystalMapper\CrystalMapper.csproj">
@@ -61,6 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Store\northwindEF.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\CoreSystem.dll" />

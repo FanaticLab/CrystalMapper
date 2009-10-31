@@ -13,50 +13,64 @@
  * 
  */
 
-
 using System;
-using System.Text;
 using System.Data;
-using System.Data.Common;
 using System.Reflection;
+using System.Data.Common;
+using System.ComponentModel;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-using CrystalMapper.Data;
-using CrystalMapper.Mapping;
 
 using CoreSystem.Data;
 
+using CrystalMapper.Data;
+using CrystalMapper.Mapping;
+using CoreSystem.Collections;
+
+
 namespace CrystalMapper
 {
-    public abstract class Entity<T>
+    public abstract class Entity<T> : INotifyPropertyChanged, INotifyPropertyChanging
         where T : Entity<T>, new()
     {
-        #region SQL Operators
+        #region Events
 
-        private const string SQL_AND = " AND ";
-        private const string SQL_SELECT = " SELECT ";
-        private const string SQL_WHERE = " WHERE ";
-        private const string SQL_FROM = " FROM ";
+        private DispatchEvent propertyChanged = new DispatchEvent();
+
+        private DispatchEvent propertyChanging = new DispatchEvent();
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { propertyChanged.Add(value); }
+            remove { propertyChanged.Remove(value); }
+        }
+
+        public event PropertyChangingEventHandler PropertyChanging
+        {
+            add { propertyChanging.Add(value); }
+            remove { propertyChanging.Remove(value); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        #region Member Methods
+
+        #region Event Methods
+
+        protected void NotifyPropertyChanging(string propertyName)
+        {
+            this.propertyChanging.Fire(this, new PropertyChangingEventArgs(propertyName));
+        }
+
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            this.propertyChanged.Fire(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
 
-        #region  Types
-
-        private static readonly Type StringType = typeof(string);
-        private static readonly Type DecimalType = typeof(decimal);
-        private static readonly Type DateTimeType = typeof(DateTime);
-
-        #endregion
-
-        #region Default Primitive Values
-
-        private static readonly int DefInt32 = default(int);
-        private static readonly string DefString = default(string);
-        private static readonly decimal DefDecimal = default(decimal);
-        private static readonly DateTime DefDateTime = default(DateTime);
-
-        #endregion
+        #region Abstract Methods
 
         public abstract void Read(DbDataReader reader);
 
@@ -65,6 +79,8 @@ namespace CrystalMapper
         public abstract bool Create(DataContext dataContext);
 
         public abstract bool Delete(DataContext dataContext);
+
+        #endregion               
 
         public bool Create()
         {
@@ -116,7 +132,7 @@ namespace CrystalMapper
         public T[] ToList(DataContext dataContext)
         {
             Dictionary<string, object> parameterValues;
-            String query = this.GetQuery(out parameterValues);
+            String query = EntityQuery<T>.GetQuery(this, out parameterValues);
 
             using (DbCommand command = dataContext.CreateCommand(query))
             {
@@ -129,81 +145,13 @@ namespace CrystalMapper
             }
         }
 
-        protected string GetQuery(out Dictionary<string, object> parameterValues)
+        #endregion
+
+        #region Static Methods
+
+        public static T[] List()
         {
-            Type objectType = this.GetType();
-            StringBuilder query = new StringBuilder(SQL_SELECT);
-
-            foreach (PropertyInfo propertyInfo in objectType.GetProperties())
-            {
-                ColumnAttribute[] dbColumnAttributes;
-                if ((dbColumnAttributes = (ColumnAttribute[])propertyInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null
-                    && dbColumnAttributes.Length == 1)
-                {
-                    //if (dbColumnAttributes[0].IsSensitiveColumn)
-                    //{
-                    //    object propertyValue = propertyInfo.GetValue(this, null);
-                    //    if (StringType.Equals(propertyInfo.PropertyType))
-                    //        query.Append("'' ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                    //    else if (DecimalType.Equals(propertyInfo.PropertyType))
-                    //        query.Append("0 ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                    //    else if (DateTimeType.Equals(propertyInfo.PropertyType))
-                    //        query.Append("SYSDATE ").Append(dbColumnAttributes[0].ColumnName).Append(",");
-                    //}
-                    //else
-                    query.Append(dbColumnAttributes[0].ColumnName).Append(",");
-                }
-            }
-            query.Remove(query.Length - 1, 1).Append(SQL_FROM);
-
-            TableAttribute[] tableAttr = (TableAttribute[])objectType.GetCustomAttributes(typeof(TableAttribute), true);
-            if (tableAttr == null || tableAttr.Length != 1)
-                throw new InvalidOperationException(string.Format("Class: '{0}' is not decorated with Table Name mapping attribute", objectType.Name));
-
-            parameterValues = new Dictionary<string, object>();
-            query.Append(tableAttr[0].TableName).Append(SQL_WHERE);
-
-            foreach (PropertyInfo propertyInfo in objectType.GetProperties())
-            {
-                ColumnAttribute[] dbColumnAttributes;
-                if ((dbColumnAttributes = (ColumnAttribute[])propertyInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null
-                    && dbColumnAttributes.Length == 1)
-                {
-                    object propertyValue = propertyInfo.GetValue(this, null);
-
-                    if (propertyValue is string && ((string)propertyValue) != DefString)
-                    {
-                        query.Append(" LOWER(").Append(dbColumnAttributes[0].ColumnName).Append(") Like LOWER(").Append(dbColumnAttributes[0].ParamName).Append(")").Append(SQL_AND);
-                        parameterValues.Add(dbColumnAttributes[0].ParamName, propertyValue);
-
-                    }
-
-                    else if (propertyValue is decimal && ((decimal)propertyValue) != DefDecimal)
-                    {
-                        query.Append(" ").Append(dbColumnAttributes[0].ColumnName).Append(" = ").Append(dbColumnAttributes[0].ParamName).Append(SQL_AND);
-                        parameterValues.Add(dbColumnAttributes[0].ParamName, propertyValue);
-
-                    }
-                    else if (propertyValue is DateTime && ((DateTime)propertyValue) != DefDateTime)
-                    {
-                        query.Append(" ").Append(dbColumnAttributes[0].ColumnName).Append(" = ").Append(dbColumnAttributes[0].ParamName).Append(SQL_AND);
-                        parameterValues.Add(dbColumnAttributes[0].ParamName, propertyValue);
-                    }
-                    else if (propertyValue is int && ((int)propertyValue) != DefInt32)
-                    {
-                        query.Append(" ").Append(dbColumnAttributes[0].ColumnName).Append(" = ").Append(dbColumnAttributes[0].ParamName).Append(SQL_AND);
-                        parameterValues.Add(dbColumnAttributes[0].ParamName, propertyValue);
-                    }
-                }
-            }
-
-            string queryStr = query.ToString();
-            if (queryStr.EndsWith(SQL_AND))
-                query.Remove(query.Length - SQL_AND.Length, SQL_AND.Length);
-            else if (queryStr.EndsWith(SQL_WHERE))
-                query.Remove(query.Length - SQL_WHERE.Length, SQL_WHERE.Length);
-
-            return query.ToString();
+            return ToList(EntityQuery<T>.GetQuery());
         }
 
         public static T[] ToList(DbDataReader reader)
@@ -225,6 +173,21 @@ namespace CrystalMapper
             {
                 using (DbCommand command = dataContext.CreateCommand(sqlQuery))
                 {
+                    return ToList(command.ExecuteReader(CommandBehavior.SequentialAccess));
+                }
+            }
+        }
+
+        public static T[] ToList(String sqlQuery, Dictionary<string, object> parameterValues)
+        {
+            using (DataContext dataContext = new DataContext(DbFactory.GetDefaultDatabase()))
+            {
+                using (DbCommand command = dataContext.CreateCommand(sqlQuery))
+                {
+                    if (parameterValues != null)
+                        foreach (string param in parameterValues.Keys)
+                            command.Parameters.Add(dataContext.CreateParameter(parameterValues[param], param));
+
                     return ToList(command.ExecuteReader(CommandBehavior.SequentialAccess));
                 }
             }
@@ -253,6 +216,10 @@ namespace CrystalMapper
 
             return retVal;
         }
+
+        #endregion
+
+        #endregion
     }
 }
 

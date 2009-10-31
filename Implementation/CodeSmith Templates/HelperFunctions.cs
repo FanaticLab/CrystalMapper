@@ -17,7 +17,17 @@ public class HelperFunctions : CodeTemplate
 {  
     private char ParamIdentifier(TableSchema table)
     { 
-         return (table.Database.Provider.Name == "SqlSchemaProvider" ? '@' : ':');
+          switch(table.Database.Provider.Name)
+            {
+                case "OracleSchemaProvider" :
+                case "SQLiteSchemaProvider" :
+                    return ':';        
+                case "SqlSchemaProvider" :      
+                case "SqlCompactSchemaProvider" :
+                    return '@';  
+                default:
+                    throw new InvalidOperationException (string.Format("This no template exists for schema provider '{0}'", table.Database.Provider.Name));
+            }
     }
     
     private MapCollection _keyWords;
@@ -49,7 +59,17 @@ public class HelperFunctions : CodeTemplate
     }
     public string GetPropertyName(ColumnSchema column)
     {
-        return GetPropertyName(GetNameFromColumn(column));
+        string propertyName = GetPropertyName(GetNameFromColumn(column));
+        
+        if(propertyName == GetClassName(column.Table))
+         {
+            if(column.SystemType.IsArray)
+                propertyName +=  StringUtil.ToPlural(StringUtil.ToPascalCase(column.SystemType.Name));
+            else
+               propertyName += StringUtil.ToPascalCase(column.SystemType.Name);
+         }
+        
+        return propertyName;
     }
     private string GetPropertyName(string name)
     {
@@ -95,15 +115,23 @@ public class HelperFunctions : CodeTemplate
     }
 
 	public string GetInsertQuery(TableSchema table)
-	{        
-		string query = "\"INSERT INTO " + table.FullName + "(";
+	{       
+      	string query = "\"INSERT INTO " + table.FullName + "(";
 		foreach(ColumnSchema column in table.Columns)
-			query += column.Name + ",";
+        {  
+            if(!IsIdentityColumn(column))
+                query += "[" + GetColumnName(column) + "],";                
+        }
+        
 		query = query.TrimEnd(new char[] {','}) + ") VALUES (";
 		
 		foreach(ColumnSchema column in table.Columns)
-			query += ParamIdentifier(table) + column.Name + ",";
-		query = query.TrimEnd(new char[] {','}) + ")\"";
+        {
+            if(!IsIdentityColumn(column))
+			    query += GetParamName(column) + ",";            
+         }   
+            
+		query = query.TrimEnd(new char[] {','}) + ");\"";
 		
 		return query;
 	}
@@ -112,12 +140,12 @@ public class HelperFunctions : CodeTemplate
 	{     
 		string query = "\"UPDATE " + table.FullName + " SET ";
 		foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
-				query += column.Name + "= " + ParamIdentifier(table) + column.Name +",";
+				query += "[" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +", ";
                 
 		query = query.TrimEnd(new char[] {','}) + " WHERE ";
 		
 		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-			query +=  column.Name +  " = " + ParamIdentifier(table) + column.Name + " AND ";		
+			query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
 		
 		return query.Substring(0, query.Length -  5) + "\"" ;
 	}	
@@ -126,7 +154,7 @@ public class HelperFunctions : CodeTemplate
 	{        
 		string query = "\"DELETE FROM " + table.FullName + " WHERE ";		
 		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-			query +=  " " + column.Name +  " = " + ParamIdentifier(table)  + column.Name + " AND";
+			query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND";
 		query = query.Substring(0, query.Length - 3) + "\"";		
 		
 		return query;
@@ -195,9 +223,14 @@ public class HelperFunctions : CodeTemplate
                 className = className.Remove(0, tablePrefix.Length);
         }
 
-        return StringUtil.ToPascalCase(className);
+        return StringUtil.ToSingular(StringUtil.ToPascalCase(className));
     }	 	
 	
+    public string GetClassNamePlural(TableSchema table)
+    {
+        return StringUtil.ToPlural(GetClassName(table));
+    }
+    
 	public string GetTableNameWithOutPrefix(TableSchema table)
     {
         string className;
@@ -457,6 +490,83 @@ public class HelperFunctions : CodeTemplate
                         return true;
         return false;
     }
+    
+    public bool IsIdentityColumnExists(TableSchema table)
+    {
+        foreach(ColumnSchema column in table.Columns)
+            if(IsIdentityColumn(column))
+                return true;          
+                
+        return false;
+    }
+    
+    public bool IsIdentityColumn(ColumnSchema column)
+    {
+        foreach(ExtendedProperty extentedProp in column.ExtendedProperties)
+            if(extentedProp.Name == "CS_IsIdentity" && true.Equals(extentedProp.Value))
+                return true;
+          
+        return false;
+    }
+    
+    public string GetChiledIdentifiedName(TableSchema sourceTable, TableSchema toManyTable, TableKeySchema tableKey)
+    {
+        int relationCount = 0;
+        
+        foreach(TableKeySchema key in toManyTable.ForeignKeys)  
+            if(key.PrimaryKeyTable.Equals(sourceTable)) 
+                relationCount ++;
+        
+        if(relationCount > 1)
+          return GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) + GetClassNamePlural(tableKey.ForeignKeyTable);
+        
+        return GetClassNamePlural(tableKey.ForeignKeyTable);     
+    }
+    
+    public string GetColumnName(ColumnSchema column)
+    {
+        return column.Name ;
+    }
+    
+    public string GetParamName(ColumnSchema column)
+    {
+        return ParamIdentifier(column.Table) + column.Name.Replace(' ','_');
+    }
+    
+    public string GetConstantColumnName(ColumnSchema column)
+    {
+        return "COL_" + column.Name.ToUpper().Replace(' ', '_');
+    }
+    
+    public string GetConstantParamName(ColumnSchema column)
+    {
+        return "PARAM_" + column.Name.ToUpper().Replace(' ', '_');
+    }   
+    
+    public string GetPropertyDeclaration(ColumnSchema column, string csharpDataType)
+    {
+        string propDeclaration =string.Empty;
+        if(!column.AllowDBNull && column.SystemType.IsPrimitive) 
+        {
+	      propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, default(@DataType))]
+                              public virtual @DataType @PropertyName ";
+		} else if(!column.AllowDBNull && column.SystemType.IsValueType) {
+           propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, typeof(@DataType))]
+                              public virtual @DataType @PropertyName ";
+		} else if(column.AllowDBNull && column.SystemType.IsValueType) {
+          propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
+                              public virtual @DataType? @PropertyName ";
+        } else {
+         propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
+                              public virtual @DataType @PropertyName ";
+        }
+        
+        return propDeclaration.Replace("@ConstantColumn", GetConstantColumnName(column))
+                              .Replace("@ConstantParam", GetConstantParamName(column))
+                              .Replace("@DataType",  csharpDataType)
+                              .Replace("@PropertyName",  GetPropertyName(column));
+    }
+    
 }
 
 #region SearchCriteria Class
