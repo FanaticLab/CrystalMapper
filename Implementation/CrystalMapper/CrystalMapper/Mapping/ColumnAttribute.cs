@@ -22,7 +22,7 @@ namespace CrystalMapper.Mapping
     {
         private string columnName;
         private string paramName;
-        //private bool isSensitiveColumn;
+        private object defTypeValue;
 
         public string ColumnName
         {
@@ -34,23 +34,27 @@ namespace CrystalMapper.Mapping
             get { return this.paramName; }
         }
 
-        //public bool IsSensitiveColumn
-        //{
-        //    get { return this.isSensitiveColumn; }
-        //}
+        public object DefTypeValue
+        {
+            get { return this.defTypeValue; }
+        }
 
-        public ColumnAttribute(string columnName, string paramName)            
+        public ColumnAttribute(string columnName, string paramName)
+            : this(columnName, paramName, (object)null)
+        {
+
+        }
+        
+        public ColumnAttribute(string columnName, string paramName, object defTypeValue)
         {
             this.columnName = columnName;
             this.paramName = paramName;
+            this.defTypeValue = defTypeValue;
         }
 
-        //public ColumnAttribute(string columnName, string paramName, bool isSensitiveColumn)
-        //{
-        //    this.paramName = paramName;
-        //    this.columnName = columnName;            
-        //    this.isSensitiveColumn = isSensitiveColumn;
-        //}
+        public ColumnAttribute(string columnName, string paramName, Type type)
+            : this(columnName, paramName, Activator.CreateInstance(type))
+        { }
     }
 }
 

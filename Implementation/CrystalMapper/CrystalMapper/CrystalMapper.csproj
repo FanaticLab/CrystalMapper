@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreSystem, Version=1.0.3582.40750, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="CoreSystem, Version=1.0.3592.5492, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -54,6 +54,7 @@
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EntityQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\CoreSystem.dll" />

@@ -28,6 +28,7 @@
 <%@ Property Name="BusinessNamespace" Type="System.String" Default="CrystalMapper.Generated.BusinessObjects" Optional="False" Category="3b. Namespaces" Description="The desired Namespace for the Business Objects." %>
 <%@ Property Name="BaseNamespace" Type="System.String" Default="CrystalMapper.Generated.Base" Optional="False" Category="3b. Namespaces" Description="The Namespace where the Base classes (BusinessBase & ManagerBase) are located." %>
 <%@ Property Name="ExportPath" Type="System.String" Default="C:\Mapping\" Optional="False" Category="3b. Path" Description="Path where files to be dumped" %>
+<%@ Property Name="GeneratedFileSuffix" Type="System.String" Default=".crys" Optional="False" Category="3b. Generated File Suffix" Description="Generated File Suffix" %>
 
 
 <%@ Assembly Name="SchemaExplorer" %>
@@ -41,7 +42,10 @@
 <%@ Import NameSpace="System.IO" %>
 <%@ Import Namespace="CodeSmith.CustomProperties" %>
 
-<%@ Register Name="BusinessObjectTemplate" Template="BusinessObjectTemplate.cst" %>
+<%@ Register Name="BusinessObjectTemplateOracle" Template="BusinessObjectTemplate.oracle.cst" %>
+<%@ Register Name="BusinessObjectTemplateSQLite" Template="BusinessObjectTemplate.sqlite.cst" %>
+<%@ Register Name="BusinessObjectTemplateSqlServer" Template="BusinessObjectTemplate.sqlserver.cst" %>
+<%@ Register Name="BusinessObjectTemplateSqlServerCe" Template="BusinessObjectTemplate.sqlserverce.cst" %>
 
 
 <script runat="template">
@@ -53,7 +57,7 @@ public override void Render(TextWriter writer)
 		ExcludedTables = new TableSchemaCollection();
 	
     foreach(TableSchema table in SourceDatabase.Tables)
-		if(!ExcludedTables.Contains(table) && !IsManyToMany(table))
+		if(!ExcludedTables.Contains(table))
 		{	
 			RenderBusinessObjects(table);
 		}	
@@ -61,17 +65,65 @@ public override void Render(TextWriter writer)
 
 private void RenderBusinessObjects(TableSchema table)
 {
-	string fileName = String.Format("{0}{1}.cs", ExportPath, GetClassName(table));
-	fileName = System.IO.Path.Combine(ExportPath, fileName);
-	BusinessObjectTemplate businessObject = this.Create<BusinessObjectTemplate>();
-	businessObject.BusinessNamespace = this.BusinessNamespace;
-	businessObject.BaseNamespace = this.BaseNamespace;
-	businessObject.VsVersion = this.VsVersion;
-	businessObject.SourceTable = table;
-	businessObject.TablePrefix = this.TablePrefix;
-	businessObject.ExcludedTables = this.ExcludedTables;
-
-	businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+	string fileName = String.Format("{0}{1}{2}.cs", ExportPath, GetClassName(table), GeneratedFileSuffix);
+	fileName = System.IO.Path.Combine(ExportPath, fileName);    
+	    
+    switch(table.Database.Provider.Name)
+    {
+        case "OracleSchemaProvider" :
+        {
+            BusinessObjectTemplateOracle businessObject = this.Create<BusinessObjectTemplateOracle>();
+            businessObject.BusinessNamespace = this.BusinessNamespace;
+            businessObject.BaseNamespace = this.BaseNamespace;
+            businessObject.VsVersion = this.VsVersion;
+            businessObject.SourceTable = table;
+            businessObject.TablePrefix = this.TablePrefix;
+            businessObject.ExcludedTables = this.ExcludedTables;
+            businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+            }
+            break;
+        
+        case "SqlSchemaProvider" :
+        {
+            BusinessObjectTemplateSqlServer businessObject = this.Create<BusinessObjectTemplateSqlServer>();
+            businessObject.BusinessNamespace = this.BusinessNamespace;
+            businessObject.BaseNamespace = this.BaseNamespace;
+            businessObject.VsVersion = this.VsVersion;
+            businessObject.SourceTable = table;
+            businessObject.TablePrefix = this.TablePrefix;
+            businessObject.ExcludedTables = this.ExcludedTables;
+            businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+            }
+            break;
+        
+        case "SqlCompactSchemaProvider" :
+        {
+            BusinessObjectTemplateSqlServerCe businessObject = this.Create<BusinessObjectTemplateSqlServerCe>();
+            businessObject.BusinessNamespace = this.BusinessNamespace;
+            businessObject.BaseNamespace = this.BaseNamespace;
+            businessObject.VsVersion = this.VsVersion;
+            businessObject.SourceTable = table;
+            businessObject.TablePrefix = this.TablePrefix;
+            businessObject.ExcludedTables = this.ExcludedTables;
+            businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+            }
+            break;        
+        
+        case "SQLiteSchemaProvider" :
+        {   
+            BusinessObjectTemplateSQLite businessObject = this.Create<BusinessObjectTemplateSQLite>();
+            businessObject.BusinessNamespace = this.BusinessNamespace;
+            businessObject.BaseNamespace = this.BaseNamespace;
+            businessObject.VsVersion = this.VsVersion;
+            businessObject.SourceTable = table;
+            businessObject.TablePrefix = this.TablePrefix;
+            businessObject.ExcludedTables = this.ExcludedTables;
+            businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+         }
+            break;         
+        default:
+            throw new InvalidOperationException (string.Format("This no template exists for schema provider '{0}'", table.Database.Provider.Name));
+    }
 }
 
 private OutputFile GetOutputFile(string fileName, string dependentUpon, params object[] metaData)
