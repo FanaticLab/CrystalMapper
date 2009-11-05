@@ -13,113 +13,21 @@
  * 
  */
 
-using System;
 using System.Data;
-using System.Reflection;
 using System.Data.Common;
-using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
 
 using CrystalMapper.Data;
-using CrystalMapper.Mapping;
-using CoreSystem.Collections;
 
 
 namespace CrystalMapper
 {
-    public abstract class Entity<T> : INotifyPropertyChanged, INotifyPropertyChanging
+    public abstract class Entity<T> : Entity
         where T : Entity<T>, new()
     {
-        #region Events
-
-        private DispatchEvent propertyChanged = new DispatchEvent();
-
-        private DispatchEvent propertyChanging = new DispatchEvent();
-
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-            add { propertyChanged.Add(value); }
-            remove { propertyChanged.Remove(value); }
-        }
-
-        public event PropertyChangingEventHandler PropertyChanging
-        {
-            add { propertyChanging.Add(value); }
-            remove { propertyChanging.Remove(value); }
-        }
-
-        #endregion
-
         #region Methods
-
-        #region Member Methods
-
-        #region Event Methods
-
-        protected void NotifyPropertyChanging(string propertyName)
-        {
-            this.propertyChanging.Fire(this, new PropertyChangingEventArgs(propertyName));
-        }
-
-        protected void NotifyPropertyChanged(string propertyName)
-        {
-            this.propertyChanged.Fire(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
-        #region Abstract Methods
-
-        public abstract void Read(DbDataReader reader);
-
-        public abstract bool Update(DataContext dataContext);
-
-        public abstract bool Create(DataContext dataContext);
-
-        public abstract bool Delete(DataContext dataContext);
-
-        #endregion               
-
-        public bool Create()
-        {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
-            {
-                dataContext.BeginTransaction();
-                bool retVal = this.Create(dataContext);
-                dataContext.CommitTransaction();
-
-                return retVal;
-            }
-
-        }
-
-        public bool Update()
-        {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
-            {
-                dataContext.BeginTransaction();
-                bool retVal = this.Update(dataContext);
-                dataContext.CommitTransaction();
-                return retVal;
-            }
-        }
-
-        public bool Delete()
-        {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
-            {
-                dataContext.BeginTransaction();
-                bool retVal = this.Delete(dataContext);
-                dataContext.CommitTransaction();
-
-                return retVal;
-            }
-        }
 
         public T[] ToList()
         {
@@ -132,7 +40,7 @@ namespace CrystalMapper
         public T[] ToList(DataContext dataContext)
         {
             Dictionary<string, object> parameterValues;
-            String query = EntityQuery<T>.GetQuery(this, out parameterValues);
+            string query = EntityQuery<T>.GetQuery(this, out parameterValues);
 
             using (DbCommand command = dataContext.CreateCommand(query))
             {
@@ -143,9 +51,7 @@ namespace CrystalMapper
                     return ToList(reader);
                 }
             }
-        }
-
-        #endregion
+        }        
 
         #region Static Methods
 
@@ -167,7 +73,7 @@ namespace CrystalMapper
             return listOfT.ToArray();
         }
 
-        public static T[] ToList(String sqlQuery)
+        public static T[] ToList(string sqlQuery)
         {
             using (DataContext dataContext = new DataContext(DbFactory.GetDefaultDatabase()))
             {
@@ -178,7 +84,7 @@ namespace CrystalMapper
             }
         }
 
-        public static T[] ToList(String sqlQuery, Dictionary<string, object> parameterValues)
+        public static T[] ToList(string sqlQuery, Dictionary<string, object> parameterValues)
         {
             using (DataContext dataContext = new DataContext(DbFactory.GetDefaultDatabase()))
             {
