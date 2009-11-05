@@ -49,8 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\DataContext.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="Data\DataContext.cs" />
+    <Compile Include="EntityOfT.cs" />
+    <Compile Include="EntityCollection.cs" />
+    <Compile Include="IEntityRelation.cs" />
+    <Compile Include="Mapping\LoadOption.cs" />
+    <Compile Include="PersistedStatus.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CrystalMapper
 {
-    public static class EntityQuery<T> 
+    public static class EntityQuery<T>
         where T : Entity<T>, new()
     {
         #region SQL Operators
@@ -106,6 +106,6 @@ namespace CrystalMapper
                 query.Remove(query.Length - SQL_WHERE.Length, SQL_WHERE.Length);
 
             return query.ToString();
-        }      
+        }
     }
 }
