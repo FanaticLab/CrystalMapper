@@ -123,6 +123,32 @@ namespace CrystalMapper
             return retVal;
         }
 
+        public static void Delete(IEnumerable<T> entities)
+        {
+            Entity.Delete(ConvertToEntity(entities));
+        }
+
+        public static void Delete(IEnumerable<T> entities, DataContext dataContext)
+        {
+            Entity.Delete(ConvertToEntity(entities), dataContext);
+        }
+
+        public static void SaveChanges(IEnumerable<T> entities)
+        {
+            Entity.SaveChanges(ConvertToEntity(entities));
+        }
+
+        public static void SaveChanges(IEnumerable<T> entities, DataContext dataContext)
+        {
+            Entity.SaveChanges(ConvertToEntity(entities), dataContext);
+        }
+
+        private static IEnumerable<Entity> ConvertToEntity(IEnumerable<T> entities)
+        {
+            foreach (T entity in entities)
+                yield return entity;
+        }
+       
         #endregion
 
         #endregion
