@@ -7,116 +7,87 @@ using System.Data;
 using System.Diagnostics;
 using CoreSystem.Data;
 using System.Data.SqlClient;
-using Northwind;
+using feedbook.Model;
+using CrystalMapper.Policy;
+using System.Threading;
+using B2B.CRM.Model;
 
 
 namespace CrystalMapper.Test
-{   
+{
     class Program
     {
         static void Main(string[] args)
         {
-            #region Simple Queries
-            
-            #region SQLite 
-            
-            Employee employee = new Employee { Region = "WA" };
-            Employee[] employees = employee.ToList();
-            Console.WriteLine("Total employees in {0} region are: {1}", employee.Region, employees.Length);
+            #region AdventureWorks
+            Stopwatch stopwatch = new Stopwatch();
 
-            //Customers customer = new Customers();// { Country = "Germany" };
-            //Customers[] customers = customer.ToList();
-            //Console.WriteLine("Total customer in {0} are: {1}", customer.Country, customers.Length);
-
-            #endregion
-                    
-
-            #region SQL Server
-
-            //WorkOrder workOrder = new WorkOrder { ProductID = 722 };
-            //WorkOrder[] orders = workOrder.ToList();
-            //Console.WriteLine("Total order of product Id: {0} are: {1}", workOrder.ProductID, orders.Length);
-
-            //ProductReview productReview = new ProductReview ();
-            //ProductReview[] reviews = productReview.ToList();
-            //foreach (ProductReview review in reviews)
+            //WorkOrder query = new WorkOrder { OrderQty = 9 };
+            //stopwatch.Start();
+            //for (int i = 0; i < 1; i++)
             //{
-            //    Console.WriteLine("Product: {0} reviewd by: {1}", review.ProductID, review.ReviewerName);
+            //    WorkOrder[] workOrder = WorkOrder.List();// query.ToList();
+            //}
+            //stopwatch.Stop();
+            //Console.WriteLine("WorkORder loading without cache 10 times: {0}", stopwatch.Elapsed);
+            CachePolicy p = new CachePolicy(typeof(WorkOrder), new TimeSpan(1, 0, 0), CrystalMapper.Cache.CacheType.Select, DateTime.MinValue);
+            PolicyManager.Initialize(new CachePolicy[] { p });
+            WorkOrder w = new WorkOrder { OrderQty = 9 };
+            WorkOrder[] workOrder2 = w.ToList();
+            while (p.IsExpired)
+                Thread.Sleep(1000);
+            WorkOrder query2 = new WorkOrder { OrderQty = 9 };
+
+            stopwatch.Reset();
+            stopwatch.Start();
+
+            for (int i = 0; i < 1; i++)
+            {
+                WorkOrder[] workOrder3 = WorkOrder.List();
+            }
+
+            stopwatch.Stop();
+            Console.WriteLine("WorkORder loading without cache 10 times: {0}", stopwatch.Elapsed);
+          //  Console.ReadLine();
+            #endregion
+
+            //Stopwatch stopwatch = new Stopwatch();
+
+            //TblOrder query1 = new TblOrder { OrderStatus = "Approved" };
+
+            //stopwatch.Reset();
+            //stopwatch.Start();
+
+            //for (int i = 0; i < 1; i++)
+            //{
+            //    TblOrder[] orders =  TblOrder.List();
             //}
 
-            #endregion
+            //stopwatch.Stop();
+            //Console.WriteLine("Order loading without cache 10 times: {0}", stopwatch.Elapsed);
 
-            #endregion
+            //CachePolicy p = new CachePolicy(typeof(TblOrder), new TimeSpan(1, 0, 0), CrystalMapper.Cache.CacheType.Select, DateTime.MinValue);
+            //PolicyManager.Initialize(new CachePolicy[] { p });
 
-            #region Little Complex Queries
+            //TblOrder[] orders3 = TblOrder.List();
+            //while (p.IsExpired)
+            //    Thread.Sleep(1000);
+            //TblOrder query = new TblOrder { OrderStatus = "Approved" };
 
-            //foreach (WorkOrder workOrder1 in WorkOrder.OrdersWithQtyGreaterThen(8))
+            //stopwatch.Reset();
+            //stopwatch.Start();
+
+            //TblOrder[] orders2;
+
+            //for (int i = 0; i < 1; i++)
             //{
-            //    Console.WriteLine("Order ID: {0}, Due Date: {1:f}", workOrder1.WorkOrderID, workOrder1.DueDate);
+            //    orders2 = TblOrder.List();
             //}
 
-            #endregion
+            //stopwatch.Stop();
+            //Console.WriteLine("Orders loading with cache 10 times: {0}", stopwatch.Elapsed);
 
-            //UpdateProductReviews();
-
-            Console.ReadLine();
+            //Console.ReadLine();
         }
-        
-        #region Bulk Update Example
-
-        //public static void UpdateProductReviews()
-        //{
-        //    ProductReview productReview = new ProductReview { ReviewerName = "%John%" };
-        //    ProductReview[] reviews = productReview.ToList();
-        //    foreach (ProductReview review in reviews)
-        //    {
-        //        review.ReviewerName = "Faraz";
-        //    }
-
-        //    ProductReview.Update(reviews); // Updates all reviews in a transaction
-        //    // Or Simple call review.Update() for individual object update
-        //    // Or Use review.Update(DataContext) function for update in transaction
-        //}
-
-        #endregion
-
-        #region Performance test
-
-        //public static void DoTest()
-        //{
-        //    DataTableTest(WorkOrder.TABLE_NAME);
-        //    CrystalMapperTest<WorkOrder>();
-        //}
-
-        //public static T[] CrystalMapperTest<T>() where T : Entity<T>, new()
-        //{
-        //    Stopwatch stopWatch = new Stopwatch();
-        //    stopWatch.Start();
-        //    T searchT = new T();
-        //    T[] searchTToList = searchT.ToList();
-        //    stopWatch.Stop();
-        //    Console.WriteLine("Number of records fetch: {0} by Crystal Mapper of in Time Seconds: {1} ", searchTToList.Length, stopWatch.Elapsed.TotalSeconds);
-        //    return searchTToList;
-        //}
-
-        //public static DataTable DataTableTest(string tableName)
-        //{
-        //    Stopwatch stopWatch = new Stopwatch();
-        //    stopWatch.Start();
-        //    using (SqlConnection conn = new SqlConnection(@"Data Source=DEV-MAC\SQLEXPRESS;Initial Catalog=AdventureWorks;Integrated Security=True"))
-        //    {
-        //        using (SqlCommand com = new SqlCommand("SELECT * FROM " + tableName, conn))
-        //        {
-        //            SqlDataAdapter adapter = new SqlDataAdapter(com);
-        //            DataSet dataset = new DataSet();
-        //            adapter.Fill(dataset, tableName);
-        //            stopWatch.Stop();
-        //            Console.WriteLine("Number of records fetch: {0} through DataSet in Time Seconds: {1} ", dataset.Tables[tableName].Rows.Count, stopWatch.Elapsed.TotalSeconds);
-        //            return dataset.Tables[tableName];
-        //        }
-        //    }
-        //}
-
-        #endregion
     }
 }

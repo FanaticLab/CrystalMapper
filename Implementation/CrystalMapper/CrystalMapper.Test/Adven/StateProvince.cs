@@ -1,15 +1,24 @@
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
- * Date:  Saturday, October 31, 2009 10:50 PM
+ * Date:  Wednesday, November 11, 2009 9:50 AM
  * 
  * Class: StateProvince
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -18,10 +27,10 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.Generated.BusinessObjects
+namespace feedbook.Model
 {
 	[Table(TABLE_NAME)]
-    public partial class StateProvince : Entity< StateProvince>
+    public partial class StateProvince : Entity< StateProvince>  
     {		
 		#region Table Schema
 		
@@ -49,74 +58,306 @@ namespace CrystalMapper.Generated.BusinessObjects
 		
 		#region Queries
 		
-		private const string SQL_INSERT_STATEPROVINCE = "INSERT INTO Person.StateProvince([StateProvinceCode],[CountryRegionCode],[IsOnlyStateProvinceFlag],[Name],[TerritoryID],[rowguid],[ModifiedDate]) VALUES (@StateProvinceCode,@CountryRegionCode,@IsOnlyStateProvinceFlag,@Name,@TerritoryID,@rowguid,@ModifiedDate);";
+		private const string SQL_INSERT_STATEPROVINCE = "INSERT INTO Person.StateProvince([StateProvinceCode],[CountryRegionCode],[IsOnlyStateProvinceFlag],[Name],[TerritoryID],[rowguid],[ModifiedDate]) VALUES (@StateProvinceCode,@CountryRegionCode,@IsOnlyStateProvinceFlag,@Name,@TerritoryID,@rowguid,@ModifiedDate);"   + "SELECT @@IDENTITY;" ;
 		
-		private const string SQL_UPDATE_STATEPROVINCE = "UPDATE Person.StateProvince SET [StateProvinceCode] = @StateProvinceCode, [CountryRegionCode] = @CountryRegionCode, [IsOnlyStateProvinceFlag] = @IsOnlyStateProvinceFlag, [Name] = @Name, [TerritoryID] = @TerritoryID, [rowguid] = @rowguid, [ModifiedDate] = @ModifiedDate,  WHERE [StateProvinceID] = @StateProvinceID";
+		private const string SQL_UPDATE_STATEPROVINCE = "UPDATE Person.StateProvince SET  [StateProvinceCode] = @StateProvinceCode, [CountryRegionCode] = @CountryRegionCode, [IsOnlyStateProvinceFlag] = @IsOnlyStateProvinceFlag, [Name] = @Name, [TerritoryID] = @TerritoryID, [rowguid] = @rowguid, [ModifiedDate] = @ModifiedDate WHERE [StateProvinceID] = @StateProvinceID";
 		
 		private const string SQL_DELETE_STATEPROVINCE = "DELETE FROM Person.StateProvince WHERE  [StateProvinceID] = @StateProvinceID ";
 		
-        #endregion
-        #region Properties	
-		
-		[Column( COL_STATEPROVINCEID, PARAM_STATEPROVINCEID, default(int))]
-                              public virtual int StateProvinceID  { get; set; }		
-		
+        #endregion        
         
-	    [Column( COL_STATEPROVINCECODE, PARAM_STATEPROVINCECODE )]
-                              public virtual string StateProvinceCode  { get; set; }	      
+        #region Hash Code       
         
-	    [Column( COL_COUNTRYREGIONCODE, PARAM_COUNTRYREGIONCODE )]
-                              public virtual string CountryRegionCode  { get; set; }	      
-        
-	    [Column( COL_ISONLYSTATEPROVINCEFLAG, PARAM_ISONLYSTATEPROVINCEFLAG, default(bool))]
-                              public virtual bool IsOnlyStateProvinceFlag  { get; set; }	      
-        
-	    [Column( COL_NAME, PARAM_NAME )]
-                              public virtual string Name  { get; set; }	      
-        
-	    [Column( COL_TERRITORYID, PARAM_TERRITORYID, default(int))]
-                              public virtual int TerritoryID  { get; set; }	      
-        
-	    [Column( COL_ROWGUID, PARAM_ROWGUID, typeof(System.Guid))]
-                              public virtual System.Guid Rowguid  { get; set; }	      
-        
-	    [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
-                              public virtual System.DateTime ModifiedDate  { get; set; }	      
-        
-        public IEnumerable< address> address
-        {
-            get {
-                  foreach(address address in addressList())
-                    yield return address; 
-                }
-        }
-        
-        public IEnumerable< SalesTaxRate> SalesTaxRates
-        {
-            get {
-                  foreach(SalesTaxRate salesTaxRate in SalesTaxRateList())
-                    yield return salesTaxRate; 
-                }
-        }
-        
-        
-        
+        private volatile int hashCode = 0;
         
         #endregion
         
+        #region Declarations
+        
+		protected int stateprovinceid = default(int);
+	
+		protected string stateprovincecode = default(string);
+	
+		protected string countryregioncode = default(string);
+	
+		protected bool isonlystateprovinceflag = default(bool);
+	
+		protected string name = default(string);
+	
+		protected int territoryid = default(int);
+	
+		protected System.Guid rowguid = default(System.Guid);
+	
+		protected System.DateTime modifieddate = default(System.DateTime);
+	
+		protected CountryRegion countryRegionEntity;
+	
+		protected SalesTerritory salesTerritoryEntity;
+	
+        protected EntityCollection< address> addresses ;
+        
+        protected EntityCollection< SalesTaxRate> salesTaxRates ;
+        
+        #endregion
+
+ 		#region Properties	
+
+        [Column( COL_STATEPROVINCEID, PARAM_STATEPROVINCEID, default(int))]
+                              public virtual int StateProvinceID 
+        {
+            get { return this.stateprovinceid; }
+			set	{ 
+                  if(this.stateprovinceid != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("StateProvinceID"));  
+                        this.stateprovinceid = value; 
+                        this.hashCode = 0;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("StateProvinceID"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_STATEPROVINCECODE, PARAM_STATEPROVINCECODE )]
+                              public virtual string StateProvinceCode 
+        {
+            get { return this.stateprovincecode; }
+			set	{ 
+                  if(this.stateprovincecode != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("StateProvinceCode"));  
+                        this.stateprovincecode = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("StateProvinceCode"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_ISONLYSTATEPROVINCEFLAG, PARAM_ISONLYSTATEPROVINCEFLAG, default(bool))]
+                              public virtual bool IsOnlyStateProvinceFlag 
+        {
+            get { return this.isonlystateprovinceflag; }
+			set	{ 
+                  if(this.isonlystateprovinceflag != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("IsOnlyStateProvinceFlag"));  
+                        this.isonlystateprovinceflag = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("IsOnlyStateProvinceFlag"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_NAME, PARAM_NAME )]
+                              public virtual string Name 
+        {
+            get { return this.name; }
+			set	{ 
+                  if(this.name != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Name"));  
+                        this.name = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_ROWGUID, PARAM_ROWGUID, typeof(System.Guid))]
+                              public virtual System.Guid Rowguid 
+        {
+            get { return this.rowguid; }
+			set	{ 
+                  if(this.rowguid != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Rowguid"));  
+                        this.rowguid = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Rowguid"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
+                              public virtual System.DateTime ModifiedDate 
+        {
+            get { return this.modifieddate; }
+			set	{ 
+                  if(this.modifieddate != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ModifiedDate"));  
+                        this.modifieddate = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ModifiedDate"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_COUNTRYREGIONCODE, PARAM_COUNTRYREGIONCODE )]
+                              public virtual string CountryRegionCode                
+        {
+            get
+            {
+                if(this.countryRegionEntity == null)
+                    return this.countryregioncode ;
+                
+                return this.countryRegionEntity.CountryRegionCode;            
+            }
+            set
+            {
+                if(this.countryregioncode != value)
+                {
+                    this.OnPropertyChanging(new PropertyChangingEventArgs("CountryRegionCode"));                    
+                    this.countryregioncode = value;                    
+                    this.OnPropertyChanged(new PropertyChangedEventArgs("CountryRegionCode"));
+                    
+                    this.countryRegionEntity = null;
+                }                
+            }          
+        }	
+        
+        [Column( COL_TERRITORYID, PARAM_TERRITORYID, default(int))]
+                              public virtual int TerritoryID                
+        {
+            get
+            {
+                if(this.salesTerritoryEntity == null)
+                    return this.territoryid ;
+                
+                return this.salesTerritoryEntity.TerritoryID;            
+            }
+            set
+            {
+                if(this.territoryid != value)
+                {
+                    this.OnPropertyChanging(new PropertyChangingEventArgs("TerritoryID"));                    
+                    this.territoryid = value;                    
+                    this.OnPropertyChanged(new PropertyChangedEventArgs("TerritoryID"));
+                    
+                    this.salesTerritoryEntity = null;
+                }                
+            }          
+        }	
+        
+        public CountryRegion CountryRegionEntity
+        {
+            get { 
+                    if(this.countryRegionEntity == null
+                       && this.countryregioncode != default(string)) 
+                    {
+                        CountryRegion countryRegionQuery = new CountryRegion {
+                                                        CountryRegionCode = this.countryregioncode  
+                                                        };
+                        
+                        CountryRegion[]  countryRegions = countryRegionQuery.ToList();                        
+                        if(countryRegions.Length == 1)
+                            this.countryRegionEntity = countryRegions[0];                        
+                    }
+                    
+                    return this.countryRegionEntity; 
+                }
+			set	{ 
+                  if(this.countryRegionEntity != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("CountryRegionEntity"));
+                        if (this.countryRegionEntity != null)
+                            this.Parents.Remove(this.countryRegionEntity);                            
+                        
+                        if((this.countryRegionEntity = value) != null) 
+                            this.Parents.Add(this.countryRegionEntity); 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("CountryRegionEntity"));
+                        
+                        this.countryregioncode = this.CountryRegionEntity.CountryRegionCode;
+                    }   
+                }
+        }	
+		
+        public SalesTerritory SalesTerritoryEntity
+        {
+            get { 
+                    if(this.salesTerritoryEntity == null
+                       && this.territoryid != default(int)) 
+                    {
+                        SalesTerritory salesTerritoryQuery = new SalesTerritory {
+                                                        TerritoryID = this.territoryid  
+                                                        };
+                        
+                        SalesTerritory[]  salesTerritories = salesTerritoryQuery.ToList();                        
+                        if(salesTerritories.Length == 1)
+                            this.salesTerritoryEntity = salesTerritories[0];                        
+                    }
+                    
+                    return this.salesTerritoryEntity; 
+                }
+			set	{ 
+                  if(this.salesTerritoryEntity != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("SalesTerritoryEntity"));
+                        if (this.salesTerritoryEntity != null)
+                            this.Parents.Remove(this.salesTerritoryEntity);                            
+                        
+                        if((this.salesTerritoryEntity = value) != null) 
+                            this.Parents.Add(this.salesTerritoryEntity); 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("SalesTerritoryEntity"));
+                        
+                        this.territoryid = this.SalesTerritoryEntity.TerritoryID;
+                    }   
+                }
+        }	
+		
+        public EntityCollection< address> Addresses 
+        {
+            get { return this.addresses;}
+        }
+        
+        public EntityCollection< SalesTaxRate> SalesTaxRates 
+        {
+            get { return this.salesTaxRates;}
+        }
+        
+        
+        #endregion        
         
         #region Methods     
 		
+        public StateProvince()
+        {
+             this.addresses = new EntityCollection< address>(this, new Associate< address>(this.AssociateAddresses), new DeAssociate< address>(this.DeAssociateAddresses), new GetChildren< address>(this.GetChildrenAddresses));
+             this.salesTaxRates = new EntityCollection< SalesTaxRate>(this, new Associate< SalesTaxRate>(this.AssociateSalesTaxRates), new DeAssociate< SalesTaxRate>(this.DeAssociateSalesTaxRates), new GetChildren< SalesTaxRate>(this.GetChildrenSalesTaxRates));
+        }
+        
+        public override int GetHashCode()
+        {      
+            if(this.hashCode == 0)
+            {
+                int result = 7;            
+                result = (11 * result) + this.stateprovinceid.GetHashCode();
+                this.hashCode = result;
+             }           
+            return this.hashCode;          
+        }
+        
+        public override bool Equals(object obj)
+        {
+            StateProvince entity = obj as StateProvince;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        && this.StateProvinceID == entity.StateProvinceID
+                        && this.StateProvinceID != default(int)
+                        )
+                    );           
+        }
+        
 		public override void Read(DbDataReader reader)
-		{
-			this.StateProvinceID = (int)reader[COL_STATEPROVINCEID];
-			this.StateProvinceCode = (string)reader[COL_STATEPROVINCECODE];
-			this.CountryRegionCode = (string)reader[COL_COUNTRYREGIONCODE];
-			this.IsOnlyStateProvinceFlag = (bool)reader[COL_ISONLYSTATEPROVINCEFLAG];
-			this.Name = (string)reader[COL_NAME];
-			this.TerritoryID = (int)reader[COL_TERRITORYID];
-			this.Rowguid = (System.Guid)reader[COL_ROWGUID];
-			this.ModifiedDate = (System.DateTime)reader[COL_MODIFIEDDATE];
+		{       
+			this.stateprovinceid = (int)reader[COL_STATEPROVINCEID];
+			this.stateprovincecode = (string)reader[COL_STATEPROVINCECODE];
+			this.countryregioncode = (string)reader[COL_COUNTRYREGIONCODE];
+			this.isonlystateprovinceflag = (bool)reader[COL_ISONLYSTATEPROVINCEFLAG];
+			this.name = (string)reader[COL_NAME];
+			this.territoryid = (int)reader[COL_TERRITORYID];
+			this.rowguid = (System.Guid)reader[COL_ROWGUID];
+			this.modifieddate = (System.DateTime)reader[COL_MODIFIEDDATE];
+            this.hashCode = 0;
+            
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -130,13 +371,8 @@ namespace CrystalMapper.Generated.BusinessObjects
 				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));
 				command.Parameters.Add(dataContext.CreateParameter(this.Rowguid, PARAM_ROWGUID));
 				command.Parameters.Add(dataContext.CreateParameter(this.ModifiedDate, PARAM_MODIFIEDDATE));
-                if(command.ExecuteNonQuery() == 1)
-                {
-                    command.CommandText = "SELECT @@IDENTITY;";
-                    this.StateProvinceID = Convert.ToInt32(command.ExecuteScalar());
-                    return true;
-                }
-                return false;                
+                this.StateProvinceID = Convert.ToInt32(command.ExecuteScalar());
+                return true;                
             }
         }
 
@@ -168,34 +404,45 @@ namespace CrystalMapper.Generated.BusinessObjects
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
-        public address GetaddressQuery()
+        private void AssociateAddresses(address address)
         {
-            return new address {                
-                                                                            StateProvinceID = this.StateProvinceID  
-                                                                            };
+           address.StateProvinceEntity = this;
         }
         
-        public address[] addressList()
+        private void DeAssociateAddresses(address address)
         {
-            return GetaddressQuery().ToList();
-        }  
-        
-        public SalesTaxRate GetSalesTaxRatesQuery()
-        {
-            return new SalesTaxRate {                
-                                                                            StateProvinceID = this.StateProvinceID  
-                                                                            };
+          if(address.StateProvinceEntity == this)
+             address.StateProvinceEntity = null;
         }
         
-        public SalesTaxRate[] SalesTaxRateList()
+        private address[] GetChildrenAddresses()
         {
-            return GetSalesTaxRatesQuery().ToList();
-        }  
+            address childrenQuery = new address();
+            childrenQuery.StateProvinceEntity = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
+        private void AssociateSalesTaxRates(SalesTaxRate salesTaxRate)
+        {
+           salesTaxRate.StateProvinceEntity = this;
+        }
         
+        private void DeAssociateSalesTaxRates(SalesTaxRate salesTaxRate)
+        {
+          if(salesTaxRate.StateProvinceEntity == this)
+             salesTaxRate.StateProvinceEntity = null;
+        }
         
+        private SalesTaxRate[] GetChildrenSalesTaxRates()
+        {
+            SalesTaxRate childrenQuery = new SalesTaxRate();
+            childrenQuery.StateProvinceEntity = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
         #endregion
     }

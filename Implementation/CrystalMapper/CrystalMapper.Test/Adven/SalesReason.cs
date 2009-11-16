@@ -1,15 +1,24 @@
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
- * Date:  Saturday, October 31, 2009 10:51 PM
+ * Date:  Wednesday, November 11, 2009 9:50 AM
  * 
  * Class: SalesReason
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -18,10 +27,10 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.Generated.BusinessObjects
+namespace feedbook.Model
 {
 	[Table(TABLE_NAME)]
-    public partial class SalesReason : Entity< SalesReason>
+    public partial class SalesReason : Entity< SalesReason>  
     {		
 		#region Table Schema
 		
@@ -41,58 +50,142 @@ namespace CrystalMapper.Generated.BusinessObjects
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SALESREASON = "INSERT INTO Sales.SalesReason([Name],[ReasonType],[ModifiedDate]) VALUES (@Name,@ReasonType,@ModifiedDate);";
+		private const string SQL_INSERT_SALESREASON = "INSERT INTO Sales.SalesReason([Name],[ReasonType],[ModifiedDate]) VALUES (@Name,@ReasonType,@ModifiedDate);"   + "SELECT @@IDENTITY;" ;
 		
-		private const string SQL_UPDATE_SALESREASON = "UPDATE Sales.SalesReason SET [Name] = @Name, [ReasonType] = @ReasonType, [ModifiedDate] = @ModifiedDate,  WHERE [SalesReasonID] = @SalesReasonID";
+		private const string SQL_UPDATE_SALESREASON = "UPDATE Sales.SalesReason SET  [Name] = @Name, [ReasonType] = @ReasonType, [ModifiedDate] = @ModifiedDate WHERE [SalesReasonID] = @SalesReasonID";
 		
 		private const string SQL_DELETE_SALESREASON = "DELETE FROM Sales.SalesReason WHERE  [SalesReasonID] = @SalesReasonID ";
 		
+        #endregion        
+        
+        #region Hash Code       
+        
+        private volatile int hashCode = 0;
+        
         #endregion
-        #region Properties	
-		
-		[Column( COL_SALESREASONID, PARAM_SALESREASONID, default(int))]
-                              public virtual int SalesReasonID  { get; set; }		
-		
         
-	    [Column( COL_NAME, PARAM_NAME )]
-                              public virtual string Name  { get; set; }	      
+        #region Declarations
         
-	    [Column( COL_REASONTYPE, PARAM_REASONTYPE )]
-                              public virtual string ReasonType  { get; set; }	      
+		protected int salesreasonid = default(int);
+	
+		protected string name = default(string);
+	
+		protected string reasontype = default(string);
+	
+		protected System.DateTime modifieddate = default(System.DateTime);
+	
+        protected EntityCollection< SalesOrderHeaderSalesReason> salesOrderHeaderSalesReasons ;
         
-	    [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
-                              public virtual System.DateTime ModifiedDate  { get; set; }	      
-        
-        public IEnumerable< SalesOrderHeaderSalesReason> SalesOrderHeaderSalesReasons
+        #endregion
+
+ 		#region Properties	
+
+        [Column( COL_SALESREASONID, PARAM_SALESREASONID, default(int))]
+                              public virtual int SalesReasonID 
         {
-            get {
-                  foreach(SalesOrderHeaderSalesReason salesOrderHeaderSalesReason in SalesOrderHeaderSalesReasonList())
-                    yield return salesOrderHeaderSalesReason; 
+            get { return this.salesreasonid; }
+			set	{ 
+                  if(this.salesreasonid != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("SalesReasonID"));  
+                        this.salesreasonid = value; 
+                        this.hashCode = 0;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("SalesReasonID"));
+                    }   
                 }
+        }	
+		
+        [Column( COL_NAME, PARAM_NAME )]
+                              public virtual string Name 
+        {
+            get { return this.name; }
+			set	{ 
+                  if(this.name != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Name"));  
+                        this.name = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_REASONTYPE, PARAM_REASONTYPE )]
+                              public virtual string ReasonType 
+        {
+            get { return this.reasontype; }
+			set	{ 
+                  if(this.reasontype != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ReasonType"));  
+                        this.reasontype = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ReasonType"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
+                              public virtual System.DateTime ModifiedDate 
+        {
+            get { return this.modifieddate; }
+			set	{ 
+                  if(this.modifieddate != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ModifiedDate"));  
+                        this.modifieddate = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ModifiedDate"));
+                    }   
+                }
+        }	
+		
+        public EntityCollection< SalesOrderHeaderSalesReason> SalesOrderHeaderSalesReasons 
+        {
+            get { return this.salesOrderHeaderSalesReasons;}
         }
         
         
-        public IEnumerable< SalesOrderHeader> SalesOrderHeaders
-        {
-            get {           
-                
-                foreach(SalesOrderHeader salesOrderHeader in SalesOrderHeaderList())
-                    yield return salesOrderHeader; 
-                }         
-        }    
-        
-        
-        #endregion
-        
+        #endregion        
         
         #region Methods     
 		
+        public SalesReason()
+        {
+             this.salesOrderHeaderSalesReasons = new EntityCollection< SalesOrderHeaderSalesReason>(this, new Associate< SalesOrderHeaderSalesReason>(this.AssociateSalesOrderHeaderSalesReasons), new DeAssociate< SalesOrderHeaderSalesReason>(this.DeAssociateSalesOrderHeaderSalesReasons), new GetChildren< SalesOrderHeaderSalesReason>(this.GetChildrenSalesOrderHeaderSalesReasons));
+        }
+        
+        public override int GetHashCode()
+        {      
+            if(this.hashCode == 0)
+            {
+                int result = 7;            
+                result = (11 * result) + this.salesreasonid.GetHashCode();
+                this.hashCode = result;
+             }           
+            return this.hashCode;          
+        }
+        
+        public override bool Equals(object obj)
+        {
+            SalesReason entity = obj as SalesReason;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        && this.SalesReasonID == entity.SalesReasonID
+                        && this.SalesReasonID != default(int)
+                        )
+                    );           
+        }
+        
 		public override void Read(DbDataReader reader)
-		{
-			this.SalesReasonID = (int)reader[COL_SALESREASONID];
-			this.Name = (string)reader[COL_NAME];
-			this.ReasonType = (string)reader[COL_REASONTYPE];
-			this.ModifiedDate = (System.DateTime)reader[COL_MODIFIEDDATE];
+		{       
+			this.salesreasonid = (int)reader[COL_SALESREASONID];
+			this.name = (string)reader[COL_NAME];
+			this.reasontype = (string)reader[COL_REASONTYPE];
+			this.modifieddate = (System.DateTime)reader[COL_MODIFIEDDATE];
+            this.hashCode = 0;
+            
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -102,13 +195,8 @@ namespace CrystalMapper.Generated.BusinessObjects
 				command.Parameters.Add(dataContext.CreateParameter(this.Name, PARAM_NAME));
 				command.Parameters.Add(dataContext.CreateParameter(this.ReasonType, PARAM_REASONTYPE));
 				command.Parameters.Add(dataContext.CreateParameter(this.ModifiedDate, PARAM_MODIFIEDDATE));
-                if(command.ExecuteNonQuery() == 1)
-                {
-                    command.CommandText = "SELECT @@IDENTITY;";
-                    this.SalesReasonID = Convert.ToInt32(command.ExecuteScalar());
-                    return true;
-                }
-                return false;                
+                this.SalesReasonID = Convert.ToInt32(command.ExecuteScalar());
+                return true;                
             }
         }
 
@@ -136,37 +224,26 @@ namespace CrystalMapper.Generated.BusinessObjects
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
-        public SalesOrderHeaderSalesReason GetSalesOrderHeaderSalesReasonsQuery()
+        private void AssociateSalesOrderHeaderSalesReasons(SalesOrderHeaderSalesReason salesOrderHeaderSalesReason)
         {
-            return new SalesOrderHeaderSalesReason {                
-                                                                            SalesReasonID = this.SalesReasonID  
-                                                                            };
+           salesOrderHeaderSalesReason.SalesReasonEntity = this;
         }
         
-        public SalesOrderHeaderSalesReason[] SalesOrderHeaderSalesReasonList()
+        private void DeAssociateSalesOrderHeaderSalesReasons(SalesOrderHeaderSalesReason salesOrderHeaderSalesReason)
         {
-            return GetSalesOrderHeaderSalesReasonsQuery().ToList();
-        }  
+          if(salesOrderHeaderSalesReason.SalesReasonEntity == this)
+             salesOrderHeaderSalesReason.SalesReasonEntity = null;
+        }
         
-        
-        
-        public SalesOrderHeader[] SalesOrderHeaderList()
+        private SalesOrderHeaderSalesReason[] GetChildrenSalesOrderHeaderSalesReasons()
         {
-            string sqlQuery = @"SELECT Sales.SalesOrderHeader.*
-                                FROM Sales.SalesOrderHeaderSalesReason
-                                INNER JOIN Sales.SalesOrderHeader ON                                                                            
-                                Sales.SalesOrderHeaderSalesReason.[SalesOrderID] = Sales.SalesOrderHeader.[SalesOrderID] AND
-                                Sales.SalesOrderHeaderSalesReason.[SalesReasonID] = @SalesReasonID  
-                                ";
-                                
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameterValues.Add(PARAM_SALESREASONID, this.SalesReasonID);
+            SalesOrderHeaderSalesReason childrenQuery = new SalesOrderHeaderSalesReason();
+            childrenQuery.SalesReasonEntity = this;
             
-            return SalesOrderHeader.ToList(sqlQuery, parameterValues);
-            
-        }    
+            return childrenQuery.ToList(); 
+        }
         
         #endregion
     }

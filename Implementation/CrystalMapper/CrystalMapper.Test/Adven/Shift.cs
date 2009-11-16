@@ -1,15 +1,24 @@
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
- * Date:  Saturday, October 31, 2009 10:50 PM
+ * Date:  Wednesday, November 11, 2009 9:50 AM
  * 
  * Class: Shift
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -18,10 +27,10 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.Generated.BusinessObjects
+namespace feedbook.Model
 {
 	[Table(TABLE_NAME)]
-    public partial class Shift : Entity< Shift>
+    public partial class Shift : Entity< Shift>  
     {		
 		#region Table Schema
 		
@@ -43,54 +52,159 @@ namespace CrystalMapper.Generated.BusinessObjects
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SHIFT = "INSERT INTO HumanResources.Shift([Name],[StartTime],[EndTime],[ModifiedDate]) VALUES (@Name,@StartTime,@EndTime,@ModifiedDate);";
+		private const string SQL_INSERT_SHIFT = "INSERT INTO HumanResources.Shift([Name],[StartTime],[EndTime],[ModifiedDate]) VALUES (@Name,@StartTime,@EndTime,@ModifiedDate);"   + "SELECT @@IDENTITY;" ;
 		
-		private const string SQL_UPDATE_SHIFT = "UPDATE HumanResources.Shift SET [Name] = @Name, [StartTime] = @StartTime, [EndTime] = @EndTime, [ModifiedDate] = @ModifiedDate,  WHERE [ShiftID] = @ShiftID";
+		private const string SQL_UPDATE_SHIFT = "UPDATE HumanResources.Shift SET  [Name] = @Name, [StartTime] = @StartTime, [EndTime] = @EndTime, [ModifiedDate] = @ModifiedDate WHERE [ShiftID] = @ShiftID";
 		
 		private const string SQL_DELETE_SHIFT = "DELETE FROM HumanResources.Shift WHERE  [ShiftID] = @ShiftID ";
 		
+        #endregion        
+        
+        #region Hash Code       
+        
+        private volatile int hashCode = 0;
+        
         #endregion
-        #region Properties	
-		
-		[Column( COL_SHIFTID, PARAM_SHIFTID, default(byte))]
-                              public virtual byte ShiftID  { get; set; }		
-		
         
-	    [Column( COL_NAME, PARAM_NAME )]
-                              public virtual string Name  { get; set; }	      
+        #region Declarations
         
-	    [Column( COL_STARTTIME, PARAM_STARTTIME, typeof(System.DateTime))]
-                              public virtual System.DateTime StartTime  { get; set; }	      
+		protected byte shiftid = default(byte);
+	
+		protected string name = default(string);
+	
+		protected System.TimeSpan starttime = default(System.TimeSpan);
+	
+		protected System.TimeSpan endtime = default(System.TimeSpan);
+	
+		protected System.DateTime modifieddate = default(System.DateTime);
+	
+        protected EntityCollection< EmployeeDepartmentHistory> employeeDepartmentHistories ;
         
-	    [Column( COL_ENDTIME, PARAM_ENDTIME, typeof(System.DateTime))]
-                              public virtual System.DateTime EndTime  { get; set; }	      
-        
-	    [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
-                              public virtual System.DateTime ModifiedDate  { get; set; }	      
-        
-        public IEnumerable< EmployeeDepartmentHistory> EmployeeDepartmentHistories
+        #endregion
+
+ 		#region Properties	
+
+        [Column( COL_SHIFTID, PARAM_SHIFTID, default(byte))]
+                              public virtual byte ShiftID 
         {
-            get {
-                  foreach(EmployeeDepartmentHistory employeeDepartmentHistory in EmployeeDepartmentHistoryList())
-                    yield return employeeDepartmentHistory; 
+            get { return this.shiftid; }
+			set	{ 
+                  if(this.shiftid != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShiftID"));  
+                        this.shiftid = value; 
+                        this.hashCode = 0;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShiftID"));
+                    }   
                 }
+        }	
+		
+        [Column( COL_NAME, PARAM_NAME )]
+                              public virtual string Name 
+        {
+            get { return this.name; }
+			set	{ 
+                  if(this.name != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Name"));  
+                        this.name = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_STARTTIME, PARAM_STARTTIME, typeof(System.TimeSpan))]
+                              public virtual System.TimeSpan StartTime 
+        {
+            get { return this.starttime; }
+			set	{ 
+                  if(this.starttime != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("StartTime"));  
+                        this.starttime = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("StartTime"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_ENDTIME, PARAM_ENDTIME, typeof(System.TimeSpan))]
+                              public virtual System.TimeSpan EndTime 
+        {
+            get { return this.endtime; }
+			set	{ 
+                  if(this.endtime != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("EndTime"));  
+                        this.endtime = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("EndTime"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
+                              public virtual System.DateTime ModifiedDate 
+        {
+            get { return this.modifieddate; }
+			set	{ 
+                  if(this.modifieddate != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ModifiedDate"));  
+                        this.modifieddate = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ModifiedDate"));
+                    }   
+                }
+        }	
+		
+        public EntityCollection< EmployeeDepartmentHistory> EmployeeDepartmentHistories 
+        {
+            get { return this.employeeDepartmentHistories;}
         }
         
         
-        
-        
-        #endregion
-        
+        #endregion        
         
         #region Methods     
 		
+        public Shift()
+        {
+             this.employeeDepartmentHistories = new EntityCollection< EmployeeDepartmentHistory>(this, new Associate< EmployeeDepartmentHistory>(this.AssociateEmployeeDepartmentHistories), new DeAssociate< EmployeeDepartmentHistory>(this.DeAssociateEmployeeDepartmentHistories), new GetChildren< EmployeeDepartmentHistory>(this.GetChildrenEmployeeDepartmentHistories));
+        }
+        
+        public override int GetHashCode()
+        {      
+            if(this.hashCode == 0)
+            {
+                int result = 7;            
+                result = (11 * result) + this.shiftid.GetHashCode();
+                this.hashCode = result;
+             }           
+            return this.hashCode;          
+        }
+        
+        public override bool Equals(object obj)
+        {
+            Shift entity = obj as Shift;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        && this.ShiftID == entity.ShiftID
+                        && this.ShiftID != default(byte)
+                        )
+                    );           
+        }
+        
 		public override void Read(DbDataReader reader)
-		{
-			this.ShiftID = (byte)reader[COL_SHIFTID];
-			this.Name = (string)reader[COL_NAME];
-			this.StartTime = (System.DateTime)reader[COL_STARTTIME];
-			this.EndTime = (System.DateTime)reader[COL_ENDTIME];
-			this.ModifiedDate = (System.DateTime)reader[COL_MODIFIEDDATE];
+		{       
+			this.shiftid = (byte)reader[COL_SHIFTID];
+			this.name = (string)reader[COL_NAME];
+			this.starttime = (System.TimeSpan)reader[COL_STARTTIME];
+			this.endtime = (System.TimeSpan)reader[COL_ENDTIME];
+			this.modifieddate = (System.DateTime)reader[COL_MODIFIEDDATE];
+            this.hashCode = 0;
+            
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -101,13 +215,8 @@ namespace CrystalMapper.Generated.BusinessObjects
 				command.Parameters.Add(dataContext.CreateParameter(this.StartTime, PARAM_STARTTIME));
 				command.Parameters.Add(dataContext.CreateParameter(this.EndTime, PARAM_ENDTIME));
 				command.Parameters.Add(dataContext.CreateParameter(this.ModifiedDate, PARAM_MODIFIEDDATE));
-                if(command.ExecuteNonQuery() == 1)
-                {
-                    command.CommandText = "SELECT @@IDENTITY;";
-                    this.ShiftID = Convert.ToByte(command.ExecuteScalar());
-                    return true;
-                }
-                return false;                
+                this.ShiftID = Convert.ToByte(command.ExecuteScalar());
+                return true;                
             }
         }
 
@@ -136,22 +245,26 @@ namespace CrystalMapper.Generated.BusinessObjects
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
-        public EmployeeDepartmentHistory GetEmployeeDepartmentHistoriesQuery()
+        private void AssociateEmployeeDepartmentHistories(EmployeeDepartmentHistory employeeDepartmentHistory)
         {
-            return new EmployeeDepartmentHistory {                
-                                                                            ShiftID = this.ShiftID  
-                                                                            };
+           employeeDepartmentHistory.ShiftEntity = this;
         }
         
-        public EmployeeDepartmentHistory[] EmployeeDepartmentHistoryList()
+        private void DeAssociateEmployeeDepartmentHistories(EmployeeDepartmentHistory employeeDepartmentHistory)
         {
-            return GetEmployeeDepartmentHistoriesQuery().ToList();
-        }  
+          if(employeeDepartmentHistory.ShiftEntity == this)
+             employeeDepartmentHistory.ShiftEntity = null;
+        }
         
-        
-        
+        private EmployeeDepartmentHistory[] GetChildrenEmployeeDepartmentHistories()
+        {
+            EmployeeDepartmentHistory childrenQuery = new EmployeeDepartmentHistory();
+            childrenQuery.ShiftEntity = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
         #endregion
     }
