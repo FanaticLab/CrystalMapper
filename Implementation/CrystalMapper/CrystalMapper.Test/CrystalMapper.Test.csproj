@@ -32,7 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreSystem, Version=1.0.3592.5492, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -46,14 +45,18 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adven\address.cs" />
     <Compile Include="Adven\AddressType.cs" />
     <Compile Include="Adven\AWBuildVersion.cs" />
     <Compile Include="Adven\BillOfMaterial.cs" />
-    <Compile Include="Adven\Contact.cs" />
-    <Compile Include="Adven\ContactCreditCard.cs" />
+    <Compile Include="Adven\BusinessEntity.cs" />
+    <Compile Include="Adven\BusinessEntityAddress.cs" />
+    <Compile Include="Adven\BusinessEntityContact.cs" />
     <Compile Include="Adven\ContactType.cs" />
     <Compile Include="Adven\CountryRegion.cs" />
     <Compile Include="Adven\CountryRegionCurrency.cs" />
@@ -62,19 +65,22 @@
     <Compile Include="Adven\Currency.cs" />
     <Compile Include="Adven\CurrencyRate.cs" />
     <Compile Include="Adven\Customer.cs" />
-    <Compile Include="Adven\CustomerAddress.cs" />
     <Compile Include="Adven\DatabaseLog.cs" />
     <Compile Include="Adven\Department.cs" />
     <Compile Include="Adven\Document.cs" />
+    <Compile Include="Adven\EmailAddress.cs" />
     <Compile Include="Adven\Employee.cs" />
-    <Compile Include="Adven\EmployeeAddress.cs" />
     <Compile Include="Adven\EmployeeDepartmentHistory.cs" />
     <Compile Include="Adven\EmployeePayHistory.cs" />
     <Compile Include="Adven\ErrorLog.cs" />
     <Compile Include="Adven\Illustration.cs" />
-    <Compile Include="Adven\Individual.cs" />
     <Compile Include="Adven\JobCandidate.cs" />
     <Compile Include="Adven\Location.cs" />
+    <Compile Include="Adven\Password.cs" />
+    <Compile Include="Adven\Person.cs" />
+    <Compile Include="Adven\PersonCreditCard.cs" />
+    <Compile Include="Adven\PersonPhone.cs" />
+    <Compile Include="Adven\PhoneNumberType.cs" />
     <Compile Include="Adven\Product.cs" />
     <Compile Include="Adven\ProductCategory.cs" />
     <Compile Include="Adven\ProductCostHistory.cs" />
@@ -109,31 +115,118 @@
     <Compile Include="Adven\SpecialOfferProduct.cs" />
     <Compile Include="Adven\StateProvince.cs" />
     <Compile Include="Adven\Store.cs" />
-    <Compile Include="Adven\StoreContact.cs" />
     <Compile Include="Adven\TransactionHistory.cs" />
     <Compile Include="Adven\TransactionHistoryArchive.cs" />
     <Compile Include="Adven\UnitMeasure.cs" />
     <Compile Include="Adven\Vendor.cs" />
-    <Compile Include="Adven\VendorAddress.cs" />
-    <Compile Include="Adven\VendorContact.cs" />
     <Compile Include="Adven\WorkOrder.cs" />
     <Compile Include="Adven\WorkOrderRouting.cs" />
-    <Compile Include="Northwind\Category.cs" />
-    <Compile Include="Northwind\Customer.cs" />
-    <Compile Include="Northwind\Employee.cs" />
-    <Compile Include="Northwind\EmployeesTerritory.cs" />
-    <Compile Include="Northwind\InternationalOrder.cs" />
-    <Compile Include="Northwind\Order.cs" />
-    <Compile Include="Northwind\OrderDetail.cs" />
-    <Compile Include="Northwind\PreviousEmployee.cs" />
-    <Compile Include="Northwind\Product.cs" />
-    <Compile Include="Northwind\Region.cs" />
-    <Compile Include="Northwind\Supplier.cs" />
-    <Compile Include="Northwind\Territory.cs" />
+    <Compile Include="ATnTCRM\BtBCallTrack.cs" />
+    <Compile Include="ATnTCRM\DailyVendorFile.cs" />
+    <Compile Include="ATnTCRM\DailyVendorStatus.cs" />
+    <Compile Include="ATnTCRM\ReportExcludedAgent.cs" />
+    <Compile Include="ATnTCRM\ResultsBtb.cs" />
+    <Compile Include="ATnTCRM\TblAccount.cs" />
+    <Compile Include="ATnTCRM\TblAccountCategory.cs" />
+    <Compile Include="ATnTCRM\TblAccountCredit.cs" />
+    <Compile Include="ATnTCRM\TblAccountProduct.cs" />
+    <Compile Include="ATnTCRM\TblActivityAction.cs" />
+    <Compile Include="ATnTCRM\TblAddress.cs" />
+    <Compile Include="ATnTCRM\TblAddressType.cs" />
+    <Compile Include="ATnTCRM\TblAgent.cs" />
+    <Compile Include="ATnTCRM\TblAlert.cs" />
+    <Compile Include="ATnTCRM\TblAnswer.cs" />
+    <Compile Include="ATnTCRM\TblBFCmpListing.cs" />
+    <Compile Include="ATnTCRM\TblBFProductDetailCode.cs" />
+    <Compile Include="ATnTCRM\TblBFPromotion.cs" />
+    <Compile Include="ATnTCRM\TblBTNProduct.cs" />
+    <Compile Include="ATnTCRM\TblCancelFile.cs" />
+    <Compile Include="ATnTCRM\TblCancelFilesMaster.cs" />
+    <Compile Include="ATnTCRM\TblCancelFilesStaging.cs" />
+    <Compile Include="ATnTCRM\TblCancelOrder.cs" />
+    <Compile Include="ATnTCRM\TblCancelOrderHistory.cs" />
+    <Compile Include="ATnTCRM\TblCity.cs" />
+    <Compile Include="ATnTCRM\TblContact.cs" />
+    <Compile Include="ATnTCRM\TblContactCategory.cs" />
+    <Compile Include="ATnTCRM\TblContactMethod.cs" />
+    <Compile Include="ATnTCRM\TblContactRole.cs" />
+    <Compile Include="ATnTCRM\TblControl.cs" />
+    <Compile Include="ATnTCRM\TblCountry.cs" />
+    <Compile Include="ATnTCRM\TblCounty.cs" />
+    <Compile Include="ATnTCRM\TblCRMCallTrack.cs" />
+    <Compile Include="ATnTCRM\TblCrossCategoryRulesFeature.cs" />
+    <Compile Include="ATnTCRM\TblCustomer.cs" />
+    <Compile Include="ATnTCRM\TblDepartment.cs" />
+    <Compile Include="ATnTCRM\TblDirectlyPostableProduct.cs" />
+    <Compile Include="ATnTCRM\TblDisclosure.cs" />
+    <Compile Include="ATnTCRM\TblDisposition.cs" />
+    <Compile Include="ATnTCRM\TblDispositionGroup.cs" />
+    <Compile Include="ATnTCRM\TblErrorReason.cs" />
+    <Compile Include="ATnTCRM\TblFeatureParent.cs" />
+    <Compile Include="ATnTCRM\TblFeaturesPage.cs" />
+    <Compile Include="ATnTCRM\TblILPCategory.cs" />
+    <Compile Include="ATnTCRM\TblLeadSegmentation.cs" />
+    <Compile Include="ATnTCRM\TblLeadsegmentationdetail.cs" />
+    <Compile Include="ATnTCRM\TblLogin.cs" />
+    <Compile Include="ATnTCRM\TblOrder.cs" />
+    <Compile Include="ATnTCRM\TblOrderCallHistory.cs" />
+    <Compile Include="ATnTCRM\TblOrderCallID.cs" />
+    <Compile Include="ATnTCRM\TblOrderPhoneNumber.cs" />
+    <Compile Include="ATnTCRM\TblOrderProcess.cs" />
+    <Compile Include="ATnTCRM\TblOrderStatus.cs" />
+    <Compile Include="ATnTCRM\TblOrderStatusHistory.cs" />
+    <Compile Include="ATnTCRM\TblPhone.cs" />
+    <Compile Include="ATnTCRM\TblPhoneType.cs" />
+    <Compile Include="ATnTCRM\TblProcess.cs" />
+    <Compile Include="ATnTCRM\TblProduct.cs" />
+    <Compile Include="ATnTCRM\TblProductFeature.cs" />
+    <Compile Include="ATnTCRM\TblProductFeaturesCategory.cs" />
+    <Compile Include="ATnTCRM\TblProductFeaturesGroup.cs" />
+    <Compile Include="ATnTCRM\TblProductProcess.cs" />
+    <Compile Include="ATnTCRM\TblProductPromotion.cs" />
+    <Compile Include="ATnTCRM\TblProductRule.cs" />
+    <Compile Include="ATnTCRM\TblProductsAlertMapping.cs" />
+    <Compile Include="ATnTCRM\TblPromotion.cs" />
+    <Compile Include="ATnTCRM\TblQuestion.cs" />
+    <Compile Include="ATnTCRM\TblQuestionType.cs" />
+    <Compile Include="ATnTCRM\TblReportMatrix.cs" />
+    <Compile Include="ATnTCRM\TblReportMatrixSegment.cs" />
+    <Compile Include="ATnTCRM\TblSale.cs" />
+    <Compile Include="ATnTCRM\TblSalesOrderFeature.cs" />
+    <Compile Include="ATnTCRM\TblSalutation.cs" />
+    <Compile Include="ATnTCRM\TblScreen.cs" />
+    <Compile Include="ATnTCRM\TblSegmentationDesc.cs" />
+    <Compile Include="ATnTCRM\TblSegmentationDesc3Q2009.cs" />
+    <Compile Include="ATnTCRM\TblShipVium.cs" />
+    <Compile Include="ATnTCRM\TblState.cs" />
+    <Compile Include="ATnTCRM\TblStatus.cs" />
+    <Compile Include="ATnTCRM\TblTempAllrule.cs" />
+    <Compile Include="ATnTCRM\TblTerm.cs" />
+    <Compile Include="ATnTCRM\TblTimeZone.cs" />
+    <Compile Include="ATnTCRM\TblTpv.cs" />
+    <Compile Include="ATnTCRM\TblTPVFile.cs" />
+    <Compile Include="ATnTCRM\TblTpvFilesStaging.cs" />
+    <Compile Include="ATnTCRM\TblTPVStatus.cs" />
+    <Compile Include="ATnTCRM\TblType.cs" />
+    <Compile Include="ATnTCRM\TblUserProduct.cs" />
+    <Compile Include="ATnTCRM\TblUserProductDetail.cs" />
+    <Compile Include="ATnTCRM\TblUserProductDetailsHistory.cs" />
+    <Compile Include="ATnTCRM\TblUserProductsHistory.cs" />
+    <Compile Include="ATnTCRM\TblUserPromotion.cs" />
+    <Compile Include="ATnTCRM\TblUserPromotionsHistory.cs" />
+    <Compile Include="ATnTCRM\TblUserSOFeature.cs" />
+    <Compile Include="ATnTCRM\TblUserSOFeaturesHistory.cs" />
+    <Compile Include="ATnTCRM\TblWTNBTN.cs" />
+    <Compile Include="ATnTCRM\TblWTNProduct.cs" />
+    <Compile Include="ATnTCRM\TempMappingsField.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
+      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
+      <Name>CoreSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CrystalMapper\CrystalMapper.csproj">
       <Project>{362267BA-8052-493E-A3C0-F89B0F3BF331}</Project>
       <Name>CrystalMapper</Name>
@@ -141,6 +234,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="Store\feedbook.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Store\northwindEF.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

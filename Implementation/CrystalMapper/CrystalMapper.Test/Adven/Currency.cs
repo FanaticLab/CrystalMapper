@@ -1,15 +1,24 @@
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
- * Date:  Saturday, October 31, 2009 10:50 PM
+ * Date:  Wednesday, November 11, 2009 9:50 AM
  * 
  * Class: Currency
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -18,10 +27,10 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.Generated.BusinessObjects
+namespace feedbook.Model
 {
 	[Table(TABLE_NAME)]
-    public partial class Currency : Entity< Currency>
+    public partial class Currency : Entity< Currency>  
     {		
 		#region Table Schema
 		
@@ -39,70 +48,141 @@ namespace CrystalMapper.Generated.BusinessObjects
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CURRENCY = "INSERT INTO Sales.Currency([CurrencyCode],[Name],[ModifiedDate]) VALUES (@CurrencyCode,@Name,@ModifiedDate);";
+		private const string SQL_INSERT_CURRENCY = "INSERT INTO Sales.Currency([CurrencyCode],[Name],[ModifiedDate]) VALUES (@CurrencyCode,@Name,@ModifiedDate);"  ;
 		
-		private const string SQL_UPDATE_CURRENCY = "UPDATE Sales.Currency SET [Name] = @Name, [ModifiedDate] = @ModifiedDate,  WHERE [CurrencyCode] = @CurrencyCode";
+		private const string SQL_UPDATE_CURRENCY = "UPDATE Sales.Currency SET  [Name] = @Name, [ModifiedDate] = @ModifiedDate WHERE [CurrencyCode] = @CurrencyCode";
 		
 		private const string SQL_DELETE_CURRENCY = "DELETE FROM Sales.Currency WHERE  [CurrencyCode] = @CurrencyCode ";
 		
-        #endregion
-        #region Properties	
-		
-		[Column( COL_CURRENCYCODE, PARAM_CURRENCYCODE )]
-                              public virtual string CurrencyCode  { get; set; }		
-		
+        #endregion        
         
-	    [Column( COL_NAME, PARAM_NAME )]
-                              public virtual string Name  { get; set; }	      
+        #region Hash Code       
         
-	    [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
-                              public virtual System.DateTime ModifiedDate  { get; set; }	      
-        
-        public IEnumerable< CountryRegionCurrency> CountryRegionCurrencies
-        {
-            get {
-                  foreach(CountryRegionCurrency countryRegionCurrency in CountryRegionCurrencyList())
-                    yield return countryRegionCurrency; 
-                }
-        }
-        
-        public IEnumerable< CurrencyRate> FromCurrencyCodeCurrencyRates
-        {
-            get {
-                  foreach(CurrencyRate currencyRate in FromCurrencyCodeCurrencyRateList())
-                    yield return currencyRate; 
-                }
-        }
-        
-        public IEnumerable< CurrencyRate> ToCurrencyCodeCurrencyRates
-        {
-            get {
-                  foreach(CurrencyRate currencyRate in ToCurrencyCodeCurrencyRateList())
-                    yield return currencyRate; 
-                }
-        }
-        
-        
-        public IEnumerable< CountryRegion> CountryRegions
-        {
-            get {           
-                
-                foreach(CountryRegion countryRegion in CountryRegionList())
-                    yield return countryRegion; 
-                }         
-        }    
-        
+        private volatile int hashCode = 0;
         
         #endregion
         
+        #region Declarations
+        
+		protected string currencycode = default(string);
+	
+		protected string name = default(string);
+	
+		protected System.DateTime modifieddate = default(System.DateTime);
+	
+        protected EntityCollection< CountryRegionCurrency> countryRegionCurrencies ;
+        
+        protected EntityCollection< CurrencyRate> currencyRateFromCurrencyCodes ;
+        
+        protected EntityCollection< CurrencyRate> currencyRateToCurrencyCodes ;
+        
+        #endregion
+
+ 		#region Properties	
+
+        [Column( COL_CURRENCYCODE, PARAM_CURRENCYCODE )]
+                              public virtual string CurrencyCode 
+        {
+            get { return this.currencycode; }
+			set	{ 
+                  if(this.currencycode != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("CurrencyCode"));  
+                        this.currencycode = value; 
+                        this.hashCode = 0;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("CurrencyCode"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_NAME, PARAM_NAME )]
+                              public virtual string Name 
+        {
+            get { return this.name; }
+			set	{ 
+                  if(this.name != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Name"));  
+                        this.name = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
+                              public virtual System.DateTime ModifiedDate 
+        {
+            get { return this.modifieddate; }
+			set	{ 
+                  if(this.modifieddate != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ModifiedDate"));  
+                        this.modifieddate = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ModifiedDate"));
+                    }   
+                }
+        }	
+		
+        public EntityCollection< CountryRegionCurrency> CountryRegionCurrencies 
+        {
+            get { return this.countryRegionCurrencies;}
+        }
+        
+        public EntityCollection< CurrencyRate> CurrencyRateFromCurrencyCodes 
+        {
+            get { return this.currencyRateFromCurrencyCodes;}
+        }
+        
+        public EntityCollection< CurrencyRate> CurrencyRateToCurrencyCodes 
+        {
+            get { return this.currencyRateToCurrencyCodes;}
+        }
+        
+        
+        #endregion        
         
         #region Methods     
 		
+        public Currency()
+        {
+             this.countryRegionCurrencies = new EntityCollection< CountryRegionCurrency>(this, new Associate< CountryRegionCurrency>(this.AssociateCountryRegionCurrencies), new DeAssociate< CountryRegionCurrency>(this.DeAssociateCountryRegionCurrencies), new GetChildren< CountryRegionCurrency>(this.GetChildrenCountryRegionCurrencies));
+             this.currencyRateFromCurrencyCodes = new EntityCollection< CurrencyRate>(this, new Associate< CurrencyRate>(this.AssociateCurrencyRateFromCurrencyCodes), new DeAssociate< CurrencyRate>(this.DeAssociateCurrencyRateFromCurrencyCodes), new GetChildren< CurrencyRate>(this.GetChildrenCurrencyRateFromCurrencyCodes));
+             this.currencyRateToCurrencyCodes = new EntityCollection< CurrencyRate>(this, new Associate< CurrencyRate>(this.AssociateCurrencyRateToCurrencyCodes), new DeAssociate< CurrencyRate>(this.DeAssociateCurrencyRateToCurrencyCodes), new GetChildren< CurrencyRate>(this.GetChildrenCurrencyRateToCurrencyCodes));
+        }
+        
+        public override int GetHashCode()
+        {      
+            if(this.hashCode == 0)
+            {
+                int result = 7;            
+                result = (11 * result) + this.currencycode.GetHashCode();
+                this.hashCode = result;
+             }           
+            return this.hashCode;          
+        }
+        
+        public override bool Equals(object obj)
+        {
+            Currency entity = obj as Currency;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        && this.CurrencyCode == entity.CurrencyCode
+                        && this.CurrencyCode != default(string)
+                        )
+                    );           
+        }
+        
 		public override void Read(DbDataReader reader)
-		{
-			this.CurrencyCode = (string)reader[COL_CURRENCYCODE];
-			this.Name = (string)reader[COL_NAME];
-			this.ModifiedDate = (System.DateTime)reader[COL_MODIFIEDDATE];
+		{       
+			this.currencycode = (string)reader[COL_CURRENCYCODE];
+			this.name = (string)reader[COL_NAME];
+			this.modifieddate = (System.DateTime)reader[COL_MODIFIEDDATE];
+            this.hashCode = 0;
+            
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -139,61 +219,64 @@ namespace CrystalMapper.Generated.BusinessObjects
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
-        public CountryRegionCurrency GetCountryRegionCurrenciesQuery()
+        private void AssociateCountryRegionCurrencies(CountryRegionCurrency countryRegionCurrency)
         {
-            return new CountryRegionCurrency {                
-                                                                            CurrencyCode = this.CurrencyCode  
-                                                                            };
+           countryRegionCurrency.CurrencyEntity = this;
         }
         
-        public CountryRegionCurrency[] CountryRegionCurrencyList()
+        private void DeAssociateCountryRegionCurrencies(CountryRegionCurrency countryRegionCurrency)
         {
-            return GetCountryRegionCurrenciesQuery().ToList();
-        }  
-        
-        public CurrencyRate GetFromCurrencyCodeCurrencyRatesQuery()
-        {
-            return new CurrencyRate {                
-                                                                            FromCurrencyCode = this.CurrencyCode  
-                                                                            };
+          if(countryRegionCurrency.CurrencyEntity == this)
+             countryRegionCurrency.CurrencyEntity = null;
         }
         
-        public CurrencyRate[] FromCurrencyCodeCurrencyRateList()
+        private CountryRegionCurrency[] GetChildrenCountryRegionCurrencies()
         {
-            return GetFromCurrencyCodeCurrencyRatesQuery().ToList();
-        }  
-        
-        public CurrencyRate GetToCurrencyCodeCurrencyRatesQuery()
-        {
-            return new CurrencyRate {                
-                                                                            ToCurrencyCode = this.CurrencyCode  
-                                                                            };
-        }
-        
-        public CurrencyRate[] ToCurrencyCodeCurrencyRateList()
-        {
-            return GetToCurrencyCodeCurrencyRatesQuery().ToList();
-        }  
-        
-        
-        
-        public CountryRegion[] CountryRegionList()
-        {
-            string sqlQuery = @"SELECT Person.CountryRegion.*
-                                FROM Sales.CountryRegionCurrency
-                                INNER JOIN Person.CountryRegion ON                                                                            
-                                Sales.CountryRegionCurrency.[CountryRegionCode] = Person.CountryRegion.[CountryRegionCode] AND
-                                Sales.CountryRegionCurrency.[CurrencyCode] = @CurrencyCode  
-                                ";
-                                
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameterValues.Add(PARAM_CURRENCYCODE, this.CurrencyCode);
+            CountryRegionCurrency childrenQuery = new CountryRegionCurrency();
+            childrenQuery.CurrencyEntity = this;
             
-            return CountryRegion.ToList(sqlQuery, parameterValues);
+            return childrenQuery.ToList(); 
+        }
+        
+        private void AssociateCurrencyRateFromCurrencyCodes(CurrencyRate currencyRate)
+        {
+           currencyRate.FromCurrencyEntity = this;
+        }
+        
+        private void DeAssociateCurrencyRateFromCurrencyCodes(CurrencyRate currencyRate)
+        {
+          if(currencyRate.FromCurrencyEntity == this)
+             currencyRate.FromCurrencyEntity = null;
+        }
+        
+        private CurrencyRate[] GetChildrenCurrencyRateFromCurrencyCodes()
+        {
+            CurrencyRate childrenQuery = new CurrencyRate();
+            childrenQuery.FromCurrencyEntity = this;
             
-        }    
+            return childrenQuery.ToList(); 
+        }
+        
+        private void AssociateCurrencyRateToCurrencyCodes(CurrencyRate currencyRate)
+        {
+           currencyRate.ToCurrencyEntity = this;
+        }
+        
+        private void DeAssociateCurrencyRateToCurrencyCodes(CurrencyRate currencyRate)
+        {
+          if(currencyRate.ToCurrencyEntity == this)
+             currencyRate.ToCurrencyEntity = null;
+        }
+        
+        private CurrencyRate[] GetChildrenCurrencyRateToCurrencyCodes()
+        {
+            CurrencyRate childrenQuery = new CurrencyRate();
+            childrenQuery.ToCurrencyEntity = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
         #endregion
     }

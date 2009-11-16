@@ -1,15 +1,24 @@
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
- * Date:  Saturday, October 31, 2009 10:50 PM
+ * Date:  Wednesday, November 11, 2009 9:50 AM
  * 
  * Class: CountryRegion
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -18,10 +27,10 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.Generated.BusinessObjects
+namespace feedbook.Model
 {
 	[Table(TABLE_NAME)]
-    public partial class CountryRegion : Entity< CountryRegion>
+    public partial class CountryRegion : Entity< CountryRegion>  
     {		
 		#region Table Schema
 		
@@ -39,62 +48,141 @@ namespace CrystalMapper.Generated.BusinessObjects
 		
 		#region Queries
 		
-		private const string SQL_INSERT_COUNTRYREGION = "INSERT INTO Person.CountryRegion([CountryRegionCode],[Name],[ModifiedDate]) VALUES (@CountryRegionCode,@Name,@ModifiedDate);";
+		private const string SQL_INSERT_COUNTRYREGION = "INSERT INTO Person.CountryRegion([CountryRegionCode],[Name],[ModifiedDate]) VALUES (@CountryRegionCode,@Name,@ModifiedDate);"  ;
 		
-		private const string SQL_UPDATE_COUNTRYREGION = "UPDATE Person.CountryRegion SET [Name] = @Name, [ModifiedDate] = @ModifiedDate,  WHERE [CountryRegionCode] = @CountryRegionCode";
+		private const string SQL_UPDATE_COUNTRYREGION = "UPDATE Person.CountryRegion SET  [Name] = @Name, [ModifiedDate] = @ModifiedDate WHERE [CountryRegionCode] = @CountryRegionCode";
 		
 		private const string SQL_DELETE_COUNTRYREGION = "DELETE FROM Person.CountryRegion WHERE  [CountryRegionCode] = @CountryRegionCode ";
 		
-        #endregion
-        #region Properties	
-		
-		[Column( COL_COUNTRYREGIONCODE, PARAM_COUNTRYREGIONCODE )]
-                              public virtual string CountryRegionCode  { get; set; }		
-		
+        #endregion        
         
-	    [Column( COL_NAME, PARAM_NAME )]
-                              public virtual string Name  { get; set; }	      
+        #region Hash Code       
         
-	    [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
-                              public virtual System.DateTime ModifiedDate  { get; set; }	      
-        
-        public IEnumerable< StateProvince> StateProvinces
-        {
-            get {
-                  foreach(StateProvince stateProvince in StateProvinceList())
-                    yield return stateProvince; 
-                }
-        }
-        
-        public IEnumerable< CountryRegionCurrency> CountryRegionCurrencies
-        {
-            get {
-                  foreach(CountryRegionCurrency countryRegionCurrency in CountryRegionCurrencyList())
-                    yield return countryRegionCurrency; 
-                }
-        }
-        
-        
-        public IEnumerable< Currency> Currencies
-        {
-            get {           
-                
-                foreach(Currency currency in CurrencyList())
-                    yield return currency; 
-                }         
-        }    
-        
+        private volatile int hashCode = 0;
         
         #endregion
         
+        #region Declarations
+        
+		protected string countryregioncode = default(string);
+	
+		protected string name = default(string);
+	
+		protected System.DateTime modifieddate = default(System.DateTime);
+	
+        protected EntityCollection< StateProvince> stateProvinces ;
+        
+        protected EntityCollection< CountryRegionCurrency> countryRegionCurrencies ;
+        
+        protected EntityCollection< SalesTerritory> salesTerritories ;
+        
+        #endregion
+
+ 		#region Properties	
+
+        [Column( COL_COUNTRYREGIONCODE, PARAM_COUNTRYREGIONCODE )]
+                              public virtual string CountryRegionCode 
+        {
+            get { return this.countryregioncode; }
+			set	{ 
+                  if(this.countryregioncode != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("CountryRegionCode"));  
+                        this.countryregioncode = value; 
+                        this.hashCode = 0;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("CountryRegionCode"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_NAME, PARAM_NAME )]
+                              public virtual string Name 
+        {
+            get { return this.name; }
+			set	{ 
+                  if(this.name != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("Name"));  
+                        this.name = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                    }   
+                }
+        }	
+		
+        [Column( COL_MODIFIEDDATE, PARAM_MODIFIEDDATE, typeof(System.DateTime))]
+                              public virtual System.DateTime ModifiedDate 
+        {
+            get { return this.modifieddate; }
+			set	{ 
+                  if(this.modifieddate != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("ModifiedDate"));  
+                        this.modifieddate = value; 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("ModifiedDate"));
+                    }   
+                }
+        }	
+		
+        public EntityCollection< StateProvince> StateProvinces 
+        {
+            get { return this.stateProvinces;}
+        }
+        
+        public EntityCollection< CountryRegionCurrency> CountryRegionCurrencies 
+        {
+            get { return this.countryRegionCurrencies;}
+        }
+        
+        public EntityCollection< SalesTerritory> SalesTerritories 
+        {
+            get { return this.salesTerritories;}
+        }
+        
+        
+        #endregion        
         
         #region Methods     
 		
+        public CountryRegion()
+        {
+             this.stateProvinces = new EntityCollection< StateProvince>(this, new Associate< StateProvince>(this.AssociateStateProvinces), new DeAssociate< StateProvince>(this.DeAssociateStateProvinces), new GetChildren< StateProvince>(this.GetChildrenStateProvinces));
+             this.countryRegionCurrencies = new EntityCollection< CountryRegionCurrency>(this, new Associate< CountryRegionCurrency>(this.AssociateCountryRegionCurrencies), new DeAssociate< CountryRegionCurrency>(this.DeAssociateCountryRegionCurrencies), new GetChildren< CountryRegionCurrency>(this.GetChildrenCountryRegionCurrencies));
+             this.salesTerritories = new EntityCollection< SalesTerritory>(this, new Associate< SalesTerritory>(this.AssociateSalesTerritories), new DeAssociate< SalesTerritory>(this.DeAssociateSalesTerritories), new GetChildren< SalesTerritory>(this.GetChildrenSalesTerritories));
+        }
+        
+        public override int GetHashCode()
+        {      
+            if(this.hashCode == 0)
+            {
+                int result = 7;            
+                result = (11 * result) + this.countryregioncode.GetHashCode();
+                this.hashCode = result;
+             }           
+            return this.hashCode;          
+        }
+        
+        public override bool Equals(object obj)
+        {
+            CountryRegion entity = obj as CountryRegion;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        && this.CountryRegionCode == entity.CountryRegionCode
+                        && this.CountryRegionCode != default(string)
+                        )
+                    );           
+        }
+        
 		public override void Read(DbDataReader reader)
-		{
-			this.CountryRegionCode = (string)reader[COL_COUNTRYREGIONCODE];
-			this.Name = (string)reader[COL_NAME];
-			this.ModifiedDate = (System.DateTime)reader[COL_MODIFIEDDATE];
+		{       
+			this.countryregioncode = (string)reader[COL_COUNTRYREGIONCODE];
+			this.name = (string)reader[COL_NAME];
+			this.modifieddate = (System.DateTime)reader[COL_MODIFIEDDATE];
+            this.hashCode = 0;
+            
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -131,49 +219,64 @@ namespace CrystalMapper.Generated.BusinessObjects
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
-        public StateProvince GetStateProvincesQuery()
+        private void AssociateStateProvinces(StateProvince stateProvince)
         {
-            return new StateProvince {                
-                                                                            CountryRegionCode = this.CountryRegionCode  
-                                                                            };
+           stateProvince.CountryRegionEntity = this;
         }
         
-        public StateProvince[] StateProvinceList()
+        private void DeAssociateStateProvinces(StateProvince stateProvince)
         {
-            return GetStateProvincesQuery().ToList();
-        }  
-        
-        public CountryRegionCurrency GetCountryRegionCurrenciesQuery()
-        {
-            return new CountryRegionCurrency {                
-                                                                            CountryRegionCode = this.CountryRegionCode  
-                                                                            };
+          if(stateProvince.CountryRegionEntity == this)
+             stateProvince.CountryRegionEntity = null;
         }
         
-        public CountryRegionCurrency[] CountryRegionCurrencyList()
+        private StateProvince[] GetChildrenStateProvinces()
         {
-            return GetCountryRegionCurrenciesQuery().ToList();
-        }  
+            StateProvince childrenQuery = new StateProvince();
+            childrenQuery.CountryRegionEntity = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
-        
-        
-        public Currency[] CurrencyList()
+        private void AssociateCountryRegionCurrencies(CountryRegionCurrency countryRegionCurrency)
         {
-            string sqlQuery = @"SELECT Sales.Currency.*
-                                FROM Sales.CountryRegionCurrency
-                                INNER JOIN Sales.Currency ON                                                                            
-                                Sales.CountryRegionCurrency.[CurrencyCode] = Sales.Currency.[CurrencyCode] AND
-                                Sales.CountryRegionCurrency.[CountryRegionCode] = @CountryRegionCode  
-                                ";
-                                
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameterValues.Add(PARAM_COUNTRYREGIONCODE, this.CountryRegionCode);
+           countryRegionCurrency.CountryRegionEntity = this;
+        }
+        
+        private void DeAssociateCountryRegionCurrencies(CountryRegionCurrency countryRegionCurrency)
+        {
+          if(countryRegionCurrency.CountryRegionEntity == this)
+             countryRegionCurrency.CountryRegionEntity = null;
+        }
+        
+        private CountryRegionCurrency[] GetChildrenCountryRegionCurrencies()
+        {
+            CountryRegionCurrency childrenQuery = new CountryRegionCurrency();
+            childrenQuery.CountryRegionEntity = this;
             
-            return Currency.ToList(sqlQuery, parameterValues);
+            return childrenQuery.ToList(); 
+        }
+        
+        private void AssociateSalesTerritories(SalesTerritory salesTerritory)
+        {
+           salesTerritory.CountryRegionEntity = this;
+        }
+        
+        private void DeAssociateSalesTerritories(SalesTerritory salesTerritory)
+        {
+          if(salesTerritory.CountryRegionEntity == this)
+             salesTerritory.CountryRegionEntity = null;
+        }
+        
+        private SalesTerritory[] GetChildrenSalesTerritories()
+        {
+            SalesTerritory childrenQuery = new SalesTerritory();
+            childrenQuery.CountryRegionEntity = this;
             
-        }    
+            return childrenQuery.ToList(); 
+        }
         
         #endregion
     }
