@@ -23,6 +23,7 @@
 <%@ Property Name="ExcludedTables" Type="SchemaExplorer.TableSchemaCollection" Optional="True" Category="1b. Database Options" Description="A collection of tables to be excluded during generation." %>
 <%@ Property Name="TablePrefix" Type="System.String" Default="" Optional="True" Category="1b. Database Options" Description="A prefix that will be stripped from table names when class names are generated." %>
 
+
 <%@ Property Name="VsVersion" Type="VisualStudioVersion" Default="VS_2008" Optional="False" Category="2. Versions" Description="The version of Visual Studio to generate for." %>
 
 <%@ Property Name="BusinessNamespace" Type="System.String" Default="CrystalMapper.Generated.BusinessObjects" Optional="False" Category="3b. Namespaces" Description="The desired Namespace for the Business Objects." %>
@@ -50,8 +51,9 @@
 
 <script runat="template">
 
+
 public override void Render(TextWriter writer)
-{
+{    
 	this.tablePrefix = this.TablePrefix;
 	if(ExcludedTables == null)
 		ExcludedTables = new TableSchemaCollection();
