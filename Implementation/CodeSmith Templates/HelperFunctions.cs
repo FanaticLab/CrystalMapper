@@ -140,21 +140,35 @@ public class HelperFunctions : CodeTemplate
 	{     
 		string query = "\"UPDATE " + table.FullName + " SET ";
 		foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
-				query += "[" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +", ";
+				query += " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +",";
                 
 		query = query.TrimEnd(new char[] {','}) + " WHERE ";
 		
+        if(table.HasPrimaryKey) 
+        {
 		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
 			query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
-		
+		} else {
+        
+    	foreach(ColumnSchema column in table.Columns)
+		query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
+            
+        }
+        
 		return query.Substring(0, query.Length -  5) + "\"" ;
 	}	
 	
 	public string GetDeleteQuery(TableSchema table)
 	{        
 		string query = "\"DELETE FROM " + table.FullName + " WHERE ";		
+        if(table.HasPrimaryKey) {
 		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
 			query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND";
+        } else {
+   		foreach(ColumnSchema column in table.Columns)
+	        query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND"; 
+        }
+            
 		query = query.Substring(0, query.Length - 3) + "\"";		
 		
 		return query;
@@ -290,10 +304,26 @@ public class HelperFunctions : CodeTemplate
 		// If there are 2 ForeignKeyColumns AND...
 		// ...there are only two columns OR
 		//    there are 3 columns and 1 is a primary key.
-		return (table.ForeignKeyColumns.Count == 2
-			&& ((table.Columns.Count == 2)
-				|| (table.Columns.Count == 3 && table.PrimaryKey != null)));
-	}
+		
+        if(table.ForeignKeys.Count != 2 || table.ForeignKeys[0].PrimaryKeyTable == table.ForeignKeys[1].PrimaryKeyTable)
+            return false;
+        
+        foreach(ColumnSchema column in table.NonKeyColumns)
+        {
+            switch(column.Name.ToLower())
+            {
+                case "createdon":
+                case "createdby":
+                case "updatedon":
+                case "updatedby":
+                    break;
+                default:
+                return false;
+            }                
+        }
+    
+        return true;
+    }
 	
 	#endregion
 	
@@ -567,6 +597,96 @@ public class HelperFunctions : CodeTemplate
                               .Replace("@PropertyName",  GetPropertyName(column));
     }
     
+    public string GetCollectionVariableName(TableSchema table)
+    {
+        return StringUtil.ToCamelCase(StringUtil.ToPlural(GetClassName(table)));
+    } 
+    
+    public string GetCollectionPropertyName(TableSchema table)
+    {
+        return StringUtil.ToPascalCase(StringUtil.ToPlural(GetClassName(table)));
+    } 
+    
+    public string GetUniqueCollectionPropName(TableSchema table, TableKeySchema keySchema)
+    {
+         int count = 0;
+         foreach(TableKeySchema tks in table.ForeignKeys)
+         if(tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
+            count++;
+            
+         // fix of StringUtil bug     
+        string collectionPropName = StringUtil.ToPascalCase(StringUtil.ToPlural(StringUtil.ToPascalCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table)))));        
+        if(collectionPropName.ToLower() == "address")
+            collectionPropName += "es";
+            
+        return collectionPropName;   
+    }
+    
+    public string GetUniqueCollectionVarName(TableSchema table, TableKeySchema keySchema)
+    {
+        int count = 0;
+        foreach(TableKeySchema tks in table.ForeignKeys)
+         if(tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
+            count++;
+            
+        // fix of StringUtil bug    
+        string collectionVarName = StringUtil.ToPlural(StringUtil.ToCamelCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table))));        
+        if(collectionVarName.ToLower() == "address")
+           collectionVarName += "es";
+        
+        return collectionVarName;
+    }
+    
+    public string GetClassVariableName(TableSchema table)
+    {
+        return StringUtil.ToCamelCase(GetClassName(table));
+    }
+    
+    public string GetForeignKeyClassVarName(TableKeySchema key)
+    {
+        string suffix = "Ref";
+        
+        foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
+            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
+                return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
+        
+        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1)
+            return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
+                        
+        return StringUtil.ToCamelCase(GetClassName(key.PrimaryKeyTable)) + suffix;
+    }
+    
+    public string GetForeignKeyClassPropName(TableKeySchema key)
+    {
+        string suffix = "Ref";
+        
+        foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
+            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
+                return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code")+ suffix;            
+
+        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1)
+               return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
+                              
+        return GetClassName(key.PrimaryKeyTable) + suffix;
+    }
+    
+    public string TrimEnd(string value, params string[] args)
+    {
+        if(args != null)
+            foreach(string arg in args)
+                if(value != null && value.Length > 0 && value.ToLower().EndsWith(arg.ToLower()))
+                return value.Substring(0, value.Length - arg.Length);
+    
+        return value;
+    }
+    
+    public string TrimId(string name)
+    {
+        if(name != null && name.Length > 2 && name.ToLower().EndsWith("id"))
+            return name.Substring(0, name.Length - 2);
+            
+        return name;
+    }
 }
 
 #region SearchCriteria Class

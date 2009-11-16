@@ -2,11 +2,11 @@
  
  * Author: Faraz Masood Khan 
  * 
- * Date: 6/4/2009 4:33:36 PM
+ * Date: 1/10/2009
  * 
- * File: BusinessObjectsTemplate.cst
+ * File: BusinessObjectsTemplate.sqlserver.cst
  *
- * Version: 1.0.0.0
+ * Version: 2.0.0.0
  * 
  * Copyright: Faraz Masood Khan @ Copyright 2009
  * 
@@ -29,17 +29,26 @@
 <%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
 <% this.tablePrefix = TablePrefix; %>
 /*
- * Author: CrystalMapper
+ * Author: CrystalMapper 
  * 
  * Date:  <%= DateTime.Now.ToString("f") %>
  * 
  * Class: <%= GetClassName(SourceTable) %>
- *    
- */
+ * 
+ * Email: mk.faraz@gmail.com
+ * 
+ * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ *
+ * Website: http://www.linkedin.com/in/farazmasoodkhan
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2009
+ *
+/*/
 
 using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
@@ -51,7 +60,7 @@ using CrystalMapper.Mapping;
 namespace <%= BusinessNamespace %>
 {
 	[Table(TABLE_NAME)]
-    public partial class <%= GetClassName(SourceTable) %> : Entity< <%= GetClassName(SourceTable) %>>
+    public partial class <%= GetClassName(SourceTable) %> : Entity< <%= GetClassName(SourceTable) %>>  
     {		
 		#region Table Schema
 		
@@ -76,17 +85,11 @@ namespace <%= BusinessNamespace %>
 		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper() %> = <%= GetDeleteQuery(SourceTable) %>;
 		
         #endregion
-        
-	    <% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+        	  	
         #region Declarations
-
-		<% // Primary Keys %>
-		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
-		protected <%= SystemCSharp[mcs.SystemType.ToString()] %> <%= GetPrivateVariableName(mcs) %> = <%= GetInitialization(mcs.SystemType) %>; 	
-		<% } %>
-		
+        
 		<% // Primitives %>
-		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>	
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
 		<% if (column.AllowDBNull && column.SystemType.IsValueType) { %>
 		protected <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>?);
 		<% } else { %>
@@ -94,84 +97,252 @@ namespace <%= BusinessNamespace %>
 		<% } %>
 	
 		<% } %>
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>	
+		protected <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassVarName(keySchema) %>;
 	
-		
+		<% } %>
+	    <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>
+        protected EntityCollection< <%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %> ;
+        
+        <% } %>
+        <% } %>
+        <% } %>       
+		<% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
+        if(IsManyToMany(tableKey.ForeignKeyTable)) { 
+        foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
+        if(!toManyKey.Equals(tableKey)) { %>            
+        protected EntityCollection< <%= GetClassName(toManyKey.PrimaryKeyTable) %>> <%= GetUniqueCollectionVarName(toManyKey.PrimaryKeyTable, toManyKey) %> ;
+        
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>        
         #endregion
 
  		#region Properties	
-		
-		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
-		<%= GetPropertyDeclaration(mcs.Column,  SystemCSharp[mcs.Column.SystemType.ToString()]) %>
-        {
-            get { return this.<%= GetPrivateVariableName(mcs) %>; }
-			set { this.<%= GetPrivateVariableName(mcs) %> = value; }
-        }					
-		
-        <% } %>
-		
-		<% // Primitives %>
-		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>
+
+		<% foreach(ColumnSchema column in SourceTable.NonForeignKeyColumns) { %>
         <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %>
         {
             get { return this.<%= GetPrivateVariableName(column) %>; }
-			set	{ this.<%= GetPrivateVariableName(column) %> = value;}
+			set	{ 
+                  if(this.<%= GetPrivateVariableName(column) %> != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("<%= GetPropertyName(column) %>"));  
+                        this.<%= GetPrivateVariableName(column) %> = value;                        
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("<%= GetPropertyName(column) %>"));
+                    }   
+                }
         }	
 		
-        <% } %>	       
-	    <% } else { %>
-        #region Properties	
-		
-		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
-		<%= GetPropertyDeclaration(mcs.Column,  SystemCSharp[mcs.Column.SystemType.ToString()]) %> { get; set; }		
-        <% } %>
-		
-		<% // Primitives %>
-		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %> 
+        <% } %>	 
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
+        <% for (int i = 0 ; i < keySchema.ForeignKeyMemberColumns.Count ; i++ ) { %>
+        <%= GetPropertyDeclaration(keySchema.ForeignKeyMemberColumns[i].Column,  SystemCSharp[keySchema.ForeignKeyMemberColumns[i].Column.SystemType.ToString()]) %>               
+        {
+            get
+            {
+                if(this.<%= GetForeignKeyClassVarName(keySchema) %> == null)
+                    return this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> ;
+                
+                return this.<%= GetForeignKeyClassVarName(keySchema) %>.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %>;            
+            }
+            set
+            {
+                if(this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> != value)
+                {
+                    this.OnPropertyChanging(new PropertyChangingEventArgs("<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[i].Column) %>"));                    
+                    this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = value;                    
+                    this.OnPropertyChanged(new PropertyChangedEventArgs("<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[i].Column) %>"));
+                    
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = null;
+                }                
+            }          
+        }	
         
-	    <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %> { get; set; }	      
-		<% } %>		       
-        <% } %>     
-        
+		<% } %>	        
+        <% } %>	        
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
+        public <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassPropName(keySchema) %>
+        {
+            get { 
+                    if(this.<%= GetForeignKeyClassVarName(keySchema) %> == null
+                    <% for(int j = 0; j < keySchema.ForeignKeyMemberColumns.Count; j++) {
+                    MemberColumnSchema mcs = keySchema.ForeignKeyMemberColumns[j]; %>
+                    <% if (mcs.Column.AllowDBNull && mcs.Column.SystemType.IsValueType) { %>
+                       && this.<%= GetPrivateVariableName(mcs) %>.HasValue <%= j == keySchema.ForeignKeyMemberColumns.Count - 1 ? ")" : "" %>
+                    <% } else { %>
+                       && this.<%= GetPrivateVariableName(mcs) %> != default(<%= SystemCSharp[mcs.Column.SystemType.ToString()] %>)<%= j == keySchema.ForeignKeyMemberColumns.Count - 1 ? ")" : "" %> 
+                    <% } %>
+                    <% } %>                     
+                    {
+                        <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetClassVariableName(keySchema.PrimaryKeyTable) %>Query = new <%= GetClassName(keySchema.PrimaryKeyTable) %> {
+                        <% for(int i =0; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) { %>
+                                                        <%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %> = this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %><%= ((keySchema.ForeignKeyMemberColumns[i].Column.AllowDBNull && keySchema.ForeignKeyMemberColumns[i].Column.SystemType.IsValueType) ? ".Value" : "")%>  <%= i != keySchema.PrimaryKeyMemberColumns.Count -1 ? "," : "" %>
+                                                        <% } %>    
+                                                        };
+                        
+                        <%= GetClassName(keySchema.PrimaryKeyTable) %>[]  <%= GetCollectionVariableName(keySchema.PrimaryKeyTable) %> = <%= GetClassVariableName(keySchema.PrimaryKeyTable) %>Query.ToList();                        
+                        if(<%= GetCollectionVariableName(keySchema.PrimaryKeyTable) %>.Length == 1)
+                            this.<%= GetForeignKeyClassVarName(keySchema) %> = <%= GetCollectionVariableName(keySchema.PrimaryKeyTable) %>[0];                        
+                    }
+                    
+                    return this.<%= GetForeignKeyClassVarName(keySchema)  %>; 
+                }
+			set	{ 
+                  if(this.<%= GetForeignKeyClassVarName(keySchema) %> != value)
+                    {
+                        this.OnPropertyChanging(new PropertyChangingEventArgs("<%= GetForeignKeyClassPropName(keySchema) %>"));
+                        if (this.<%= GetForeignKeyClassVarName(keySchema)  %> != null)
+                            this.Parents.Remove(this.<%= GetForeignKeyClassVarName(keySchema) %>);                            
+                        
+                        if((this.<%= GetForeignKeyClassVarName(keySchema)  %> = value) != null) 
+                            this.Parents.Add(this.<%= GetForeignKeyClassVarName(keySchema) %>); 
+                        this.OnPropertyChanged(new PropertyChangedEventArgs("<%= GetForeignKeyClassPropName(keySchema) %>"));
+                        
+                        <% for(int i = 0; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) { %>
+                        this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = this.<%= GetForeignKeyClassPropName(keySchema) %>.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %>;
+                        <% } %>
+                    }   
+                }
+        }	
+		
+        <% } %>	         
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
-        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>        
-        public IEnumerable< <%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
+        public EntityCollection< <%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %> 
         {
-            get {
-                  foreach(<%= GetClassName(tableKey.ForeignKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %> in <%= StringUtil.ToSingular(GetChiledIdentifiedName(SourceTable, toManyTable, tableKey)) %>List())
-                    yield return <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>; 
-                }
+            get { return this.<%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %>;}
         }
         
         <% } %>
         <% } %>
-        <% } %>            
+        <% } %>
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
         if(IsManyToMany(tableKey.ForeignKeyTable)) { 
         foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
         if(!toManyKey.Equals(tableKey)) { %>            
-        public IEnumerable< <%= GetClassName(toManyKey.PrimaryKeyTable) %>> <%= StringUtil.ToPlural(GetClassName(toManyKey.PrimaryKeyTable)) %>
+        public EntityCollection< <%= GetClassName(toManyKey.PrimaryKeyTable) %>> <%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %> 
         {
-            get {                         
-                    foreach(<%= GetClassName(toManyKey.PrimaryKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %> in <%= GetClassName(toManyKey.PrimaryKeyTable) %>List())
-                        yield return <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %>; 
-                }         
+            get { return this.<%= GetUniqueCollectionVarName(toManyKey.PrimaryKeyTable, tableKey) %>;}
         }    
         <% } %>
         <% } %>
         <% } %>
         <% } %>
         <% } %>
-        <% } %>     
+        <% } %>
+        
         #endregion        
         
         #region Methods     
 		
+        public <%= GetClassName(SourceTable) %>()
+        {
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
+             this.<%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %> = new EntityCollection< <%=GetClassName(tableKey.ForeignKeyTable) %>>(this, new Associate< <%=GetClassName(tableKey.ForeignKeyTable) %>>(this.Associate<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>), new DeAssociate< <%=GetClassName(tableKey.ForeignKeyTable) %>>(this.DeAssociate<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>), new GetChildren< <%=GetClassName(tableKey.ForeignKeyTable) %>>(this.GetChildren<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>));
+        <% } %>
+        <% } %>
+        <% } %>
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
+        if(IsManyToMany(tableKey.ForeignKeyTable)) { 
+        foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
+        if(!toManyKey.Equals(tableKey)) { %>            
+            this.<%= GetUniqueCollectionVarName(toManyKey.PrimaryKeyTable, toManyKey) %> = new EntityCollection< <%=GetClassName(toManyKey.PrimaryKeyTable) %>>(this, new Associate< <%=GetClassName(toManyKey.PrimaryKeyTable) %>>(this.Associate<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>), new DeAssociate< <%=GetClassName(toManyKey.PrimaryKeyTable) %>>(this.DeAssociate<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>), new GetChildren< <%=GetClassName(toManyKey.PrimaryKeyTable) %>>(this.GetChildren<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>));
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        }
+        
+        <% if (SourceTable.HasPrimaryKey) { %>
+        public override bool Equals(object obj)
+        {
+            <%= GetClassName(SourceTable) %> entity = obj as <%= GetClassName(SourceTable) %>;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        <% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>
+                        && this.<%= GetPropertyName(mcs.Column) %> == entity.<%= GetPropertyName(mcs.Column) %>
+                        <% } %>
+                        <% for(int i = 0; i < SourceTable.PrimaryKey.MemberColumns.Count; i++) { %>
+                        && this.<%= GetPropertyName(SourceTable.PrimaryKey.MemberColumns[i].Column) %> != default(<%= SystemCSharp[SourceTable.PrimaryKey.MemberColumns[i].SystemType.ToString()] %><%= (SourceTable.PrimaryKey.MemberColumns[i].Column.AllowDBNull && SourceTable.PrimaryKey.MemberColumns[i].Column.SystemType.IsValueType ? "?" : "") %>)
+                        <% } %>
+                        )
+                    );           
+        }
+        <% } else { %>
+        public override bool Equals(object obj)
+        {
+            <%= GetClassName(SourceTable) %> entity = obj as <%= GetClassName(SourceTable) %>;           
+            
+            return (
+                    object.ReferenceEquals(this, entity)                    
+                    || (
+                        entity != null            
+                        <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+                        && this.<%= GetPropertyName(column) %> == entity.<%= GetPropertyName(column) %>
+                        <% } %>                       
+                        <% for(int i = 0; i < SourceTable.Columns.Count; i++) { %>
+                        && this.<%= GetPropertyName(SourceTable.Columns[i]) %> != default(<%= SystemCSharp[SourceTable.Columns[i].SystemType.ToString()] %><%= (SourceTable.Columns[i].AllowDBNull && SourceTable.Columns[i].SystemType.IsValueType ? "?" : "") %>)
+                        <% } %>
+                        )
+                    );           
+        }        
+        <% } %>   
+        
+        <% if (SourceTable.HasPrimaryKey) { %>
+        public override int GetHashCode()
+        {
+            
+            int hashCode = 7;
+            
+            <% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>
+            <% if(mcs.AllowDBNull) { %>
+            hashCode = (11 * hashCode) + (this.<%= GetPrivateVariableName(mcs.Column) %> == null ? 1 : this.<%= GetPropertyName(mcs.Column) %>.GetHashCode());
+            <% } else {%>
+            hashCode = (11 * hashCode) + this.<%= GetPrivateVariableName(mcs.Column) %>.GetHashCode();
+            <% } %>
+            <% } %>
+                        
+            return hashCode;          
+        }
+        <% } else { %>
+        public override int GetHashCode()
+        {
+            int hashCode = 7;
+            
+            <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+            <% if(column.AllowDBNull) { %>
+            hashCode = (11 * hashCode) + (this.<%= GetPrivateVariableName(column) %> == null ? 1 : this.<%= GetPropertyName(column) %>.GetHashCode());
+            <% } else {%>
+            hashCode = (11 * hashCode) + this.<%= GetPrivateVariableName(column) %>.GetHashCode();
+            <% } %>
+            <% } %>
+                        
+            return hashCode;           
+        }        
+        <% } %>     
+        
 		public override void Read(DbDataReader reader)
-		{
-            <% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+		{       
 			<% foreach(ColumnSchema column in SourceTable.Columns) {%>		
 			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
 			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[<%= GetConstantColumnName(column) %>]);
@@ -184,22 +355,8 @@ namespace <%= BusinessNamespace %>
 			this.<%= GetPrivateVariableName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[<%= GetConstantColumnName(column) %>];
 			<% } %>
 			<% } %>
-			<% } %>	
-            <% } else { %>	
-            <% foreach(ColumnSchema column in SourceTable.Columns) {%>		
-			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
-			this.<%= GetPropertyName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[<%= GetConstantColumnName(column) %>]);
-			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
-			this.<%= GetPropertyName(column) %> = DbConvert.ToString(reader[<%= GetConstantColumnName(column) %>]);
-			<% } else { %>
-			<% if(column.SystemType.Name == "Object") { %>
-			this.<%= GetPropertyName(column) %> = reader[<%= GetConstantColumnName(column) %>];
-			<% } else { %>
-			this.<%= GetPropertyName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[<%= GetConstantColumnName(column) %>];
 			<% } %>
-			<% } %>
-			<% } %>	
-            <% } %>	
+            base.Read(reader);
 		}
 		
 		public override bool Create(DataContext dataContext)
@@ -252,47 +409,80 @@ namespace <%= BusinessNamespace %>
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_<%= SourceTable.Name.ToUpper()%>))
             {							
-                <%foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>				
+                <%if(SourceTable.HasPrimaryKey) {
+                    foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>				
 				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(mcs)%>, <%=  GetConstantParamName(mcs.Column) %>));				
-				<% } %>			
+				<%  }
+                } else {
+                   foreach(ColumnSchema mcs in SourceTable.Columns) { %>				
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(mcs)%>, <%=  GetConstantParamName(mcs) %>));	
+                <% } %>
+                <% } %>
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
         #endregion
         
-        #region Children
+        #region Entity Relationship Functions
         
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
-        public <%= GetClassName(tableKey.ForeignKeyTable) %> Get<%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>Query()
+        private void Associate<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>(<%= GetClassName(tableKey.ForeignKeyTable) %> <%= GetClassVariableName(tableKey.ForeignKeyTable) %>)
         {
-            return new <%= GetClassName(tableKey.ForeignKeyTable) %> {                
-                                                                            <% for(int i=0; i < tableKey.PrimaryKeyMemberColumns.Count ; i++) {  %>
-                                                                            <%= GetPropertyName(tableKey.ForeignKeyMemberColumns[i]) %> = this.<%= GetPropertyName(tableKey.PrimaryKeyMemberColumns[i]) %>  <% if(i != tableKey.PrimaryKeyMemberColumns.Count - 1) { %> , <% } %>
-                                                                            <% } %>
-                                                                            };
+           <%= GetClassVariableName(tableKey.ForeignKeyTable)  %>.<%= GetForeignKeyClassPropName(tableKey) %> = this;
         }
         
-        public <%= GetClassName(tableKey.ForeignKeyTable) %>[] <%= StringUtil.ToSingular(GetChiledIdentifiedName(SourceTable, toManyTable, tableKey)) %>List()
+        private void DeAssociate<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>(<%= GetClassName(tableKey.ForeignKeyTable) %> <%= GetClassVariableName(tableKey.ForeignKeyTable) %>)
         {
-            return Get<%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>Query().ToList();
-        }  
+          if(<%= GetClassVariableName(tableKey.ForeignKeyTable) %>.<%= GetForeignKeyClassPropName(tableKey) %> == this)
+             <%= GetClassVariableName(tableKey.ForeignKeyTable) %>.<%= GetForeignKeyClassPropName(tableKey) %> = null;
+        }
+        
+        private <%= GetClassName(tableKey.ForeignKeyTable) %>[] GetChildren<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>()
+        {
+            <%= GetClassName(tableKey.ForeignKeyTable) %> childrenQuery = new <%= GetClassName(tableKey.ForeignKeyTable) %>();
+            childrenQuery.<%= GetForeignKeyClassPropName(tableKey) %> = this;
+            
+            return childrenQuery.ToList(); 
+        }
         
         <% } %>
         <% } %>
         <% } %>
-        
-        
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
         if(IsManyToMany(tableKey.ForeignKeyTable)) { 
         foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
-        if(!toManyKey.Equals(tableKey)) { %>            
-        public <%= GetClassName(toManyKey.PrimaryKeyTable) %>[] <%= GetClassName(toManyKey.PrimaryKeyTable) %>List()
+        if(!toManyKey.Equals(tableKey)) { %>
+        private void Associate<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>(<%= GetClassName(toManyKey.PrimaryKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %>)
         {
+           <%= GetClassName(tableKey.ForeignKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %> = new  <%= GetClassName(tableKey.ForeignKeyTable) %>();                   
+           <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>.<%= GetForeignKeyClassPropName(toManyKey) %> = <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %>;
+           
+           this.<%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %>.Add(<%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>); 
+        }
+        
+        private void DeAssociate<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>(<%= GetClassName(toManyKey.PrimaryKeyTable) %> child)
+        {
+           <%= GetClassName(tableKey.ForeignKeyTable)%> remove<%= GetClassName(tableKey.ForeignKeyTable) %> = null; 
+           foreach(<%= GetClassName(tableKey.ForeignKeyTable)%> <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>  in  this.<%= StringUtil.ToCamelCase(StringUtil.ToPlural(GetClassName(tableKey.ForeignKeyTable))) %>)
+             if(<%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>.<%= GetForeignKeyClassPropName(toManyKey)  %> == child)
+             {
+                <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>.<%= GetForeignKeyClassPropName(toManyKey) %> = null;
+                remove<%= GetClassName(tableKey.ForeignKeyTable) %> = <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>;                
+             }            
+            
+            if(remove<%= GetClassName(tableKey.ForeignKeyTable) %> != null)
+                this.<%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %>.Remove(remove<%= GetClassName(tableKey.ForeignKeyTable) %>); 
+        }
+        
+        private <%= GetClassName(toManyKey.PrimaryKeyTable) %>[] GetChildren<%= GetUniqueCollectionPropName(toManyKey.PrimaryKeyTable, toManyKey) %>()
+        {
+            this.<%= GetUniqueCollectionVarName(tableKey.ForeignKeyTable, tableKey) %>.Load() ;
+            
             string sqlQuery = @"SELECT <%= toManyKey.PrimaryKeyTable.FullName %>.*
                                 FROM <%= toManyKey.ForeignKeyTable.FullName %>
                                 INNER JOIN <%= toManyKey.PrimaryKeyTable.FullName %> ON                                                                            
@@ -309,16 +499,14 @@ namespace <%= BusinessNamespace %>
             parameterValues.Add(<%= GetConstantParamName(mcs.Column)%>, this.<%= GetPropertyName(mcs.Column)%>);
             <% } %>
             
-            return <%= GetClassName(toManyKey.PrimaryKeyTable) %>.ToList(sqlQuery, parameterValues);
-            
+            return <%= GetClassName(toManyKey.PrimaryKeyTable) %>.ToList(sqlQuery, parameterValues);            
         }    
         <% } %>
         <% } %>
         <% } %>
         <% } %>
         <% } %>
-        <% } %>
-        
+        <% } %>           
         #endregion
     }
 }
