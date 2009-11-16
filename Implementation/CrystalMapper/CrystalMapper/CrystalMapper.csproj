@@ -33,7 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreSystem, Version=1.0.3592.5492, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -48,19 +47,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\CacheManager.cs" />
+    <Compile Include="Cache\CacheProvider.cs" />
+    <Compile Include="Policy\CacheType.cs" />
+    <Compile Include="Helper\PolicyHelper.cs" />
+    <Compile Include="Policy\CachePolicy.cs" />
+    <Compile Include="Policy\EntityPolicy.cs" />
+    <Compile Include="Policy\PolicyManager.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Data\DataContext.cs" />
-    <Compile Include="EntityOfT.cs" />
-    <Compile Include="EntityCollection.cs" />
+    <Compile Include="Generic\Entity.cs" />
+    <Compile Include="Generic\Collection\EntityCollection.cs" />
     <Compile Include="Mapping\LoadOption.cs" />
     <Compile Include="PersistedStatus.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EntityQueryHelper.cs" />
+    <Compile Include="Helper\EntityQueryHelper.cs" />
+    <Compile Include="SQLite\SQLiteWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\CoreSystem.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
+      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
+      <Name>CoreSystem</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
