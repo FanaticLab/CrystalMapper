@@ -67,6 +67,8 @@ public override void Render(TextWriter writer)
 
 private void RenderBusinessObjects(TableSchema table)
 {
+    if(!String.IsNullOrEmpty(ExportPath) && !ExportPath.EndsWith(@"\"))
+        ExportPath += @"\";
 	string fileName = String.Format("{0}{1}{2}.cs", ExportPath, GetClassName(table), GeneratedFileSuffix);
 	fileName = System.IO.Path.Combine(ExportPath, fileName);    
 	    

@@ -120,7 +120,7 @@ public class HelperFunctions : CodeTemplate
 		foreach(ColumnSchema column in table.Columns)
         {  
             if(!IsIdentityColumn(column))
-                query += "[" + GetColumnName(column) + "],";                
+                query += " [" + GetColumnName(column) + "],";                
         }
         
 		query = query.TrimEnd(new char[] {','}) + ") VALUES (";
@@ -128,7 +128,7 @@ public class HelperFunctions : CodeTemplate
 		foreach(ColumnSchema column in table.Columns)
         {
             if(!IsIdentityColumn(column))
-			    query += GetParamName(column) + ",";            
+			    query += " " + GetParamName(column) + ",";            
          }   
             
 		query = query.TrimEnd(new char[] {','}) + ");\"";
@@ -644,7 +644,7 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassVarName(TableKeySchema key)
     {
-        string suffix = "Ref";
+        string suffix = "";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
             if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
@@ -658,7 +658,7 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassPropName(TableKeySchema key)
     {
-        string suffix = "Ref";
+        string suffix = "";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
             if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))

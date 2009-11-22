@@ -21,21 +21,8 @@ namespace CrystalMapper//.Generic.Collection
     public class EntityCollection<TEntity> : ICollection<TEntity>, INotifyCollectionChanged
         where TEntity : Entity<TEntity>, new()
     {
-
         #region Private Members
-
-        #region Variables
-
-        private bool isLoaded;
-
-        private readonly Entity parentEntity;
-
-        private readonly DispatchEvent collectionChangedEvent = new DispatchEvent();
-
-        private readonly DispatchedObservableCollection<TEntity> collection = new DispatchedObservableCollection<TEntity>();
-
-        #endregion
-
+       
         #region Relationship Function Members
 
         private readonly Associate<TEntity> Associate;
@@ -45,8 +32,20 @@ namespace CrystalMapper//.Generic.Collection
         private readonly GetChildren<TEntity> GetChildren;
 
         #endregion
+        
+        #region Variables        
+
+        private readonly Entity parentEntity;
+
+        private readonly DispatchEvent collectionChangedEvent = new DispatchEvent();
+
+        private readonly DispatchedObservableCollection<TEntity> collection = new DispatchedObservableCollection<TEntity>();
 
         #endregion
+
+        #endregion
+
+        public bool IsLoaded { get; private set; }
 
         public TEntity this[int index]
         {
@@ -63,7 +62,10 @@ namespace CrystalMapper//.Generic.Collection
             get { return false; }
         }
 
-        public EntityCollection(Entity parentEntity, Associate<TEntity> associate, DeAssociate<TEntity> deAssociate, GetChildren<TEntity> getChildren)
+        public EntityCollection(Entity parentEntity
+                                , Associate<TEntity> associate
+                                , DeAssociate<TEntity> deAssociate
+                                , GetChildren<TEntity> getChildren)
         {
             this.parentEntity = parentEntity;
             this.Associate = associate;
@@ -78,13 +80,21 @@ namespace CrystalMapper//.Generic.Collection
 
         public void Load()
         {
-            this.AddRange(this.GetChildren());
-            this.isLoaded = true;
+            TEntity[] children = this.GetChildren();
+            if (children != null)
+                this.AddRange(children);
+
+            this.IsLoaded = true;
         }
 
         public void Add(TEntity entity)
-        {
+        {   
             this.Associate(entity);
+            this.AddOnly(entity);
+        }
+                
+        public void AddOnly(TEntity entity)
+        {
             if (!this.collection.Contains(entity))
             {
                 this.parentEntity.Children.Add(entity);
@@ -100,6 +110,18 @@ namespace CrystalMapper//.Generic.Collection
                 this.DeAssociate(entity);
                 this.collection.Remove(entity);
 
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool RemoveOnly(TEntity entity)
+        {
+            if (this.collection.Contains(entity))
+            {
+                this.parentEntity.Children.Remove(entity);               
+                this.collection.Remove(entity);
                 return true;
             }
 
@@ -139,7 +161,8 @@ namespace CrystalMapper//.Generic.Collection
 
         public IEnumerator<TEntity> GetEnumerator()
         {
-            if (!this.isLoaded) this.Load();
+            if (!this.IsLoaded) this.Load();
+
             foreach (TEntity entity in this.collection)
                 yield return entity;
         }
