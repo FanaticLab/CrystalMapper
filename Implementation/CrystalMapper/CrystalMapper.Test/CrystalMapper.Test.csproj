@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FB05239A-0E75-4E64-963C-136215002017}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CrystalMapper.Test</RootNamespace>
+    <AssemblyName>CrystalMapper.Test</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Adven\address.cs" />
+    <Compile Include="Adven\AddressType.cs" />
+    <Compile Include="Adven\AWBuildVersion.cs" />
+    <Compile Include="Adven\BillOfMaterial.cs" />
+    <Compile Include="Adven\Contact.cs" />
+    <Compile Include="Adven\ContactCreditCard.cs" />
+    <Compile Include="Adven\ContactType.cs" />
+    <Compile Include="Adven\CountryRegion.cs" />
+    <Compile Include="Adven\CountryRegionCurrency.cs" />
+    <Compile Include="Adven\CreditCard.cs" />
+    <Compile Include="Adven\Culture.cs" />
+    <Compile Include="Adven\Currency.cs" />
+    <Compile Include="Adven\CurrencyRate.cs" />
+    <Compile Include="Adven\Customer.cs" />
+    <Compile Include="Adven\CustomerAddress.cs" />
+    <Compile Include="Adven\DatabaseLog.cs" />
+    <Compile Include="Adven\Department.cs" />
+    <Compile Include="Adven\Document.cs" />
+    <Compile Include="Adven\Employee.cs" />
+    <Compile Include="Adven\EmployeeAddress.cs" />
+    <Compile Include="Adven\EmployeeDepartmentHistory.cs" />
+    <Compile Include="Adven\EmployeePayHistory.cs" />
+    <Compile Include="Adven\ErrorLog.cs" />
+    <Compile Include="Adven\Illustration.cs" />
+    <Compile Include="Adven\Individual.cs" />
+    <Compile Include="Adven\JobCandidate.cs" />
+    <Compile Include="Adven\Location.cs" />
+    <Compile Include="Adven\Product.cs" />
+    <Compile Include="Adven\ProductCategory.cs" />
+    <Compile Include="Adven\ProductCostHistory.cs" />
+    <Compile Include="Adven\ProductDescription.cs" />
+    <Compile Include="Adven\ProductDocument.cs" />
+    <Compile Include="Adven\ProductInventory.cs" />
+    <Compile Include="Adven\ProductListPriceHistory.cs" />
+    <Compile Include="Adven\ProductModel.cs" />
+    <Compile Include="Adven\ProductModelIllustration.cs" />
+    <Compile Include="Adven\ProductModelProductDescriptionCulture.cs" />
+    <Compile Include="Adven\ProductPhoto.cs" />
+    <Compile Include="Adven\ProductProductPhoto.cs" />
+    <Compile Include="Adven\ProductReview.cs" />
+    <Compile Include="Adven\ProductSubcategory.cs" />
+    <Compile Include="Adven\ProductVendor.cs" />
+    <Compile Include="Adven\PurchaseOrderDetail.cs" />
+    <Compile Include="Adven\PurchaseOrderHeader.cs" />
+    <Compile Include="Adven\SalesOrderDetail.cs" />
+    <Compile Include="Adven\SalesOrderHeader.cs" />
+    <Compile Include="Adven\SalesOrderHeaderSalesReason.cs" />
+    <Compile Include="Adven\SalesPerson.cs" />
+    <Compile Include="Adven\SalesPersonQuotaHistory.cs" />
+    <Compile Include="Adven\SalesReason.cs" />
+    <Compile Include="Adven\SalesTaxRate.cs" />
+    <Compile Include="Adven\SalesTerritory.cs" />
+    <Compile Include="Adven\SalesTerritoryHistory.cs" />
+    <Compile Include="Adven\ScrapReason.cs" />
+    <Compile Include="Adven\Shift.cs" />
+    <Compile Include="Adven\ShipMethod.cs" />
+    <Compile Include="Adven\ShoppingCartItem.cs" />
+    <Compile Include="Adven\SpecialOffer.cs" />
+    <Compile Include="Adven\SpecialOfferProduct.cs" />
+    <Compile Include="Adven\StateProvince.cs" />
+    <Compile Include="Adven\Store.cs" />
+    <Compile Include="Adven\StoreContact.cs" />
+    <Compile Include="Adven\TransactionHistory.cs" />
+    <Compile Include="Adven\TransactionHistoryArchive.cs" />
+    <Compile Include="Adven\UnitMeasure.cs" />
+    <Compile Include="Adven\Vendor.cs" />
+    <Compile Include="Adven\VendorAddress.cs" />
+    <Compile Include="Adven\VendorContact.cs" />
+    <Compile Include="Adven\WorkOrderRouting.cs" />
+    <Compile Include="Northwind\Category.cs" />
+    <Compile Include="Northwind\Customer.cs" />
+    <Compile Include="Northwind\CustomerCustomerDemo.cs" />
+    <Compile Include="Northwind\CustomerDemographic.cs" />
+    <Compile Include="Northwind\Employee.cs" />
+    <Compile Include="Northwind\EmployeeTerritory.cs" />
+    <Compile Include="Northwind\Order.cs" />
+    <Compile Include="Northwind\OrderDetail.cs" />
+    <Compile Include="Northwind\Product.cs" />
+    <Compile Include="Northwind\Region.cs" />
+    <Compile Include="Northwind\Shipper.cs" />
+    <Compile Include="Northwind\Supplier.cs" />
+    <Compile Include="Northwind\Territory.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
+      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
+      <Name>CoreSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CrystalMapper\CrystalMapper.csproj">
+      <Project>{362267BA-8052-493E-A3C0-F89B0F3BF331}</Project>
+      <Name>CrystalMapper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Content Include="Store\feedbook.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Store\northwindEF.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\CoreSystem.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Sql.Server.Express.9.2">
+      <Visible>False</Visible>
+      <ProductName>SQL Server 2005 Express Edition SP2 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
