@@ -27,7 +27,15 @@ namespace CrystalMapper.Data
         private bool disposeConnection = false;
         private Database database;
         private DbConnection connection;
-        private DbTransaction transaction;   
+        private DbTransaction transaction;
+
+        public DataContext()
+            : this(DbFactory.GetDefaultDatabase())
+        { }
+
+        public DataContext(string name)
+            : this(DbFactory.GetDatabase(name))
+        { }
 
         public DataContext(Database database)
             : this(database, database.CreateConnection())
@@ -39,6 +47,11 @@ namespace CrystalMapper.Data
         {
             this.database = database;
             this.connection = connection;
+        }
+
+        public Database Database
+        {
+            get { return this.database; }
         }
 
         public DbConnection Connection 
@@ -86,22 +99,29 @@ namespace CrystalMapper.Data
         public void RollbackTransaction()
         {
             if (this.transaction != null)
-                transaction.Rollback();
-            this.transaction = null;
+                transaction.Rollback();           
         }
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            if (this.transaction != null)
-                this.transaction.Dispose();
-
-            if (this.disposeConnection)
-                this.connection.Dispose();
-              
+            this.Dispose(true);
+            GC.SuppressFinalize(this);              
         }
 
         #endregion
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (this.transaction != null)
+                    this.transaction.Dispose();
+
+                if (this.disposeConnection)
+                    this.connection.Dispose();
+            }
+        }
     }
 }

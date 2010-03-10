@@ -22,18 +22,35 @@ using CoreSystem.Data;
 using CrystalMapper.Data;
 using CrystalMapper.Helper;
 using CrystalMapper.Cache;
+using System.Linq;
+using CrystalMapper.Linq;
 
 
-namespace CrystalMapper
+namespace CrystalMapper.Generic
 {
     public abstract class Entity<T> : Entity
         where T : Entity<T>, new()
     {
+        public static IQueryable<T> Query()
+        {
+            return new Query<T>();
+        }
+
+        public static IQueryable<T> Query(string name)
+        {
+            return new Query<T>(name);
+        }
+
+        public static IQueryable<T> Query(DataContext dataContext)
+        {
+            return new Query<T>(dataContext);
+        }    
+
         #region Methods
 
         private static DataContext GetDataContext()
         {
-            return CacheManager.GetDataContext<T>() ?? new DataContext(DbFactory.GetDefaultDatabase());            
+            return CacheManager.GetDataContext<T>() ?? new DataContext();
         }
 
         public T[] ToList()
@@ -48,20 +65,18 @@ namespace CrystalMapper
         {
             Dictionary<string, object> parameterValues;
             string query = EntityQuery<T>.GetQuery(this, out parameterValues);
-
-            if (dataContext.Connection.Database == "main")
-                query = query.Replace("Production.WorkOrder", "[Production.WorkOrder]");
-            
+       
             using (DbCommand command = dataContext.CreateCommand(query))
             {
                 foreach (string param in parameterValues.Keys)
                     command.Parameters.Add(dataContext.CreateParameter(parameterValues[param], param));
+
                 using (DbDataReader reader = command.ExecuteReader())
                 {
                     return ToList(reader);
                 }
             }
-        }        
+        }
 
         #region Static Methods
 
@@ -85,14 +100,19 @@ namespace CrystalMapper
 
         public static T[] ToList(string sqlQuery)
         {
-           
-            using (DataContext dataContext = GetDataContext())
+            using (DataContext dataContext = new DataContext())
             {
-                if (dataContext.Connection.Database == "main")
-                    sqlQuery = sqlQuery.Replace("Production.WorkOrder", "[Production.WorkOrder]");
-                using (DbCommand command = dataContext.CreateCommand(sqlQuery))
+                return ToList(sqlQuery, dataContext);
+            }
+        }
+
+        public static T[] ToList(string sqlQuery, DataContext dataContext)
+        {
+            using (DbCommand command = dataContext.CreateCommand(sqlQuery))
+            {
+                using (DbDataReader reader = command.ExecuteReader())
                 {
-                    return ToList(command.ExecuteReader());
+                    return ToList(reader);
                 }
             }
         }
@@ -101,13 +121,21 @@ namespace CrystalMapper
         {
             using (DataContext dataContext = GetDataContext())
             {
-                using (DbCommand command = dataContext.CreateCommand(sqlQuery))
-                {
-                    if (parameterValues != null)
-                        foreach (string param in parameterValues.Keys)
-                            command.Parameters.Add(dataContext.CreateParameter(parameterValues[param], param));
+                return ToList(sqlQuery, parameterValues, dataContext);
+            }
+        }
 
-                    return ToList(command.ExecuteReader());
+        public static T[] ToList(string sqlQuery, Dictionary<string, object> parameterValues, DataContext dataContext)
+        {
+            using (DbCommand command = dataContext.CreateCommand(sqlQuery))
+            {
+                if (parameterValues != null)
+                    foreach (string param in parameterValues.Keys)
+                        command.Parameters.Add(dataContext.CreateParameter(parameterValues[param], param));
+
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    return ToList(reader);
                 }
             }
         }
@@ -120,9 +148,8 @@ namespace CrystalMapper
         public static int Update(T[] entities)
         {
             int retVal = 0;
-            Database db = DbFactory.GetDefaultDatabase();
-
-            using (DataContext dataContext = new DataContext(db))
+            
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
 
@@ -161,7 +188,7 @@ namespace CrystalMapper
             foreach (T entity in entities)
                 yield return entity;
         }
-       
+
         #endregion
 
         #endregion
