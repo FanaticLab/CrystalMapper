@@ -168,6 +168,20 @@ namespace CrystalMapper.Linq.Translator
                             return new AggregateExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(this.GetLambda(m.Arguments[1])), DbConvert.ToEnum<DbExpressionType>(m.Method.Name), m.Method.ReturnType);
 
                         return new AggregateExpression((DbExpression)this.Visit(m.Arguments[0]), null, DbConvert.ToEnum<DbExpressionType>(m.Method.Name), m.Method.ReturnType);
+
+                    default:
+                    case "Any":
+                    case "All":
+                    case "Join":
+                    case "GroupJoin":
+                    case "GroupBy":
+                    case "Skip":
+                    case "Contains":
+                    case "Cast":
+                    case "Reverse":
+                    case "Intersect":
+                    case "Except":
+                        throw new NotSupportedException(string.Format("CrystalMapper doesn't support the '{0}' operation", m.Method.Name));
                 }
             }
             else if (m.Method.DeclaringType == typeof(Decimal))
