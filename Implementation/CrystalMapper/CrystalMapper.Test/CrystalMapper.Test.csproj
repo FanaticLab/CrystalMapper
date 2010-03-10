@@ -12,6 +12,21 @@
     <AssemblyName>CrystalMapper.Test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,175 +65,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adven\address.cs" />
-    <Compile Include="Adven\AddressType.cs" />
-    <Compile Include="Adven\AWBuildVersion.cs" />
-    <Compile Include="Adven\BillOfMaterial.cs" />
-    <Compile Include="Adven\BusinessEntity.cs" />
-    <Compile Include="Adven\BusinessEntityAddress.cs" />
-    <Compile Include="Adven\BusinessEntityContact.cs" />
-    <Compile Include="Adven\ContactType.cs" />
-    <Compile Include="Adven\CountryRegion.cs" />
-    <Compile Include="Adven\CountryRegionCurrency.cs" />
-    <Compile Include="Adven\CreditCard.cs" />
-    <Compile Include="Adven\Culture.cs" />
-    <Compile Include="Adven\Currency.cs" />
-    <Compile Include="Adven\CurrencyRate.cs" />
-    <Compile Include="Adven\Customer.cs" />
-    <Compile Include="Adven\DatabaseLog.cs" />
-    <Compile Include="Adven\Department.cs" />
-    <Compile Include="Adven\Document.cs" />
-    <Compile Include="Adven\EmailAddress.cs" />
-    <Compile Include="Adven\Employee.cs" />
-    <Compile Include="Adven\EmployeeDepartmentHistory.cs" />
-    <Compile Include="Adven\EmployeePayHistory.cs" />
-    <Compile Include="Adven\ErrorLog.cs" />
-    <Compile Include="Adven\Illustration.cs" />
-    <Compile Include="Adven\JobCandidate.cs" />
-    <Compile Include="Adven\Location.cs" />
-    <Compile Include="Adven\Password.cs" />
-    <Compile Include="Adven\Person.cs" />
-    <Compile Include="Adven\PersonCreditCard.cs" />
-    <Compile Include="Adven\PersonPhone.cs" />
-    <Compile Include="Adven\PhoneNumberType.cs" />
-    <Compile Include="Adven\Product.cs" />
-    <Compile Include="Adven\ProductCategory.cs" />
-    <Compile Include="Adven\ProductCostHistory.cs" />
-    <Compile Include="Adven\ProductDescription.cs" />
-    <Compile Include="Adven\ProductDocument.cs" />
-    <Compile Include="Adven\ProductInventory.cs" />
-    <Compile Include="Adven\ProductListPriceHistory.cs" />
-    <Compile Include="Adven\ProductModel.cs" />
-    <Compile Include="Adven\ProductModelIllustration.cs" />
-    <Compile Include="Adven\ProductModelProductDescriptionCulture.cs" />
-    <Compile Include="Adven\ProductPhoto.cs" />
-    <Compile Include="Adven\ProductProductPhoto.cs" />
-    <Compile Include="Adven\ProductReview.cs" />
-    <Compile Include="Adven\ProductSubcategory.cs" />
-    <Compile Include="Adven\ProductVendor.cs" />
-    <Compile Include="Adven\PurchaseOrderDetail.cs" />
-    <Compile Include="Adven\PurchaseOrderHeader.cs" />
-    <Compile Include="Adven\SalesOrderDetail.cs" />
-    <Compile Include="Adven\SalesOrderHeader.cs" />
-    <Compile Include="Adven\SalesOrderHeaderSalesReason.cs" />
-    <Compile Include="Adven\SalesPerson.cs" />
-    <Compile Include="Adven\SalesPersonQuotaHistory.cs" />
-    <Compile Include="Adven\SalesReason.cs" />
-    <Compile Include="Adven\SalesTaxRate.cs" />
-    <Compile Include="Adven\SalesTerritory.cs" />
-    <Compile Include="Adven\SalesTerritoryHistory.cs" />
-    <Compile Include="Adven\ScrapReason.cs" />
-    <Compile Include="Adven\Shift.cs" />
-    <Compile Include="Adven\ShipMethod.cs" />
-    <Compile Include="Adven\ShoppingCartItem.cs" />
-    <Compile Include="Adven\SpecialOffer.cs" />
-    <Compile Include="Adven\SpecialOfferProduct.cs" />
-    <Compile Include="Adven\StateProvince.cs" />
-    <Compile Include="Adven\Store.cs" />
-    <Compile Include="Adven\TransactionHistory.cs" />
-    <Compile Include="Adven\TransactionHistoryArchive.cs" />
-    <Compile Include="Adven\UnitMeasure.cs" />
-    <Compile Include="Adven\Vendor.cs" />
-    <Compile Include="Adven\WorkOrder.cs" />
-    <Compile Include="Adven\WorkOrderRouting.cs" />
-    <Compile Include="ATnTCRM\BtBCallTrack.cs" />
-    <Compile Include="ATnTCRM\DailyVendorFile.cs" />
-    <Compile Include="ATnTCRM\DailyVendorStatus.cs" />
-    <Compile Include="ATnTCRM\ReportExcludedAgent.cs" />
-    <Compile Include="ATnTCRM\ResultsBtb.cs" />
-    <Compile Include="ATnTCRM\TblAccount.cs" />
-    <Compile Include="ATnTCRM\TblAccountCategory.cs" />
-    <Compile Include="ATnTCRM\TblAccountCredit.cs" />
-    <Compile Include="ATnTCRM\TblAccountProduct.cs" />
-    <Compile Include="ATnTCRM\TblActivityAction.cs" />
-    <Compile Include="ATnTCRM\TblAddress.cs" />
-    <Compile Include="ATnTCRM\TblAddressType.cs" />
-    <Compile Include="ATnTCRM\TblAgent.cs" />
-    <Compile Include="ATnTCRM\TblAlert.cs" />
-    <Compile Include="ATnTCRM\TblAnswer.cs" />
-    <Compile Include="ATnTCRM\TblBFCmpListing.cs" />
-    <Compile Include="ATnTCRM\TblBFProductDetailCode.cs" />
-    <Compile Include="ATnTCRM\TblBFPromotion.cs" />
-    <Compile Include="ATnTCRM\TblBTNProduct.cs" />
-    <Compile Include="ATnTCRM\TblCancelFile.cs" />
-    <Compile Include="ATnTCRM\TblCancelFilesMaster.cs" />
-    <Compile Include="ATnTCRM\TblCancelFilesStaging.cs" />
-    <Compile Include="ATnTCRM\TblCancelOrder.cs" />
-    <Compile Include="ATnTCRM\TblCancelOrderHistory.cs" />
-    <Compile Include="ATnTCRM\TblCity.cs" />
-    <Compile Include="ATnTCRM\TblContact.cs" />
-    <Compile Include="ATnTCRM\TblContactCategory.cs" />
-    <Compile Include="ATnTCRM\TblContactMethod.cs" />
-    <Compile Include="ATnTCRM\TblContactRole.cs" />
-    <Compile Include="ATnTCRM\TblControl.cs" />
-    <Compile Include="ATnTCRM\TblCountry.cs" />
-    <Compile Include="ATnTCRM\TblCounty.cs" />
-    <Compile Include="ATnTCRM\TblCRMCallTrack.cs" />
-    <Compile Include="ATnTCRM\TblCrossCategoryRulesFeature.cs" />
-    <Compile Include="ATnTCRM\TblCustomer.cs" />
-    <Compile Include="ATnTCRM\TblDepartment.cs" />
-    <Compile Include="ATnTCRM\TblDirectlyPostableProduct.cs" />
-    <Compile Include="ATnTCRM\TblDisclosure.cs" />
-    <Compile Include="ATnTCRM\TblDisposition.cs" />
-    <Compile Include="ATnTCRM\TblDispositionGroup.cs" />
-    <Compile Include="ATnTCRM\TblErrorReason.cs" />
-    <Compile Include="ATnTCRM\TblFeatureParent.cs" />
-    <Compile Include="ATnTCRM\TblFeaturesPage.cs" />
-    <Compile Include="ATnTCRM\TblILPCategory.cs" />
-    <Compile Include="ATnTCRM\TblLeadSegmentation.cs" />
-    <Compile Include="ATnTCRM\TblLeadsegmentationdetail.cs" />
-    <Compile Include="ATnTCRM\TblLogin.cs" />
-    <Compile Include="ATnTCRM\TblOrder.cs" />
-    <Compile Include="ATnTCRM\TblOrderCallHistory.cs" />
-    <Compile Include="ATnTCRM\TblOrderCallID.cs" />
-    <Compile Include="ATnTCRM\TblOrderPhoneNumber.cs" />
-    <Compile Include="ATnTCRM\TblOrderProcess.cs" />
-    <Compile Include="ATnTCRM\TblOrderStatus.cs" />
-    <Compile Include="ATnTCRM\TblOrderStatusHistory.cs" />
-    <Compile Include="ATnTCRM\TblPhone.cs" />
-    <Compile Include="ATnTCRM\TblPhoneType.cs" />
-    <Compile Include="ATnTCRM\TblProcess.cs" />
-    <Compile Include="ATnTCRM\TblProduct.cs" />
-    <Compile Include="ATnTCRM\TblProductFeature.cs" />
-    <Compile Include="ATnTCRM\TblProductFeaturesCategory.cs" />
-    <Compile Include="ATnTCRM\TblProductFeaturesGroup.cs" />
-    <Compile Include="ATnTCRM\TblProductProcess.cs" />
-    <Compile Include="ATnTCRM\TblProductPromotion.cs" />
-    <Compile Include="ATnTCRM\TblProductRule.cs" />
-    <Compile Include="ATnTCRM\TblProductsAlertMapping.cs" />
-    <Compile Include="ATnTCRM\TblPromotion.cs" />
-    <Compile Include="ATnTCRM\TblQuestion.cs" />
-    <Compile Include="ATnTCRM\TblQuestionType.cs" />
-    <Compile Include="ATnTCRM\TblReportMatrix.cs" />
-    <Compile Include="ATnTCRM\TblReportMatrixSegment.cs" />
-    <Compile Include="ATnTCRM\TblSale.cs" />
-    <Compile Include="ATnTCRM\TblSalesOrderFeature.cs" />
-    <Compile Include="ATnTCRM\TblSalutation.cs" />
-    <Compile Include="ATnTCRM\TblScreen.cs" />
-    <Compile Include="ATnTCRM\TblSegmentationDesc.cs" />
-    <Compile Include="ATnTCRM\TblSegmentationDesc3Q2009.cs" />
-    <Compile Include="ATnTCRM\TblShipVium.cs" />
-    <Compile Include="ATnTCRM\TblState.cs" />
-    <Compile Include="ATnTCRM\TblStatus.cs" />
-    <Compile Include="ATnTCRM\TblTempAllrule.cs" />
-    <Compile Include="ATnTCRM\TblTerm.cs" />
-    <Compile Include="ATnTCRM\TblTimeZone.cs" />
-    <Compile Include="ATnTCRM\TblTpv.cs" />
-    <Compile Include="ATnTCRM\TblTPVFile.cs" />
-    <Compile Include="ATnTCRM\TblTpvFilesStaging.cs" />
-    <Compile Include="ATnTCRM\TblTPVStatus.cs" />
-    <Compile Include="ATnTCRM\TblType.cs" />
-    <Compile Include="ATnTCRM\TblUserProduct.cs" />
-    <Compile Include="ATnTCRM\TblUserProductDetail.cs" />
-    <Compile Include="ATnTCRM\TblUserProductDetailsHistory.cs" />
-    <Compile Include="ATnTCRM\TblUserProductsHistory.cs" />
-    <Compile Include="ATnTCRM\TblUserPromotion.cs" />
-    <Compile Include="ATnTCRM\TblUserPromotionsHistory.cs" />
-    <Compile Include="ATnTCRM\TblUserSOFeature.cs" />
-    <Compile Include="ATnTCRM\TblUserSOFeaturesHistory.cs" />
-    <Compile Include="ATnTCRM\TblWTNBTN.cs" />
-    <Compile Include="ATnTCRM\TblWTNProduct.cs" />
-    <Compile Include="ATnTCRM\TempMappingsField.cs" />
+    <Compile Include="Northwind\Category.cs" />
+    <Compile Include="Northwind\Customer.cs" />
+    <Compile Include="Northwind\CustomerCustomerDemo.cs" />
+    <Compile Include="Northwind\CustomerDemographic.cs" />
+    <Compile Include="Northwind\Employee.cs" />
+    <Compile Include="Northwind\EmployeeTerritory.cs" />
+    <Compile Include="Northwind\Order.cs" />
+    <Compile Include="Northwind\OrderDetail.cs" />
+    <Compile Include="Northwind\Product.cs" />
+    <Compile Include="Northwind\Region.cs" />
+    <Compile Include="Northwind\Shipper.cs" />
+    <Compile Include="Northwind\Supplier.cs" />
+    <Compile Include="Northwind\Territory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -243,6 +102,43 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\CoreSystem.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Sql.Server.Express.9.2">
+      <Visible>False</Visible>
+      <ProductName>SQL Server 2005 Express Edition SP2 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
