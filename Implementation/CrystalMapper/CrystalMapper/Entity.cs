@@ -33,9 +33,9 @@ namespace CrystalMapper
 
         protected List<Entity> Parents { get; private set; }
 
-        internal List<Entity> Children { get; private set; }
+        public List<Entity> Children { get; private set; }
 
-        internal PersistedStatus PersistedStatus { get; private set; }
+        public PersistedStatus PersistedStatus { get; private set; }
 
         public bool IsParentsPersisted
         {
@@ -93,8 +93,7 @@ namespace CrystalMapper
 
         public bool Create()
         {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
                 bool retVal = this.Create(dataContext);
@@ -106,9 +105,8 @@ namespace CrystalMapper
         }
 
         public bool Update()
-        {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
+        {            
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
                 bool retVal = this.Update(dataContext);
@@ -118,9 +116,8 @@ namespace CrystalMapper
         }
 
         public bool Delete()
-        {
-            Database db = DbFactory.GetDefaultDatabase();
-            using (DataContext dataContext = new DataContext(db))
+        {           
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
                 bool retVal = this.Delete(dataContext);
@@ -140,9 +137,14 @@ namespace CrystalMapper
             Entity.SaveChanges(new Entity[] { this });
         }
 
+        public void SaveChanges(DataContext dataContext)
+        {
+            Entity.SaveChanges(new Entity[] { this }, dataContext);
+        }
+
         public static void Delete(IEnumerable<Entity> entities)
         {
-            using (DataContext dataContext = new DataContext(DbFactory.GetDefaultDatabase()))
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
 
@@ -202,7 +204,7 @@ namespace CrystalMapper
 
         public static void SaveChanges(IEnumerable<Entity> entities)
         {
-            using (DataContext dataContext = new DataContext(DbFactory.GetDefaultDatabase()))
+            using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
 

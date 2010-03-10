@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrystalMapper.Mapping
+namespace CrystalMapper.Linq.Expressions
 {
-    public enum LoadOption
+    internal enum SortDirection
     {
-        Merge = 0        
+        Asc,
+        Desc,
     }
+
 }

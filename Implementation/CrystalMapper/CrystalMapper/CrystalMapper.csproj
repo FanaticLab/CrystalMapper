@@ -18,6 +18,15 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,7 +39,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -42,7 +50,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\feedbook\Implementation\feedbook\feedbook\MyRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,6 +67,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -70,6 +80,45 @@
   <ItemGroup>
     <Compile Include="Cache\CacheManager.cs" />
     <Compile Include="Cache\CacheProvider.cs" />
+    <Compile Include="Lang\PSqlLang.cs" />
+    <Compile Include="Lang\SqliteLang.cs" />
+    <Compile Include="Lang\SqlLang.cs" />
+    <Compile Include="Lang\TSqlLang.cs" />
+    <Compile Include="Linq\Expressions\AggregateExpression.cs" />
+    <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
+    <Compile Include="Linq\Extension.cs" />
+    <Compile Include="Linq\Expressions\DbExpressionType.cs" />
+    <Compile Include="Linq\Expressions\DbParameterExpression.cs" />
+    <Compile Include="Linq\Expressions\DistinctExpression.cs" />
+    <Compile Include="Linq\Expressions\ColumnExpression.cs" />
+    <Compile Include="Linq\Expressions\DbBinaryExpression.cs" />
+    <Compile Include="Linq\Expressions\DbMemberExpression.cs" />
+    <Compile Include="Linq\Expressions\DbExpression.cs" />
+    <Compile Include="Linq\Expressions\IndirectExpression.cs" />
+    <Compile Include="Linq\Expressions\MultiSourceExpression.cs" />
+    <Compile Include="Linq\Expressions\OrderByExpression.cs" />
+    <Compile Include="Linq\Expressions\ProjectionExpression.cs" />
+    <Compile Include="Linq\Expressions\SelectExpression.cs" />
+    <Compile Include="Linq\Expressions\SortDirection.cs" />
+    <Compile Include="Linq\Expressions\SortExpression.cs" />
+    <Compile Include="Linq\Expressions\SourceExpression.cs" />
+    <Compile Include="Linq\Expressions\TableExpression.cs" />
+    <Compile Include="Linq\Expressions\TakeExpression.cs" />
+    <Compile Include="Linq\Expressions\ThenByExpression.cs" />
+    <Compile Include="Linq\Expressions\WhereExpression.cs" />
+    <Compile Include="Linq\Helper\FormatHelper.cs" />
+    <Compile Include="Linq\Metadata\MemberMetadata.cs" />
+    <Compile Include="Linq\Metadata\MetadataProvider.cs" />
+    <Compile Include="Linq\Query.cs" />
+    <Compile Include="Linq\QueryInfo.cs" />
+    <Compile Include="Linq\QueryProvider.cs" />
+    <Compile Include="Linq\QueryWriter.cs" />
+    <Compile Include="Linq\ResultShape.cs" />
+    <Compile Include="Linq\Metadata\TableMetadata.cs" />
+    <Compile Include="Linq\Translator\ExpressionVisitor.cs" />
+    <Compile Include="Linq\Translator\QueryTranslator.cs" />
+    <Compile Include="Linq\Helper\TypeHelper.cs" />
+    <Compile Include="Linq\Helper\TypeSystem.cs" />
     <Compile Include="Policy\CacheType.cs" />
     <Compile Include="Helper\PolicyHelper.cs" />
     <Compile Include="Policy\CachePolicy.cs" />
@@ -85,6 +134,7 @@
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper\EntityQueryHelper.cs" />
+    <Compile Include="ReadOnlyExtension.cs" />
     <Compile Include="SQLite\SQLiteWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,12 +157,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.VisualBasic.PowerPacks.10.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft Visual Basic PowerPacks 10.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

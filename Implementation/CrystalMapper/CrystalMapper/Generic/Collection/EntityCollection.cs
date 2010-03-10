@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 
 
-namespace CrystalMapper//.Generic.Collection
+namespace CrystalMapper.Generic.Collection
 {
     public delegate void Associate<TEntity>(TEntity entity)
     where TEntity : Entity<TEntity>, new();
@@ -36,8 +36,6 @@ namespace CrystalMapper//.Generic.Collection
         #region Variables        
 
         private readonly Entity parentEntity;
-
-        private readonly DispatchEvent collectionChangedEvent = new DispatchEvent();
 
         private readonly DispatchedObservableCollection<TEntity> collection = new DispatchedObservableCollection<TEntity>();
 
@@ -71,20 +69,18 @@ namespace CrystalMapper//.Generic.Collection
             this.Associate = associate;
             this.DeAssociate = deAssociate;
             this.GetChildren = getChildren;
-
-            this.collection.CollectionChanged += new NotifyCollectionChangedEventHandler(delegate(object sender, NotifyCollectionChangedEventArgs e)
-                                                                                                  {
-                                                                                                      this.OnCollectionChanged(e);
-                                                                                                  });
         }
 
         public void Load()
         {
-            TEntity[] children = this.GetChildren();
-            if (children != null)
-                this.AddRange(children);
-
-            this.IsLoaded = true;
+            if (!this.IsLoaded)
+            {
+                TEntity[] children = this.GetChildren();
+                if (children != null)
+                    foreach (TEntity entity in children)
+                        this.AddOnly(entity);
+                this.IsLoaded = true;
+            }            
         }
 
         public void Add(TEntity entity)
@@ -152,11 +148,6 @@ namespace CrystalMapper//.Generic.Collection
             this.collection.CopyTo(array, arrayIndex);
         }
 
-        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            this.collectionChangedEvent.Fire(this, e);
-        }
-
         #region IEnumerable<TChild> Members
 
         public IEnumerator<TEntity> GetEnumerator()
@@ -178,8 +169,8 @@ namespace CrystalMapper//.Generic.Collection
 
         public event NotifyCollectionChangedEventHandler CollectionChanged
         {
-            add { this.collectionChangedEvent.Add(value); }
-            remove { this.collectionChangedEvent.Remove(value); }
+            add { this.collection.CollectionChanged += value; }
+            remove { this.collection.CollectionChanged -= value; }
         }
 
         #endregion
