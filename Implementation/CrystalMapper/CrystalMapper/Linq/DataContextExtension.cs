@@ -7,7 +7,7 @@ using CrystalMapper.Data;
 
 namespace CrystalMapper.Linq
 {
-    public static class Extension
+    public static class DataContextExtension
     {
         public static IQueryable<T> Query<T>(this DataContext dataContext) where T : Entity<T>, new()
         {

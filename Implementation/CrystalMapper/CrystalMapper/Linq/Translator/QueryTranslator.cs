@@ -28,7 +28,7 @@ namespace CrystalMapper.Linq.Translator
 
             if (selectExpression != null)
             {
-                QueryWriter queryWriter = new QueryWriter();
+                QueryWriter queryWriter = new QueryWriter();                
                 selectExpression.WriteQuery(sqlLang, queryWriter);
 
                 string sqlQuery = queryWriter.ToString();

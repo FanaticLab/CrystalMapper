@@ -5,13 +5,13 @@ using System.Text;
 
 namespace CrystalMapper.Linq
 {
-    public class QueryWriter
+    internal class QueryWriter
     {
         private int indent;
 
         private StringBuilder queryWriter = new StringBuilder();
 
-        public string IndentCharacters = "\t";
+        public string IndentCharacters = " ";
 
         public string Indentation { get; private set; }
 
@@ -42,6 +42,16 @@ namespace CrystalMapper.Linq
             value = value ?? string.Empty;
             this.queryWriter.AppendLine(value.ToString()).Append(this.Indentation);
             return this;
+        }
+
+        public int GetLastLineLength()
+        {
+            string data = this.queryWriter.ToString();
+            int indexOfNewLine = data.LastIndexOf(Environment.NewLine);
+            if (indexOfNewLine != -1)
+                return data.Length - indexOfNewLine - 1;
+
+            return 0;
         }
 
         public override string ToString()
