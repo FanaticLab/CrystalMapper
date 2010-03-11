@@ -11,10 +11,7 @@ namespace CrystalMapper.Linq.Expressions
 
         public SourceExpression(string alias, DbExpressionType DbNodeType, Type type)
             : base(DbNodeType, type)
-        {
-            if (string.IsNullOrEmpty(alias))
-                throw new ArgumentNullException("alias");
-
+        {           
             this.Alias = alias;
         }
 

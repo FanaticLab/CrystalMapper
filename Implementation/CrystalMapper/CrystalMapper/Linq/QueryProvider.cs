@@ -97,7 +97,7 @@ namespace CrystalMapper.Linq
                         {
                             IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(new[] { queryInfo.ReturnType }));
 
-                            foreach (object entity in TranslateResult(queryInfo, reader))
+                            foreach (object entity in queryInfo.Projection.Translate(queryInfo, reader))
                                 list.Add(entity);
 
                             return list;
@@ -106,7 +106,7 @@ namespace CrystalMapper.Linq
 
                     using (DbDataReader reader = command.ExecuteReader(CommandBehavior.SingleResult))
                     {
-                        foreach (object entity in TranslateResult(queryInfo, reader))
+                        foreach (object entity in queryInfo.Projection.Translate(queryInfo, reader))
                             return entity;
 
                         if (!queryInfo.UseDefault)
@@ -121,54 +121,7 @@ namespace CrystalMapper.Linq
                 if (this.disposeDataContext && dataContext != null)
                     dataContext.Dispose();
             }
-        }
-
-        private static IEnumerable<object> TranslateResult(QueryInfo queryInfo, DbDataReader reader)
-        {
-            if (queryInfo.ReturnType.IsSubclassOf(typeof(Entity)))
-            {
-                while (reader.Read())
-                {
-                    Entity entity = (Entity)Activator.CreateInstance(queryInfo.ReturnType);
-                    entity.Read(reader);
-                    yield return entity;
-                }
-            }
-            else if (queryInfo.ReturnType.IsPrimitive)
-            {
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                        yield return Convert.ChangeType(reader.GetValue(i), queryInfo.ReturnType);
-                }
-            }
-            else if (queryInfo.ReturnType == typeof(string))
-            {
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        object value = reader.GetValue(i);
-                        yield return value == DBNull.Value ? null : value;
-                    }
-                }
-            }
-            else
-            {
-                ConstructorInfo constructor = queryInfo.ReturnType.GetConstructors()[0];
-                while (reader.Read())
-                {
-                    List<object> parameters = new List<object>();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        object value = reader.GetValue(i);
-                        parameters.Add(value == DBNull.Value ? null : value);
-                    }
-
-                    yield return constructor.Invoke(parameters.ToArray());
-                }
-            }
-        }
+        }   
 
         private SqlLang GetSqlLangByProvider()
         {

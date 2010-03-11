@@ -92,9 +92,7 @@ namespace CrystalMapper.Linq.Expressions
                         this.Aggregate = source as AggregateExpression;
                         source = this.Aggregate.Source;
                         break;
-                    case DbExpressionType.Select:
-                    case DbExpressionType.Table:
-                    case DbExpressionType.MultiSource:
+                    default:
                         this.From = source as SourceExpression;
                         break;
                 }

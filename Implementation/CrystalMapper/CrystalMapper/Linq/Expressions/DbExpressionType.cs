@@ -27,7 +27,8 @@ namespace CrystalMapper.Linq.Expressions
         Sum,
         Min,
         Max,
-        Average
+        Average,
+        Join
     }
 
 }

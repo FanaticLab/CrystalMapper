@@ -36,7 +36,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Order Details";	
+        public const string TABLE_NAME = "dbo.[Order Details]";	
      
 		public const string COL_ORDERID = "OrderID";
 		public const string COL_PRODUCTID = "ProductID";
