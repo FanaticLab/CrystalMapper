@@ -66,15 +66,13 @@ namespace CrystalMapper.Linq.Expressions
                         yield return System.Convert.ChangeType(reader.GetValue(i), queryInfo.ReturnType);
                 }
             }
-            else if (queryInfo.ReturnType == typeof(string))
+            else if (queryInfo.ReturnType == typeof(string)
+                 || (queryInfo.ReturnType.IsGenericType && queryInfo.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        object value = reader.GetValue(i);
-                        yield return value == DBNull.Value ? null : value;
-                    }
+                        yield return DbConvert.ToObject(reader.GetValue(i));
                 }
             }
             else if (queryInfo.ReturnType == this.Type)
@@ -100,7 +98,7 @@ namespace CrystalMapper.Linq.Expressions
         private object GetObject(Type type, DbDataReader reader, ref int index)
         {
             if (IsMemberType(type))
-                return reader[index++];
+                return DbConvert.ToObject(reader[index++]);
 
             if (type.IsSubclassOf(typeof(Entity)))
             {
@@ -117,7 +115,7 @@ namespace CrystalMapper.Linq.Expressions
             foreach (PropertyInfo propInfo in type.GetProperties())
             {
                 if (IsMemberType(propInfo.PropertyType))
-                    parameters.Add(reader[index++]);
+                    parameters.Add(DbConvert.ToObject(reader[index++]));
                 else
                     parameters.Add(GetObject(propInfo.PropertyType, reader, ref index));
             }
