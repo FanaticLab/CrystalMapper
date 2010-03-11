@@ -33,11 +33,12 @@ namespace CrystalMapper
 
         protected List<Entity> Parents { get; private set; }
 
-        public List<Entity> Children { get; private set; }
+        internal List<Entity> Children { get; private set; }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public PersistedStatus PersistedStatus { get; private set; }
 
-        public bool IsParentsPersisted
+        internal bool IsParentsPersisted
         {
             get
             {
@@ -49,7 +50,7 @@ namespace CrystalMapper
             }
         }
 
-        public bool IsChildrenRemoved
+        internal bool IsChildrenRemoved
         {
             get
             {
@@ -105,7 +106,7 @@ namespace CrystalMapper
         }
 
         public bool Update()
-        {            
+        {
             using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
@@ -116,7 +117,7 @@ namespace CrystalMapper
         }
 
         public bool Delete()
-        {           
+        {
             using (DataContext dataContext = new DataContext())
             {
                 dataContext.BeginTransaction();
@@ -247,7 +248,7 @@ namespace CrystalMapper
                             case PersistedStatus.Updated:
                                 throw new InvalidOperationException(String.Format("Entity: '{0}' persisted status does not suppose to be '{1}'", entity, entity.PersistedStatus));
                             default:
-                                throw new InvalidOperationException(String.Format("Unrecognized PersistedStatus: '{0}'", entity.PersistedStatus));
+                                throw new InvalidOperationException(String.Format("Unrecognized entity persisted status: '{0}'", entity.PersistedStatus));
                         }
 
                         if (!isChangesSaved)

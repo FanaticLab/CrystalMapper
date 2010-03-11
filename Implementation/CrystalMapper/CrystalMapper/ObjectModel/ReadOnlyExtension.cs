@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace CrystalMapper
+namespace CrystalMapper.ObjectModel
 {
     public static class ReadOnlyExtension
     {

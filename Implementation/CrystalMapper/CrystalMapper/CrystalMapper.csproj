@@ -86,7 +86,7 @@
     <Compile Include="Lang\TSqlLang.cs" />
     <Compile Include="Linq\Expressions\AggregateExpression.cs" />
     <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
-    <Compile Include="Linq\Extension.cs" />
+    <Compile Include="Linq\DataContextExtension.cs" />
     <Compile Include="Linq\Expressions\DbExpressionType.cs" />
     <Compile Include="Linq\Expressions\DbParameterExpression.cs" />
     <Compile Include="Linq\Expressions\DistinctExpression.cs" />
@@ -134,7 +134,7 @@
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper\EntityQueryHelper.cs" />
-    <Compile Include="ReadOnlyExtension.cs" />
+    <Compile Include="ObjectModel\ReadOnlyExtension.cs" />
     <Compile Include="SQLite\SQLiteWrapper.cs" />
   </ItemGroup>
   <ItemGroup>

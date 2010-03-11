@@ -110,6 +110,8 @@ namespace CrystalMapper.Linq.Expressions
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
+            int currentIndent = queryWriter.Indent;
+            queryWriter.Indent = queryWriter.GetLastLineLength();
             queryWriter.Write("(SELECT ");
 
             if (this.Distinct != null)
@@ -125,11 +127,7 @@ namespace CrystalMapper.Linq.Expressions
 
             queryWriter.WriteLine().Write("FROM ");
 
-            queryWriter.Indent += 1;
-            queryWriter.Write(queryWriter.Indentation);
             this.From.WriteQuery(sqlLang, queryWriter);
-            queryWriter.Indent -= 1;
-
 
             if (sqlLang.SqlLangType == SqlLangType.PSql && this.Take != null)
             {
@@ -183,6 +181,8 @@ namespace CrystalMapper.Linq.Expressions
             }
 
             queryWriter.Write(") AS ").Write(Alias);
+
+            queryWriter.Indent = currentIndent;
         }
 
         private void AssignAlias()
