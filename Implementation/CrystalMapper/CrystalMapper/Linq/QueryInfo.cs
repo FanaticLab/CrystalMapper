@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using CrystalMapper.Linq.Metadata;
+using CrystalMapper.Linq.Expressions;
 
 namespace CrystalMapper.Linq
 {
-    public class QueryInfo
+    internal class QueryInfo
     {
         public bool UseDefault { get; private set; }
 
@@ -19,13 +20,16 @@ namespace CrystalMapper.Linq
 
         public Dictionary<string, object> ParamValues { get; private set;}
 
-        public QueryInfo(ResultShape resultShape, bool useDefault, Type returnType, string sqlQuery, Dictionary<string, object> paramValues )
+        public ProjectionExpression Projection { get; private set; }
+
+        public QueryInfo(ResultShape resultShape, bool useDefault, Type returnType, ProjectionExpression projection, string sqlQuery, Dictionary<string, object> paramValues )
         {
             this.UseDefault = useDefault;
             this.ReturnType = returnType;
             this.ResultShape = resultShape;
             this.SqlQuery = sqlQuery;
-            this.ParamValues = paramValues;                       
+            this.ParamValues = paramValues;
+            this.Projection = projection;
         }
     }
 }

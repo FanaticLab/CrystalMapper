@@ -95,6 +95,7 @@
     <Compile Include="Linq\Expressions\DbMemberExpression.cs" />
     <Compile Include="Linq\Expressions\DbExpression.cs" />
     <Compile Include="Linq\Expressions\IndirectExpression.cs" />
+    <Compile Include="Linq\Expressions\JoinExpression.cs" />
     <Compile Include="Linq\Expressions\MultiSourceExpression.cs" />
     <Compile Include="Linq\Expressions\OrderByExpression.cs" />
     <Compile Include="Linq\Expressions\ProjectionExpression.cs" />

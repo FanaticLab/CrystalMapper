@@ -28,7 +28,7 @@ namespace CrystalMapper.Linq.Translator
 
             if (selectExpression != null)
             {
-                QueryWriter queryWriter = new QueryWriter();                
+                QueryWriter queryWriter = new QueryWriter();
                 selectExpression.WriteQuery(sqlLang, queryWriter);
 
                 string sqlQuery = queryWriter.ToString();
@@ -39,7 +39,7 @@ namespace CrystalMapper.Linq.Translator
                     sqlQuery = sqlQuery.Substring(0, sqlQuery.LastIndexOf(')'));
                 }
 
-                return new QueryInfo(resultShape, selectExpression.UseDefault, selectExpression.ReturnType, sqlQuery, null);
+                return new QueryInfo(resultShape, selectExpression.UseDefault, selectExpression.ReturnType, selectExpression.Projection, sqlQuery, null);
             }
 
             throw new InvalidOperationException(string.Format("Failed to translate expression in to select expression, top node expression is: '{0}. Try to wrap it in select clause'", expression));
@@ -58,6 +58,8 @@ namespace CrystalMapper.Linq.Translator
 
                         return new SelectExpression(this.GetNextTableAlias(), dbExpression, new ProjectionExpression(columns.ToList().AsReadOnly(), dbExpression.Type, null));
                     }
+                case DbExpressionType.Join:
+                    return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((JoinExpression)dbExpression).Projection);
             }
 
             if ((dbExpression as IndirectExpression) != null)
@@ -169,10 +171,14 @@ namespace CrystalMapper.Linq.Translator
 
                         return new AggregateExpression((DbExpression)this.Visit(m.Arguments[0]), null, DbConvert.ToEnum<DbExpressionType>(m.Method.Name), m.Method.ReturnType);
 
+                    case "Join":
+                        DbBinaryExpression keyExpression = new DbBinaryExpression((DbExpression)this.Visit(this.GetLambda(m.Arguments[2])), (DbExpression)this.Visit(this.GetLambda(m.Arguments[3])), ExpressionType.Equal, typeof(bool));
+
+                        return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
+
                     default:
                     case "Any":
                     case "All":
-                    case "Join":
                     case "GroupJoin":
                     case "GroupBy":
                     case "Skip":
@@ -277,20 +283,16 @@ namespace CrystalMapper.Linq.Translator
                 string memberName;
                 PropertyInfo[] members = nex.Type.GetProperties();
 
+
                 foreach (Expression ex in nex.Arguments)
                 {
                     DbExpression dbExpression = this.Visit(ex) as DbExpression;
                     memberName = members[index].Name;
 
-                    if (!members[index].PropertyType.IsPrimitive
-                        && members[index].PropertyType != typeof(string)
-                        && !members[index].PropertyType.IsGenericType && members[index].PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>))
-                        throw new NotSupportedException(string.Format("Type: {0} is not supported in projection expression (new) for database queries, only primitive types are supported", members[index].PropertyType));
-
-                    if (dbExpression is DbMemberExpression && string.Equals(memberName, ((DbMemberExpression)dbExpression).MemberMetadata.ColumnName))
-                        columns.Add(new ColumnExpression(new MemberMetadata(members[index]), dbExpression));
-                    else
+                    if (IsMemberType(members[index].PropertyType))
                         columns.Add(new ColumnExpression(new MemberMetadata(members[index]), dbExpression, memberName));
+                    else
+                        columns.AddRange(GetColumns(members[index].PropertyType));
 
                     index++;
                 }
@@ -299,6 +301,25 @@ namespace CrystalMapper.Linq.Translator
             }
 
             return this.Visit(lambda.Body);
+        }
+
+        private IEnumerable<ColumnExpression> GetColumns(Type type)
+        {
+            TableMetadata tableMetadata = MetadataProvider.GetMetadata(type);
+            if (tableMetadata != null)
+                foreach (MemberMetadata memberMetadata in tableMetadata.Members)
+                    yield return new ColumnExpression(memberMetadata, new DbMemberExpression(memberMetadata));
+            else
+            {
+                foreach (PropertyInfo propInfo in type.GetProperties())
+                {
+                    if (IsMemberType(propInfo.PropertyType))
+                        yield return new ColumnExpression(new MemberMetadata(propInfo), new DbMemberExpression(new MemberMetadata(propInfo)));
+                    else
+                        foreach (ColumnExpression column in GetColumns(propInfo.PropertyType))
+                            yield return column;
+                }
+            }
         }
 
         protected override Expression VisitBinary(BinaryExpression b)
@@ -402,6 +423,14 @@ namespace CrystalMapper.Linq.Translator
                 columns.Add(new ColumnExpression(null, (DbExpression)expression));
                 return new ProjectionExpression(columns.AsReadOnly(), expression.Type, null);
             }
+        }
+
+        private bool IsMemberType(Type type)
+        {
+            return type.IsPrimitive
+                   || type == typeof(string)
+                   || (type.IsGenericType
+                       && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
     }
 }

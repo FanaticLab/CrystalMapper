@@ -4,7 +4,7 @@
  * 
  * Date: 1/10/2009
  * 
- * File: BusinessObjectsTemplate.sqlserver.cst
+ * File: BusinessObjectsTemplate.sqlite.cst
  *
  * Version: 2.0.0.0
  * 
@@ -56,6 +56,8 @@ using CoreSystem.Data;
 using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
+using CrystalMapper.Generic;
+using CrystalMapper.Generic.Collection;
 
 namespace <%= BusinessNamespace %>
 {
@@ -259,7 +261,7 @@ namespace <%= BusinessNamespace %>
         
         #region Methods     
 		
-        public <%= GetClassName(SourceTable) %>()
+       public <%= GetClassName(SourceTable) %>()
         {
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
@@ -453,6 +455,7 @@ namespace <%= BusinessNamespace %>
              <%= GetClassVariableName(tableKey.ForeignKeyTable) %>.<%= GetForeignKeyClassPropName(tableKey) %> = null;
         }
         
+            
         private <%= GetClassName(tableKey.ForeignKeyTable) %>[] GetChildren<%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %>()
         {
               <% if(tableKey.PrimaryKeyMemberColumns.Count == 1) {%>
