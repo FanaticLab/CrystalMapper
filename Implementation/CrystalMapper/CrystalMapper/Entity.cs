@@ -133,6 +133,36 @@ namespace CrystalMapper
             Entity.Delete(new Entity[] { this });
         }
 
+        public void Save()
+        {
+            using (DataContext dataContext = new DataContext())
+            {
+                this.Save(dataContext);
+            }
+        }
+
+        public void Save(DataContext dataContext)
+        {
+            switch (this.PersistedStatus)
+            {
+                case PersistedStatus.New:
+                    if (!this.Create(dataContext))
+                        throw new InvalidOperationException(string.Format("Failed to create entity '{0}' in database", this));
+                    break;
+                case PersistedStatus.Dirty:
+                    if (!this.Update(dataContext))
+                        throw new InvalidOperationException(string.Format("Failed to update entity '{0}' in database", this));
+                    break;
+                case PersistedStatus.Updated:
+                    break;
+                case PersistedStatus.Deleted:
+                    throw new InvalidOperationException(string.Format("Entity '{0}' is already deleted from database", this));
+                default:
+                    throw new InvalidOperationException(string.Format("Unrecognize entity persistence status '{0}'", this.PersistedStatus));
+                    break;
+            }
+        }
+
         public void SaveChanges()
         {
             Entity.SaveChanges(new Entity[] { this });
