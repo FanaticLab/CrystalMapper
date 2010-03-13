@@ -5,13 +5,12 @@ using System.Text;
 using CrystalMapper.Lang;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CrystalMapper.Linq.Expressions
 {
     internal class SelectExpression : SourceExpression
     {
-        private List<SortExpression> sortExpressions = new List<SortExpression>();
-
         public DistinctExpression Distinct { get; private set; }
 
         public AggregateExpression Aggregate { get; private set; }
@@ -23,6 +22,12 @@ namespace CrystalMapper.Linq.Expressions
         public WhereExpression Where { get; private set; }
 
         public ProjectionExpression Projection { get; private set; }
+
+        private List<SortExpression> sortExpressions = new List<SortExpression>();
+
+        private List<GroupByExpression> groupbyExpressions = new List<GroupByExpression>();
+
+        public bool WrapInBracks { get; set; }
 
         public bool UseDefault
         {
@@ -47,6 +52,8 @@ namespace CrystalMapper.Linq.Expressions
         {
             if (projection == null)
                 throw new ArgumentNullException("projection");
+
+            this.WrapInBracks = true;
 
             this.Projection = projection;
 
@@ -83,6 +90,22 @@ namespace CrystalMapper.Linq.Expressions
                         this.sortExpressions.Insert(0, sortExp);
                         source = sortExp.Source;
                         break;
+                    case DbExpressionType.GroupBy:
+                        GroupByExpression groupby = (GroupByExpression)source;
+                        this.groupbyExpressions.Add(groupby);
+                        foreach (ColumnExpression column in this.Projection.Columns)
+                        {
+                            if (column.Column is DbMemberExpression)
+                            {
+                                MemberInfo dbMember = ((DbMemberExpression)column.Column).MemberMetadata.Member;
+                                if (dbMember.Name == "Key" && dbMember.DeclaringType.IsGenericType && dbMember.DeclaringType.GetGenericTypeDefinition() == typeof(IGrouping<,>))
+                                {
+                                    column.Column = groupby.ByColumn;
+                                }
+                            }
+                        }
+                        source = groupby.Source;
+                        break;
                     case DbExpressionType.Count:
                     case DbExpressionType.LongCount:
                     case DbExpressionType.Sum:
@@ -110,7 +133,10 @@ namespace CrystalMapper.Linq.Expressions
         {
             int currentIndent = queryWriter.Indent;
             queryWriter.Indent = queryWriter.GetLastLineLength();
-            queryWriter.Write("(SELECT ");
+
+            if (this.WrapInBracks) queryWriter.Write("(");
+
+            queryWriter.Write("SELECT ");
 
             if (this.Distinct != null)
                 this.Distinct.WriteQuery(sqlLang, queryWriter);
@@ -158,18 +184,32 @@ namespace CrystalMapper.Linq.Expressions
                     sortExpression.ReverseSortDirection();
             }
 
-            bool isFirstOrderBy = true;
+            bool isFirst = true;
             foreach (var orderByExp in this.sortExpressions)
             {
-                if (isFirstOrderBy)
+                if (isFirst)
                 {
                     queryWriter.WriteLine().Write("ORDER BY ");
-                    isFirstOrderBy = false;
+                    isFirst = false;
                 }
                 else
                     queryWriter.Write(", ");
 
                 orderByExp.WriteQuery(sqlLang, queryWriter);
+            }
+
+            isFirst = true;
+            foreach (var groupbyExp in this.groupbyExpressions)
+            {
+                if (isFirst)
+                {
+                    queryWriter.WriteLine().Write("GROUP BY ");
+                    isFirst = false;
+                }
+                else
+                    queryWriter.Write(", ");
+
+                groupbyExp.WriteQuery(sqlLang, queryWriter);
             }
 
             if (sqlLang.SqlLangType == SqlLangType.Sqlite && this.Take != null)
@@ -178,7 +218,7 @@ namespace CrystalMapper.Linq.Expressions
                 this.Take.WriteQuery(sqlLang, queryWriter);
             }
 
-            queryWriter.Write(") AS ").Write(Alias);
+            if (this.WrapInBracks) queryWriter.Write(") AS ").Write(Alias);
 
             queryWriter.Indent = currentIndent;
         }

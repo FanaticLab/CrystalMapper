@@ -11,6 +11,7 @@ using CrystalMapper.Linq.Translator;
 using System.Data;
 using CrystalMapper.Lang;
 using CrystalMapper.Linq.Helper;
+using CoreSystem.Data;
 
 namespace CrystalMapper.Linq
 {
@@ -78,15 +79,15 @@ namespace CrystalMapper.Linq
         public object Execute(Expression expression)
         {
             DataContext dataContext = this.GetDataContext();
+            //expression = PartialEvaluator.Eval(expression);
             QueryInfo queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
             
             try
             {                
                 using (DbCommand command = dataContext.CreateCommand(queryInfo.SqlQuery))
                 {
-                    if (queryInfo.ParamValues != null && queryInfo.ParamValues.Count > 0)
-                        foreach (string parameter in queryInfo.ParamValues.Keys)
-                            command.Parameters.Add(dataContext.CreateParameter(queryInfo.ParamValues[parameter], parameter));
+                    foreach (string parameter in queryInfo.ParamValues.Keys)
+                        command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(queryInfo.ParamValues[parameter]), parameter));
 
                     if (queryInfo.ResultShape == ResultShape.None)
                         return command.ExecuteNonQuery();

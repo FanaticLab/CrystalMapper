@@ -59,8 +59,9 @@ namespace CrystalMapper.Linq.Expressions
         {
             yield return this;
 
-            foreach (DbExpression expression in this.Member.GetNodes())
-                yield return expression;
+            if (this.Member != null)
+                foreach (DbExpression expression in this.Member.GetNodes())
+                    yield return expression;
         }
     }
 }

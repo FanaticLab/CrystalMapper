@@ -21,20 +21,29 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
-            var q = from c in Customer.Query()
-                    join o in Order.Query() on c.CustomerID equals o.CustomerID
-                    join od in OrderDetail.Query() on o.OrderID equals od.OrderID
-                    where o.OrderID > 2000
-                    select od.ProductID;
+            var q = Customer.Query().Where(c => Order.Query().Select(o => o.CustomerID).Contains(c.CustomerID));
 
+            var s = new { O = new { I = new { OrderId = 100 } }, CustomerId = "ALFKI" };
 
+            var q2 = (from c in Customer.Query()
+                      join o in Order.Query().Select(o => new { o.CustomerID, OrderID = o.OrderID - 1000 }) on c.CustomerID equals o.CustomerID
+                      where o.OrderID > s.O.I.OrderId && c.CustomerID == s.CustomerId
+                      select new { c, o });
 
-            var r = q.ToArray();
+            var r2 = q2.ToArray();
 
-            var r2 =  (from  c in Customer.Query()
-                      join  o in Order.Query().Select(o => new {o.CustomerID, OrderID = o.OrderID - 1000}) on  c.CustomerID equals o.CustomerID
-                      select new { c, o }).ToArray();
+            //var q3 = from c in Customer.Query()
+            //         from o in Order.Query().Where(o => o.OrderID > 100)
+            //         select new { c, o };
 
+            //var r3 = q3.ToArray();
+
+            var q4 = from o in Order.Query()
+                    group o by o.CustomerID into g
+                    select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID), Min = g.Min(o => o.OrderID) };
+
+            var r4 = q4.ToArray();
+            
             Console.ReadLine();
         }
 

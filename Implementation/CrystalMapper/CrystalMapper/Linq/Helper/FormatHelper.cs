@@ -51,37 +51,17 @@ namespace CrystalMapper.Linq.Helper
             return "[" + column + "]";
         }
 
-        public static string FormatDbValue(object value)
+        public static string RemovesBrackets(string value)
         {
-            if (value == null)
+            if (value != null)
             {
-                return "NULL";
+                value = value.TrimStart(' ');
+
+                if (value.StartsWith("("))
+                    return value.Substring(1, value.LastIndexOf(')'));
             }
-            Type type = value.GetType();
-            if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
-            {
-                type = type.GetGenericArguments()[0];
-            }
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Object:
-                    if (!(value is Guid))
-                        throw new NotSupportedException(string.Format("The constant for '{0}' is not supported", value));
 
-                    return "'" + value + "'";
-
-                case TypeCode.Boolean:
-                    return (bool)value ? "1" : "0"; ;
-
-                case TypeCode.Char:
-                case TypeCode.DateTime:
-                case TypeCode.String:
-                    return "'" + EscapeSingleQuotes(value.ToString()) + "'";
-
-                default:
-                    return value.ToString();
-            }
+            return value;
         }
-
     }
 }

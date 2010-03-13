@@ -15,10 +15,10 @@ namespace CrystalMapper.Linq.Expressions
 
         public MemberMetadata MemberMetadata { get; private set; }
 
-        public DbMemberExpression(MemberMetadata member)
-            : base(DbExpressionType.Member, TypeHelper.GetMemberType(member.Member) ?? member.Member.DeclaringType)
+        public DbMemberExpression(MemberMetadata memberMetadata)
+            : base(DbExpressionType.Member, memberMetadata.Member.GetMemberType() ?? memberMetadata.Member.DeclaringType)
         {
-            this.MemberMetadata = member;
+            this.MemberMetadata = memberMetadata;
         }    
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)

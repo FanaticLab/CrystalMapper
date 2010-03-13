@@ -12,7 +12,7 @@ namespace CrystalMapper.Linq.Expressions
     {
         public MemberMetadata Member { get; private set; }
 
-        public DbExpression Column { get; private set; }
+        public DbExpression Column { get; set; }
 
         public string ColumnAlias { get; private set; }
 
