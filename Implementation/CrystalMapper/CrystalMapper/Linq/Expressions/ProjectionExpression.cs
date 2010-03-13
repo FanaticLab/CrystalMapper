@@ -8,6 +8,7 @@ using CrystalMapper.Linq.Metadata;
 using System.Reflection;
 using System.Data.Common;
 using CoreSystem.Data;
+using System.Collections;
 
 namespace CrystalMapper.Linq.Expressions
 {
@@ -105,10 +106,20 @@ namespace CrystalMapper.Linq.Expressions
                 object entity = Activator.CreateInstance(type);
                 TableMetadata entityMetadata = MetadataProvider.GetMetadata(type);
 
-                foreach (MemberMetadata memberMeta in entityMetadata.Members)
-                    ((PropertyInfo)memberMeta.Member).SetValue(entity, DbConvert.ToObject(reader[index++]), null);
+                foreach (MemberMetadata mbMetadata in entityMetadata.Members)
+                    ((PropertyInfo)mbMetadata.Member).SetValue(entity, DbConvert.ToObject(reader[index++]), null);
 
                 return entity;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            {
+                Type[] genericTypes = type.GetGenericArguments();
+                IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericTypes));
+                list.Add(GetObject(genericTypes[0], reader, ref index));
+
+                return list;
+                //throw new InvalidOperationException(string.Format("IEnumerable<T> type cannot be projected", type.GetGenericArguments()[0]));
             }
 
             List<object> parameters = new List<object>();

@@ -18,34 +18,33 @@ namespace CrystalMapper.Linq.Translator
 {
     internal class QueryTranslator : ExpressionVisitor
     {
+        private int parameterCount = 0;
+
         private int tableAliasCount = 0;
+
+        private List<DbParameterExpression> parameters = new List<DbParameterExpression>();
 
         public QueryInfo Translate(SqlLang sqlLang, Expression expression)
         {
             ResultShape resultShape = GetResultShape(expression);
             expression = this.Visit(expression);
-            SelectExpression selectExpression = this.MakeSelectExpression(expression as DbExpression);
+            SelectExpression selectExpression = this.MakeSelect(expression as DbExpression);
+            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+            parameters.ForEach(p => parameterValues.Add(sqlLang.GetParameter(p.Parameter), p.Value));
 
             if (selectExpression != null)
             {
+                selectExpression.WrapInBracks = false;
                 QueryWriter queryWriter = new QueryWriter();
                 selectExpression.WriteQuery(sqlLang, queryWriter);
 
-                string sqlQuery = queryWriter.ToString();
-
-                if (sqlQuery != null && sqlQuery.StartsWith("("))
-                {
-                    sqlQuery = sqlQuery.Substring(sqlQuery.IndexOf('(') + 1);
-                    sqlQuery = sqlQuery.Substring(0, sqlQuery.LastIndexOf(')'));
-                }
-
-                return new QueryInfo(resultShape, selectExpression.UseDefault, selectExpression.ReturnType, selectExpression.Projection, sqlQuery, null);
+                return new QueryInfo(resultShape, selectExpression.UseDefault, selectExpression.ReturnType, selectExpression.Projection, queryWriter.ToString(), parameterValues);
             }
 
             throw new InvalidOperationException(string.Format("Failed to translate expression in to select expression, top node expression is: '{0}. Try to wrap it in select clause'", expression));
         }
 
-        private SelectExpression MakeSelectExpression(DbExpression dbExpression)
+        private SelectExpression MakeSelect(DbExpression dbExpression)
         {
             switch (dbExpression.DbNodeType)
             {
@@ -95,18 +94,32 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(Queryable))
+            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(Enumerable))
             {
 
                 switch (m.Method.Name)
                 {
+
                     case "Select":
                         return new SelectExpression(this.GetNextTableAlias(), (DbExpression)this.Visit(m.Arguments[0]), GetProjectionExpression(m.Arguments[1]));
 
                     case "SelectMany":
-                        Expression[] exps = new Expression[] { m.Arguments[0], m.Arguments[1] };
-                        return new MultiSourceExpression(exps.Select(e => (SourceExpression)this.Visit(e)));
 
+                        MethodCallExpression mcs = this.GetLambda(m.Arguments[1]).Body as MethodCallExpression;
+
+                        if (mcs != null && mcs.Method.Name == "DefaultIfEmpty" && (mcs.Method.DeclaringType == typeof(Queryable) || mcs.Method.DeclaringType == typeof(Enumerable)))
+                        {
+                            JoinExpression joinExpression = (JoinExpression)this.Visit(m.Arguments[0]);
+
+                            return new JoinExpression(joinExpression.Outer, joinExpression.Inner, JoinType.LeftOuterJoin, joinExpression.Join, this.GetProjectionExpression(this.GetLambda(m.Arguments[2])));
+                        }
+                        DbExpression outer = (DbExpression)this.Visit(m.Arguments[0]);
+                        DbExpression inner = (DbExpression)this.Visit(m.Arguments[1]);
+
+                        outer = outer as SourceExpression != null ? outer : this.MakeSelect(outer);
+                        inner = inner as SourceExpression != null ? inner : this.MakeSelect(inner);
+
+                        return new JoinExpression((SourceExpression)outer, (SourceExpression)inner, JoinType.CrossJoin, null, this.GetProjectionExpression(this.GetLambda(m.Arguments[2])));
                     case "Where":
                         return new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1])));
 
@@ -142,7 +155,7 @@ namespace CrystalMapper.Linq.Translator
                     case "Distinct":
                         {
                             if (m.Arguments.Count == 2)
-                                throw new InvalidOperationException("IEqualityComparer<T> argument into sql query");
+                                throw new InvalidOperationException(string.Format("Cannot translate IEqualityComparer<T> ({0}) into sql query", m.Arguments[1]));
 
                             return new DistinctExpression((DbExpression)this.Visit(m.Arguments[0]));
                         }
@@ -172,17 +185,26 @@ namespace CrystalMapper.Linq.Translator
                         return new AggregateExpression((DbExpression)this.Visit(m.Arguments[0]), null, DbConvert.ToEnum<DbExpressionType>(m.Method.Name), m.Method.ReturnType);
 
                     case "Join":
+                    case "GroupJoin":
                         DbBinaryExpression keyExpression = new DbBinaryExpression((DbExpression)this.Visit(this.GetLambda(m.Arguments[2])), (DbExpression)this.Visit(this.GetLambda(m.Arguments[3])), ExpressionType.Equal, typeof(bool));
 
-                        return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
+                        return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), JoinType.InnerJoin, keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
 
+                    case "Contains":
+                        SelectExpression select = (SelectExpression)this.Visit(m.Arguments[0]);
+                        DbExpression member = (DbExpression)this.Visit(m.Arguments[1]);
+
+                        return new InExpression(member, select);
+
+                    case "GroupBy":
+                        if (m.Arguments.Count == 2)
+                            return new GroupByExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(this.GetLambda(m.Arguments[1])));
+
+                        break;
                     default:
                     case "Any":
                     case "All":
-                    case "GroupJoin":
-                    case "GroupBy":
                     case "Skip":
-                    case "Contains":
                     case "Cast":
                     case "Reverse":
                     case "Intersect":
@@ -235,6 +257,14 @@ namespace CrystalMapper.Linq.Translator
                 if (queryable != null)
                     return this.Visit(queryable.Expression);
             }
+            else if (m.Method.DeclaringType == typeof(Enumerable))
+            {
+                switch (m.Method.Name)
+                {
+                    case "DefaultIfEmpty":
+                        return this.Visit(m.Arguments[0]);
+                }
+            }
 
             return new DbMethodCallExpression((DbExpression)this.Visit(m.Object), m.Method, (IEnumerable<DbExpression>)m.Arguments.Select(a => this.Visit(a)));
         }
@@ -253,11 +283,26 @@ namespace CrystalMapper.Linq.Translator
                 return new TableExpression(this.GetNextTableAlias(), tableMetadata);
             }
 
-            return new DbParameterExpression(c.Value);
+            DbParameterExpression dbParameter = new DbParameterExpression(this.GetNextParameter(), c.Value);
+            parameters.Add(dbParameter);
+
+            return dbParameter;
         }
 
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
+            ConstantExpression constant = m.Expression as ConstantExpression;
+            if (constant != null)
+            {
+                if (IsMemberType(m.Member.GetMemberType()))
+                    return this.Visit(Expression.Constant(m.Member.GetValue(constant.Value)));
+                else
+                    return Expression.Constant(m.Member.GetValue(constant.Value));
+            }
+
+            if (m.Expression is MemberExpression)
+                return this.Visit(Expression.MakeMemberAccess(this.Visit(m.Expression), m.Member));
+
             Type declaringType = m.Member.DeclaringType;
             // use the mapping metadata and find the name of this member in the database
             TableMetadata tableMetadata = MetadataProvider.GetMetadata(declaringType);
@@ -305,6 +350,10 @@ namespace CrystalMapper.Linq.Translator
 
         private IEnumerable<ColumnExpression> GetColumns(Type type)
         {
+            //It should not be ienumerable type, needs to be fix
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                type = type.GetGenericArguments()[0];
+
             TableMetadata tableMetadata = MetadataProvider.GetMetadata(type);
             if (tableMetadata != null)
                 foreach (MemberMetadata memberMetadata in tableMetadata.Members)
@@ -339,6 +388,9 @@ namespace CrystalMapper.Linq.Translator
                 return new TableExpression(this.GetNextTableAlias(), tableMetadata);
             }
 
+            if (p.Type.IsGenericType && p.Type.GetGenericTypeDefinition() == typeof(IGrouping<,>))
+                return this.Visit(Expression.Parameter(p.Type.GetGenericArguments()[1], "g"));            
+
             return base.VisitParameter(p);
         }
 
@@ -370,6 +422,11 @@ namespace CrystalMapper.Linq.Translator
         private string GetNextTableAlias()
         {
             return "[t" + tableAliasCount++ + ']';
+        }
+
+        private string GetNextParameter()
+        {
+            return "p" + parameterCount++;
         }
 
         private ResultShape GetResultShape(Expression expression)

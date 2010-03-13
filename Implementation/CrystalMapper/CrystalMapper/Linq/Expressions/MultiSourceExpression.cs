@@ -11,7 +11,7 @@ namespace CrystalMapper.Linq.Expressions
         public ReadOnlyCollection<SourceExpression> Sources { get; private set; }
 
         public MultiSourceExpression(IEnumerable<SourceExpression> sources)
-            : base(".", DbExpressionType.MultiSource, typeof(void))
+            : base(null, DbExpressionType.MultiSource, typeof(void))
         {
             this.Sources = new ReadOnlyCollection<SourceExpression>(sources.ToList());
         }

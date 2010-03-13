@@ -9,20 +9,22 @@ namespace CrystalMapper.Linq.Expressions
 {
     internal class DbParameterExpression : DbExpression
     {
+        public string Parameter { get; private set; }
+
         public object Value { get; private set; }
 
         public bool IsDBNull { get { return this.Value == DBNull.Value; } }
 
-        public DbParameterExpression(object value)
+        public DbParameterExpression(string parameter, object value)
             : base(DbExpressionType.Parameter, value != null ? value.GetType() : typeof(DBNull))
         {
+            this.Parameter = parameter;
             this.Value = value != null ? value : DBNull.Value;
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
-            queryWriter.Write(FormatHelper.FormatDbValue(this.Value == DBNull.Value ? null : this.Value));
+            queryWriter.Write(sqlLang.GetParameter(this.Parameter));
         }
-
     }
 }
