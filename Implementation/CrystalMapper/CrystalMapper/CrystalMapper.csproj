@@ -98,7 +98,6 @@
     <Compile Include="Linq\Expressions\IndirectExpression.cs" />
     <Compile Include="Linq\Expressions\InExpression.cs" />
     <Compile Include="Linq\Expressions\JoinExpression.cs" />
-    <Compile Include="Linq\Expressions\MultiSourceExpression.cs" />
     <Compile Include="Linq\Expressions\OrderByExpression.cs" />
     <Compile Include="Linq\Expressions\ProjectionExpression.cs" />
     <Compile Include="Linq\Expressions\SelectExpression.cs" />

@@ -78,8 +78,7 @@ namespace CrystalMapper.Linq
 
         public object Execute(Expression expression)
         {
-            DataContext dataContext = this.GetDataContext();
-            //expression = PartialEvaluator.Eval(expression);
+            DataContext dataContext = this.GetDataContext();           
             QueryInfo queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
             
             try

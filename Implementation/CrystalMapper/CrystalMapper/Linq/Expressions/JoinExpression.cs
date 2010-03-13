@@ -23,17 +23,14 @@ namespace CrystalMapper.Linq.Expressions
 
         public DbExpression Join { get; private set; }
 
-        public ProjectionExpression Projection { get; private set; }
-
         public JoinExpression(SourceExpression outer, SourceExpression inner, JoinType joinType, DbExpression join, ProjectionExpression projection)
-            : base(null, DbExpressionType.Join, projection.Type)
+            : base(null, projection, DbExpressionType.Join, projection.Type)
         {
             this.Outer = outer;
             this.Inner = inner;
             this.JoinType = joinType;
             this.Join = join;
-            this.Projection = projection;
-
+            
             this.AssignAlias();
         }
 

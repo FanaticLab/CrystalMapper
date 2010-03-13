@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant.cs" />
+    <Compile Include="Linq\GroupByTest.cs" />
+    <Compile Include="Linq\ProjectionTest.cs" />
+    <Compile Include="TestHelper.cs" />
     <Compile Include="Linq\AggregateTest.cs" />
     <Compile Include="Linq\JoinTest.cs" />
     <Compile Include="Linq\WhereTest.cs" />
@@ -66,9 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="instnwnd.sql" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AuthoringTests.txt" />
+    <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
