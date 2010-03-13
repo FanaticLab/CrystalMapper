@@ -20,9 +20,7 @@ namespace CrystalMapper.Linq.Expressions
         public SourceExpression From { get; private set; }
 
         public WhereExpression Where { get; private set; }
-
-        public ProjectionExpression Projection { get; private set; }
-
+       
         private List<SortExpression> sortExpressions = new List<SortExpression>();
 
         private List<GroupByExpression> groupbyExpressions = new List<GroupByExpression>();
@@ -48,14 +46,12 @@ namespace CrystalMapper.Linq.Expressions
         public ReadOnlyCollection<SortExpression> SortExpressions { get { return this.sortExpressions.AsReadOnly(); } }
 
         public SelectExpression(string alias, DbExpression source, ProjectionExpression projection)
-            : base(alias, DbExpressionType.Select, projection.Type)
+            : base(alias, projection, DbExpressionType.Select, projection.Type)
         {
             if (projection == null)
                 throw new ArgumentNullException("projection");
 
-            this.WrapInBracks = true;
-
-            this.Projection = projection;
+            this.WrapInBracks = true;        
 
             do
             {

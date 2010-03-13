@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace CrystalMapper.Linq.Translator
 {
-    //[DebuggerStepThrough]
+    [DebuggerStepThrough]
     internal abstract class ExpressionVisitor
     {
         public ExpressionVisitor()

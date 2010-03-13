@@ -32,18 +32,19 @@ namespace CrystalMapper.Test
 
             var r2 = q2.ToArray();
 
-            //var q3 = from c in Customer.Query()
-            //         from o in Order.Query().Where(o => o.OrderID > 100)
-            //         select new { c, o };
+            var q3 = from c in Customer.Query()
+                     from o in Order.Query().Where(o => o.OrderID > 100)
+                     select new { c, o };
 
-            //var r3 = q3.ToArray();
+            var r3 = q3.ToArray();
 
-            var q4 = from o in Order.Query()
-                    group o by o.CustomerID into g
-                    select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID), Min = g.Min(o => o.OrderID) };
+            var q4 = from c in Customer.Query()
+                     join o in Order.Query() on c.CustomerID equals o.CustomerID
+                     group o by o.CustomerID into g           
+                     select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID), Min = g.Min(o => o.OrderID),  };
 
             var r4 = q4.ToArray();
-            
+
             Console.ReadLine();
         }
 
@@ -56,74 +57,3 @@ namespace CrystalMapper.Test
         }
     }
 }
-
-
-//  #region AdventureWorks
-//  Stopwatch stopwatch = new Stopwatch();
-
-//  //WorkOrder query = new WorkOrder { OrderQty = 9 };
-//  //stopwatch.Start();
-//  //for (int i = 0; i < 1; i++)
-//  //{
-//  //    WorkOrder[] workOrder = WorkOrder.List();// query.ToList();
-//  //}
-//  //stopwatch.Stop();
-//  //Console.WriteLine("WorkORder loading without cache 10 times: {0}", stopwatch.Elapsed);
-//  CachePolicy p = new CachePolicy(typeof(WorkOrder), new TimeSpan(1, 0, 0), CrystalMapper.Cache.CacheType.Select, DateTime.MinValue);
-//  PolicyManager.Initialize(new CachePolicy[] { p });
-//  WorkOrder w = new WorkOrder { OrderQty = 9 };
-//  WorkOrder[] workOrder2 = w.ToList();
-//  while (p.IsExpired)
-//      Thread.Sleep(1000);
-//  WorkOrder query2 = new WorkOrder { OrderQty = 9 };
-
-//  stopwatch.Reset();
-//  stopwatch.Start();
-
-//  for (int i = 0; i < 1; i++)
-//  {
-//      WorkOrder[] workOrder3 = WorkOrder.List();
-//  }
-
-//  stopwatch.Stop();
-//  Console.WriteLine("WorkORder loading without cache 10 times: {0}", stopwatch.Elapsed);
-////  Console.ReadLine();
-//  #endregion
-
-//Stopwatch stopwatch = new Stopwatch();
-
-//TblOrder query1 = new TblOrder { OrderStatus = "Approved" };
-
-//stopwatch.Reset();
-//stopwatch.Start();
-
-//for (int i = 0; i < 1; i++)
-//{
-//    TblOrder[] orders =  TblOrder.List();
-//}
-
-//stopwatch.Stop();
-//Console.WriteLine("Order loading without cache 10 times: {0}", stopwatch.Elapsed);
-
-//CachePolicy p = new CachePolicy(typeof(TblOrder), new TimeSpan(1, 0, 0), CrystalMapper.Cache.CacheType.Select, DateTime.MinValue);
-//PolicyManager.Initialize(new CachePolicy[] { p });
-
-//TblOrder[] orders3 = TblOrder.List();
-//while (p.IsExpired)
-//    Thread.Sleep(1000);
-//TblOrder query = new TblOrder { OrderStatus = "Approved" };
-
-//stopwatch.Reset();
-//stopwatch.Start();
-
-//TblOrder[] orders2;
-
-//for (int i = 0; i < 1; i++)
-//{
-//    orders2 = TblOrder.List();
-//}
-
-//stopwatch.Stop();
-//Console.WriteLine("Orders loading with cache 10 times: {0}", stopwatch.Elapsed);
-
-//Console.ReadLine();

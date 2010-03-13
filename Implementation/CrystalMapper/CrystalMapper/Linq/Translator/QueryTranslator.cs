@@ -46,25 +46,16 @@ namespace CrystalMapper.Linq.Translator
 
         private SelectExpression MakeSelect(DbExpression dbExpression)
         {
-            switch (dbExpression.DbNodeType)
-            {
-                case DbExpressionType.Select:
-                    return (SelectExpression)dbExpression;
-                case DbExpressionType.Table:
-                    {
-                        var columns = from m in (dbExpression as TableExpression).TableMetadata.Members
-                                      select new ColumnExpression(m, new DbMemberExpression(m));
+            if (dbExpression.DbNodeType == DbExpressionType.Select)
+                return (SelectExpression)dbExpression;
 
-                        return new SelectExpression(this.GetNextTableAlias(), dbExpression, new ProjectionExpression(columns.ToList().AsReadOnly(), dbExpression.Type, null));
-                    }
-                case DbExpressionType.Join:
-                    return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((JoinExpression)dbExpression).Projection);
-            }
+            if ((dbExpression as SourceExpression) != null)
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)dbExpression).Projection);
 
             if ((dbExpression as IndirectExpression) != null)
             {
                 DbExpression source = dbExpression;
-                while (!(source is TableExpression) && !(source is SelectExpression))
+                while (source as SourceExpression == null)
                 {
                     IndirectExpression indirectExpression = source as IndirectExpression;
 
@@ -74,19 +65,7 @@ namespace CrystalMapper.Linq.Translator
                     source = indirectExpression.Source;
                 }
 
-                if (source.DbNodeType == DbExpressionType.Table)
-                {
-                    var columns = from m in (source as TableExpression).TableMetadata.Members
-                                  select new ColumnExpression(m, new DbMemberExpression(m));
-
-                    return new SelectExpression(this.GetNextTableAlias(), dbExpression, new ProjectionExpression(columns.ToList().AsReadOnly(), source.Type, null));
-                }
-                else
-                {
-                    SelectExpression selectExp = (source as SelectExpression);
-                    var columns = selectExp.Projection.Columns.Select(c => new ColumnExpression(c.Member, new DbMemberExpression(c.Member))).ToList();
-                    return new SelectExpression(this.GetNextTableAlias(), dbExpression, new ProjectionExpression(columns.AsReadOnly(), selectExp.Projection.Type, null));
-                }
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)source).Projection);          
             }
 
             throw new InvalidOperationException(string.Format("Unable to directly transform {0} Expression into Select Expression", dbExpression.DbNodeType));
@@ -197,10 +176,8 @@ namespace CrystalMapper.Linq.Translator
                         return new InExpression(member, select);
 
                     case "GroupBy":
-                        if (m.Arguments.Count == 2)
-                            return new GroupByExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(this.GetLambda(m.Arguments[1])));
+                        return new GroupByExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(this.GetLambda(m.Arguments[1])));
 
-                        break;
                     default:
                     case "Any":
                     case "All":
@@ -389,7 +366,7 @@ namespace CrystalMapper.Linq.Translator
             }
 
             if (p.Type.IsGenericType && p.Type.GetGenericTypeDefinition() == typeof(IGrouping<,>))
-                return this.Visit(Expression.Parameter(p.Type.GetGenericArguments()[1], "g"));            
+                return this.Visit(Expression.Parameter(p.Type.GetGenericArguments()[1], "g"));
 
             return base.VisitParameter(p);
         }
@@ -489,5 +466,7 @@ namespace CrystalMapper.Linq.Translator
                    || (type.IsGenericType
                        && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
+
+     
     }
 }

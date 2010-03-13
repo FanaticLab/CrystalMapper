@@ -73,7 +73,7 @@ namespace CrystalMapper.Linq.Expressions
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
-                        yield return DbConvert.ToObject(reader.GetValue(i));
+                        yield return DbConvert.CLRValue(reader.GetValue(i));
                 }
             }
             else if (queryInfo.ReturnType == this.Type)
@@ -99,7 +99,7 @@ namespace CrystalMapper.Linq.Expressions
         private object GetObject(Type type, DbDataReader reader, ref int index)
         {
             if (IsMemberType(type))
-                return DbConvert.ToObject(reader[index++]);
+                return DbConvert.CLRValue(reader[index++]);
 
             if (type.IsSubclassOf(typeof(Entity)))
             {
@@ -107,7 +107,7 @@ namespace CrystalMapper.Linq.Expressions
                 TableMetadata entityMetadata = MetadataProvider.GetMetadata(type);
 
                 foreach (MemberMetadata mbMetadata in entityMetadata.Members)
-                    ((PropertyInfo)mbMetadata.Member).SetValue(entity, DbConvert.ToObject(reader[index++]), null);
+                    ((PropertyInfo)mbMetadata.Member).SetValue(entity, DbConvert.CLRValue(reader[index++]), null);
 
                 return entity;
             }
@@ -126,7 +126,7 @@ namespace CrystalMapper.Linq.Expressions
             foreach (PropertyInfo propInfo in type.GetProperties())
             {
                 if (IsMemberType(propInfo.PropertyType))
-                    parameters.Add(DbConvert.ToObject(reader[index++]));
+                    parameters.Add(DbConvert.CLRValue(reader[index++]));
                 else
                     parameters.Add(GetObject(propInfo.PropertyType, reader, ref index));
             }

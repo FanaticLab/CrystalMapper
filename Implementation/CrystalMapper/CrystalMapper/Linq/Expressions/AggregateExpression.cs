@@ -17,21 +17,6 @@ namespace CrystalMapper.Linq.Expressions
             : base(source, aggregateType, type)
         {
             this.Member = member;
-            if (this.Member == null)
-            {
-                while (!(source is TableExpression) && !(source is SelectExpression))
-                {
-                    IndirectExpression indirectExpression = source as IndirectExpression;
-
-                    if (indirectExpression == null)
-                        throw new InvalidOperationException(string.Format("Unable to find source expression: '{0}'", source));
-
-                    source = indirectExpression.Source;
-                }
-
-                if (source is SelectExpression)
-                    this.Member = new DbMemberExpression(((SelectExpression)source).Projection.Columns.First().Member);
-            }
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)

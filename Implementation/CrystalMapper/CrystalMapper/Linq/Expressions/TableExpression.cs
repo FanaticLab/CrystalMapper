@@ -12,7 +12,7 @@ namespace CrystalMapper.Linq.Expressions
         public TableMetadata TableMetadata { get; private set; }
 
         public TableExpression(string alias, TableMetadata tableMetadata)
-            : base(alias, DbExpressionType.Table, tableMetadata.Type)
+            : base(alias, GetProjectionExpression(tableMetadata), DbExpressionType.Table, tableMetadata.Type)
         {
             if (tableMetadata == null)
                 throw new ArgumentNullException("tableMetadata");
@@ -28,6 +28,14 @@ namespace CrystalMapper.Linq.Expressions
         public override string GetAlias(Type type)
         {
             return (type == this.TableMetadata.Type) ? this.Alias : null;
+        }
+
+        public static ProjectionExpression GetProjectionExpression(TableMetadata tableMetadata)
+        {
+            var columns = from m in tableMetadata.Members
+                          select new ColumnExpression(m, new DbMemberExpression(m));
+
+            return new ProjectionExpression(columns.ToList().AsReadOnly(), tableMetadata.Type, null);
         }
     }
 }

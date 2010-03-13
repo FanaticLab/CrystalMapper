@@ -75,7 +75,7 @@ namespace CrystalMapper
             this.propertyChanged.Fire(this, e);
         }
 
-        public Entity()
+        protected Entity()
         {
             this.Parents = new List<Entity>();
             this.Children = new List<Entity>();

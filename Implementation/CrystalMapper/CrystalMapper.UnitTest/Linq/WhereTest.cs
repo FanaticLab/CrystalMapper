@@ -38,28 +38,6 @@ namespace CrystalMapper.UnitTest.Linq
             }
         }
 
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
         [TestMethod]
         public void WhereEqualTest()
         {
@@ -74,6 +52,38 @@ namespace CrystalMapper.UnitTest.Linq
             var customers = Customer.Query().Where(c => c.CustomerID != "ALFKI").ToList();
 
             Assert.AreNotEqual(0, customers.Count);
+        }
+
+        [TestMethod]
+        public void WhereGreaterThen()
+        {
+            Assert.AreEqual(
+                            TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT > 100")
+                            , Order.Query().Where(o => o.Freight > 100).Count());
+        }
+
+        [TestMethod]
+        public void WhereLessThen()
+        {
+            Assert.AreEqual(
+                          TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT < 100")
+                          , Order.Query().Where(o => o.Freight < 100).Count());
+        }
+
+        [TestMethod]
+        public void WhereGreaterThenAndEqualTo()
+        {
+            Assert.AreEqual(
+                            TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT >= 100")
+                            , Order.Query().Where(o => o.Freight > 100).Count());
+        }
+
+        [TestMethod]
+        public void WhereLessThenAndEqualTo()
+        {
+            Assert.AreEqual(
+                          TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT <= 100")
+                          , Order.Query().Where(o => o.Freight < 100).Count());
         }
     }
 }

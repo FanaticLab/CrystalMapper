@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CrystalMapper.UnitTest.Northwind;
 
 namespace CrystalMapper.UnitTest.Linq
 {
@@ -19,52 +20,39 @@ namespace CrystalMapper.UnitTest.Linq
             //
         }
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
+        [TestMethod]
+        public void CrossJoinTest()
         {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
+            var count = (from c in Customer.Query()
+                             from o in Order.Query()
+                             select new { Customer = c, Order = o }).Count();
+
+            Assert.AreEqual(TestHelper.ExecuteScalar("SELECT COUNT(*) FROM CUSTOMERS CROSS JOIN ORDERS"), count);
         }
 
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
+        [TestMethod]
+        public void InnerJoinTest()
+        {
+            var count = (from c in Customer.Query()
+                         join o in Order.Query() on c.CustomerID equals o.CustomerID
+                         select new { Customer = c, Order = o }).Count();
+
+            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
+                                                      FROM CUSTOMERS C
+                                                      INNER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID"), count);
+        }
 
         [TestMethod]
-        public void TestMethod1()
+        public void LeftOuterJoinTest()
         {
-            //
-            // TODO: Add test logic	here
-            //
+            var count = (from c in Customer.Query()
+                         join o in Order.Query() on c.CustomerID equals o.CustomerID into l
+                         from ol in l.DefaultIfEmpty()
+                         select new { Customer = c, Order = ol }).Count();
+
+            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
+                                                      FROM CUSTOMERS C
+                                                      LEFT OUTER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID"), count);
         }
     }
 }
