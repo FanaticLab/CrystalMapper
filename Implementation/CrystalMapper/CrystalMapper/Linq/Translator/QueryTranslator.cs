@@ -65,7 +65,7 @@ namespace CrystalMapper.Linq.Translator
                     source = indirectExpression.Source;
                 }
 
-                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)source).Projection);          
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)source).Projection);
             }
 
             throw new InvalidOperationException(string.Format("Unable to directly transform {0} Expression into Select Expression", dbExpression.DbNodeType));
@@ -165,8 +165,34 @@ namespace CrystalMapper.Linq.Translator
 
                     case "Join":
                     case "GroupJoin":
-                        DbBinaryExpression keyExpression = new DbBinaryExpression((DbExpression)this.Visit(this.GetLambda(m.Arguments[2])), (DbExpression)this.Visit(this.GetLambda(m.Arguments[3])), ExpressionType.Equal, typeof(bool));
+                        DbExpression outerKey = (DbExpression)this.Visit(this.GetLambda(m.Arguments[2]));
+                        DbExpression innerKey = (DbExpression)this.Visit(this.GetLambda(m.Arguments[3]));
+                        DbBinaryExpression keyExpression = null;
 
+                        if (outerKey as ProjectionExpression != null)
+                        {            
+                            ProjectionExpression outerCompositeKey = (ProjectionExpression)outerKey;
+                            ProjectionExpression innerCompositeKey = innerKey as ProjectionExpression;
+
+                            if (innerCompositeKey == null || outerCompositeKey.Columns.Count != innerCompositeKey.Columns.Count)
+                                throw new InvalidOperationException(string.Format("Join inner key '{0}' must contains same number of elements as in outer key '{1}'", this.GetLambda(m.Arguments[3]), this.GetLambda(m.Arguments[2])));
+
+                            int index = 0;
+                            foreach (ColumnExpression column in outerCompositeKey.Columns)
+                            {
+                                if (keyExpression == null)
+                                    keyExpression = new DbBinaryExpression(column.Column, innerCompositeKey.Columns[index].Column, ExpressionType.Equal, typeof(bool));
+                                else
+                                {
+                                    DbBinaryExpression right = new DbBinaryExpression(column.Column, innerCompositeKey.Columns[index].Column, ExpressionType.Equal, typeof(bool));
+                                    keyExpression = new DbBinaryExpression(keyExpression, right, ExpressionType.AndAlso, typeof(bool));
+                                }
+                                index++;
+                            }
+                        }
+                        else
+                            keyExpression = new DbBinaryExpression(outerKey, innerKey, ExpressionType.Equal, typeof(bool));
+                        
                         return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), JoinType.InnerJoin, keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
 
                     case "Contains":
@@ -467,6 +493,6 @@ namespace CrystalMapper.Linq.Translator
                        && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
-     
+
     }
 }

@@ -12,6 +12,7 @@ using System.Threading;
 using CrystalMapper.Test.Northwind;
 using CrystalMapper.Linq;
 using CrystalMapper.Data;
+using System.Collections;
 
 
 
@@ -21,7 +22,8 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
-            var q = Customer.Query().Where(c => Order.Query().Select(o => o.CustomerID).Contains(c.CustomerID));
+            var r = Customer.Query().Where(c => Order.Query().Select(o => o.CustomerID).Contains(c.CustomerID)).ToArray();
+            Write(r);
 
             var s = new { O = new { I = new { OrderId = 100 } }, CustomerId = "ALFKI" };
 
@@ -31,29 +33,31 @@ namespace CrystalMapper.Test
                       select new { c, o });
 
             var r2 = q2.ToArray();
+            Write(r2);
 
-            var q3 = from c in Customer.Query()
-                     from o in Order.Query().Where(o => o.OrderID > 100)
-                     select new { c, o };
+            var q3 = (from c in Customer.Query()
+                     from o in Order.Query().Where(o => o.OrderID > 100)                     
+                     select new { c, o }).Take(1000);
 
             var r3 = q3.ToArray();
+            Write(r3);
 
             var q4 = from c in Customer.Query()
-                     join o in Order.Query() on c.CustomerID equals o.CustomerID
-                     group o by o.CustomerID into g           
-                     select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID), Min = g.Min(o => o.OrderID),  };
+                     join o in Order.Query() on new { c.CustomerID, ID = c.CustomerID } equals new { o.CustomerID, ID = o.CustomerID }
+                     group o by o.CustomerID into g
+                     select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID), Min = g.Min(o => o.OrderID), };
 
             var r4 = q4.ToArray();
+            Write(r4);
 
             Console.ReadLine();
         }
 
-        static void SimpleSelectQuery()
+        static void Write(IEnumerable collection)
         {
-            var q = from c in Customer.Query()
-                    select c;
-
-            var r = q.ToArray();
+            int count = 0;
+            foreach (var obj in collection)
+                Console.WriteLine("{0}: {1}", count++, obj);
         }
     }
 }
