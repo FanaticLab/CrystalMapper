@@ -152,8 +152,6 @@ namespace CrystalMapper.Generic.Collection
 
         public IEnumerator<TEntity> GetEnumerator()
         {
-            if (!this.IsLoaded) this.Load();
-
             foreach (TEntity entity in this.collection)
                 yield return entity;
         }
