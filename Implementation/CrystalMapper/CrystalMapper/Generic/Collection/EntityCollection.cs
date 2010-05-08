@@ -18,7 +18,7 @@ namespace CrystalMapper.Generic.Collection
     public delegate TEntity[] GetChildren<TEntity>()
     where TEntity : Entity<TEntity>, new();
 
-    public class EntityCollection<TEntity> : ICollection<TEntity>, INotifyCollectionChanged
+    public class EntityCollection<TEntity> : ICollection<TEntity>, INotifyCollectionChanged, ICollection, INotifyPropertyChanged
         where TEntity : Entity<TEntity>, new()
     {
         #region Private Members
@@ -69,7 +69,11 @@ namespace CrystalMapper.Generic.Collection
             this.Associate = associate;
             this.DeAssociate = deAssociate;
             this.GetChildren = getChildren;
-        }
+            this.collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                this.OnProperyChanged(new PropertyChangedEventArgs("Count"));
+            };
+        }               
 
         public void Load()
         {
@@ -172,5 +176,36 @@ namespace CrystalMapper.Generic.Collection
         }
 
         #endregion
+
+        #region ICollection Members
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            ((ICollection)this.collection).CopyTo(array, index);
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { return ((ICollection)this.collection).IsSynchronized; }
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { return ((ICollection)this.collection).SyncRoot; }
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        protected virtual void OnProperyChanged(PropertyChangedEventArgs e)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, e);
+        }
     }
 }
