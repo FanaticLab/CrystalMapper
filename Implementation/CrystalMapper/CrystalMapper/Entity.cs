@@ -148,18 +148,19 @@ namespace CrystalMapper
                 case PersistedStatus.New:
                     if (!this.Create(dataContext))
                         throw new InvalidOperationException(string.Format("Failed to create entity '{0}' in database", this));
+                    this.PersistedStatus = PersistedStatus.Updated;
                     break;
                 case PersistedStatus.Dirty:
                     if (!this.Update(dataContext))
                         throw new InvalidOperationException(string.Format("Failed to update entity '{0}' in database", this));
+                    this.PersistedStatus = PersistedStatus.Updated;
                     break;
                 case PersistedStatus.Updated:
                     break;
                 case PersistedStatus.Deleted:
                     throw new InvalidOperationException(string.Format("Entity '{0}' is already deleted from database", this));
                 default:
-                    throw new InvalidOperationException(string.Format("Unrecognize entity persistence status '{0}'", this.PersistedStatus));
-                    break;
+                    throw new InvalidOperationException(string.Format("Unrecognize entity persistence status '{0}'", this.PersistedStatus));                   
             }
         }
 
