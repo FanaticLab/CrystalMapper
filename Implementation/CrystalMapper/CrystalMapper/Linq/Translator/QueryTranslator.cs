@@ -50,7 +50,7 @@ namespace CrystalMapper.Linq.Translator
                 return (SelectExpression)dbExpression;
 
             if ((dbExpression as SourceExpression) != null)
-                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)dbExpression).Projection);
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, (ProjectionExpression)((SourceExpression)dbExpression).Projection.Clone());
 
             if ((dbExpression as IndirectExpression) != null)
             {
@@ -65,7 +65,7 @@ namespace CrystalMapper.Linq.Translator
                     source = indirectExpression.Source;
                 }
 
-                return new SelectExpression(this.GetNextTableAlias(), dbExpression, ((SourceExpression)source).Projection);
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, (ProjectionExpression)((SourceExpression)source).Projection.Clone());
             }
 
             throw new InvalidOperationException(string.Format("Unable to directly transform {0} Expression into Select Expression", dbExpression.DbNodeType));
@@ -317,6 +317,10 @@ namespace CrystalMapper.Linq.Translator
                 if (memberMetadata != null)
                     return new DbMemberExpression(memberMetadata);
             }
+            
+            tableMetadata = MetadataProvider.GetMetadata(m.Member.GetMemberType());
+            if (tableMetadata != null)
+                return new TableExpression(null, tableMetadata);
 
             return new DbMemberExpression(new MemberMetadata(m.Member));
         }
@@ -489,6 +493,7 @@ namespace CrystalMapper.Linq.Translator
         {
             return type.IsPrimitive
                    || type == typeof(string)
+                   || type == typeof(DateTime)
                    || (type.IsGenericType
                        && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }

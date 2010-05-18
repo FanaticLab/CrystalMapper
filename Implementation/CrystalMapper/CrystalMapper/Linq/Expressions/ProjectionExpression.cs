@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Data.Common;
 using CoreSystem.Data;
 using System.Collections;
+using CrystalMapper.ObjectModel;
 
 namespace CrystalMapper.Linq.Expressions
 {
@@ -94,6 +95,11 @@ namespace CrystalMapper.Linq.Expressions
             }
             else
                 throw new InvalidOperationException(string.Format("Cannot translate result into type '{0}'", queryInfo.ReturnType));
+        }
+
+        public override object  Clone()
+        {
+           return new ProjectionExpression(this.Columns.Select(c => (ColumnExpression)c.Clone()).ToReadOnly(), this.Type, this.ProjectionFunction);
         }
 
         private object GetObject(Type type, DbDataReader reader, ref int index)

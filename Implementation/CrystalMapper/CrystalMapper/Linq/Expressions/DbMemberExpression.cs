@@ -27,6 +27,6 @@ namespace CrystalMapper.Linq.Expressions
                 queryWriter.Write(this.TableAlias).Write(".");
 
             queryWriter.Write(FormatHelper.WrapInBrackets(this.MemberMetadata.ColumnName));
-        }      
+        }     
     }
 }

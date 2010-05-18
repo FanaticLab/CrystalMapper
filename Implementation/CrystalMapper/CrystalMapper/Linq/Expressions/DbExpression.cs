@@ -11,7 +11,7 @@ using CrystalMapper.Linq.Metadata;
 
 namespace CrystalMapper.Linq.Expressions
 {
-    internal abstract class DbExpression : Expression
+    internal abstract class DbExpression : Expression, ICloneable
     {
         public DbExpressionType DbNodeType { get { return (DbExpressionType)this.NodeType; } }
 
@@ -38,5 +38,14 @@ namespace CrystalMapper.Linq.Expressions
 
             return queryWriter.ToString();
         }
+
+        #region ICloneable Members
+
+        public virtual object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 }
