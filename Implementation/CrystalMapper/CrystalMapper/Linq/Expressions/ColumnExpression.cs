@@ -43,5 +43,10 @@ namespace CrystalMapper.Linq.Expressions
             foreach (DbExpression expression in this.Column.GetNodes())
                 yield return expression;
         }
+
+        public override object Clone()
+        {
+            return new ColumnExpression(this.Member, (DbExpression)this.Column.Clone(), this.ColumnAlias);
+        }
     }
 }

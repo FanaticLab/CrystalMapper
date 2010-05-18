@@ -27,7 +27,7 @@ namespace CrystalMapper.Lang
                 case SqlLangType.PSql:
                     return new PSqlLang();
                 default:
-                    throw new NotSupportedException(string.Format("CrstalMapper does not support Sql Language Type: {0}", sqlLangType));
+                    throw new NotSupportedException(string.Format("CrystalMapper does not support Sql Language Type: {0}", sqlLangType));
             }
         }
 

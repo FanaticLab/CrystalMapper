@@ -130,16 +130,16 @@ namespace CrystalMapper.Linq
                 case CoreSystem.Data.DbProviderType.Oracle:
                     return SqlLang.GetSqlLang(SqlLangType.PSql);
 
+                case CoreSystem.Data.DbProviderType.SqlServerCe:
                 case CoreSystem.Data.DbProviderType.SqlServer:
                     return SqlLang.GetSqlLang(SqlLangType.TSql);
 
                 case CoreSystem.Data.DbProviderType.SQLite:
                     return SqlLang.GetSqlLang(SqlLangType.Sqlite);
-
-                case CoreSystem.Data.DbProviderType.SqlServerCe:
+                
                 case CoreSystem.Data.DbProviderType.UnSupported:
                 default:
-                    throw new NotSupportedException(string.Format("Provider; '{0}' is not supported", this.GetDataContext().Database.DbProvider)); ;
+                    throw new NotSupportedException(string.Format("LINQ is not supported for Provider: '{0}'", this.GetDataContext().Database.DbProvider)); ;
             }
         }
 

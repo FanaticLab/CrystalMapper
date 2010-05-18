@@ -27,7 +27,7 @@ namespace CrystalMapper.Linq.Expressions
             switch (sqlLang.SqlLangType)
             {
                 case SqlLangType.TSql:
-                    queryWriter.Write(" TOP ").Write(this.Count).Write(" ");
+                    queryWriter.Write(" TOP (").Write(this.Count).Write(") ");
                     break;
                 case SqlLangType.Sqlite:
                     queryWriter.Write("LIMIT ").Write(this.Count).Write(" ");

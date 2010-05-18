@@ -51,6 +51,14 @@ namespace CrystalMapper.Linq.Expressions
                 yield return expression;
         }
 
+        public override object Clone()
+        {
+            DbExpression left = (Left != null) ? (DbExpression)Left.Clone() : null;
+            DbExpression right = (Right != null) ? (DbExpression)Right.Clone() : null;
+            
+            return new DbBinaryExpression(left, right, this.Operator, this.Type);
+        }      
+
         private string GetOperator()
         {
             switch (this.Operator)
@@ -108,7 +116,7 @@ namespace CrystalMapper.Linq.Expressions
         private bool IsBoolean(Type type)
         {
             return type == typeof(bool) || type == typeof(bool?);
-        }
+        }        
 
         public static DbBinaryExpression RemainderExpression(DbExpression left, DbExpression right, Type type)
         {
