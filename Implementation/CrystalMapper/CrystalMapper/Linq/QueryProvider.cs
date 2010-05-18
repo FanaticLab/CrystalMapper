@@ -77,10 +77,9 @@ namespace CrystalMapper.Linq
         }
 
         public object Execute(Expression expression)
-        {
-            DataContext dataContext = this.GetDataContext();           
-            QueryInfo queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
-            
+        {          
+            QueryInfo queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);         
+            DataContext dataContext = this.GetDataContext();    
             try
             {                
                 using (DbCommand command = dataContext.CreateCommand(queryInfo.SqlQuery))
