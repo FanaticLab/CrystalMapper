@@ -13,7 +13,7 @@ namespace CrystalMapper.Linq.Expressions
 {
     internal abstract class DbExpression : Expression, ICloneable
     {
-        public DbExpressionType DbNodeType { get { return (DbExpressionType)this.NodeType; } }
+        public DbExpressionType DbNodeType { get { return (DbExpressionType)this.NodeType; } }        
 
         public DbExpression(DbExpressionType nodeType)
             : this(nodeType, typeof(void))
