@@ -144,12 +144,6 @@
     <Content Include="Lib\CoreSystem.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
-      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
-      <Name>CoreSystem</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -172,6 +166,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
+      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
+      <Name>CoreSystem</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
