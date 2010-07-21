@@ -80,7 +80,7 @@ namespace <%= BusinessNamespace %>
 		
 		#region Queries
 		
-		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetInsertQuery(SourceTable) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + "SELECT SCOPE_IDENTITY();" <% } %>;
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetInsertQuery(SourceTable) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + " SELECT SCOPE_IDENTITY();" <% } %>;
 		
 		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetUpdateQuery(SourceTable) %>;
 		
