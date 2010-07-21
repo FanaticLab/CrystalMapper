@@ -644,7 +644,7 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassVarName(TableKeySchema key)
     {
-        string suffix = "Ref";
+        string suffix = "";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
             if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
@@ -658,7 +658,7 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassPropName(TableKeySchema key)
     {
-        string suffix = "Ref";
+        string suffix = "";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
             if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
