@@ -8,7 +8,7 @@ using CoreSystem.Collections;
 using System;
 
 namespace CrystalMapper
-{
+{    
     public abstract class Entity : INotifyPropertyChanged
     {
         #region Events

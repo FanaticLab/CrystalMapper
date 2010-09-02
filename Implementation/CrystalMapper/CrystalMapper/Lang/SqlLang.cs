@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CrystalMapper.Linq.Helper;
 
 namespace CrystalMapper.Lang
 {
@@ -9,7 +10,8 @@ namespace CrystalMapper.Lang
     {
         TSql,
         Sqlite,
-        PSql
+        PSql,
+        MySql
     }
 
     internal abstract class SqlLang
@@ -26,6 +28,8 @@ namespace CrystalMapper.Lang
                     return new SqliteLang();
                 case SqlLangType.PSql:
                     return new PSqlLang();
+                case SqlLangType.MySql:
+                    return new MySqlLang();
                 default:
                     throw new NotSupportedException(string.Format("CrystalMapper does not support Sql Language Type: {0}", sqlLangType));
             }
@@ -73,6 +77,11 @@ namespace CrystalMapper.Lang
         public virtual bool AggregateArgumentIsPredicate(string aggregateName)
         {
             return aggregateName == "Count" || aggregateName == "LongCount";
+        }
+
+        public virtual string Wrap(string name)
+        {
+            return FormatHelper.WrapInBrackets(name);
         }
     }
 }

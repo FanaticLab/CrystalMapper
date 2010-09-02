@@ -65,7 +65,12 @@ namespace CrystalMapper.Linq.Expressions
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
-                        yield return System.Convert.ChangeType(reader.GetValue(i), queryInfo.ReturnType);
+                    {
+                        var value = reader.GetValue(i);
+                        yield return (value == DBNull.Value)
+                            ? Activator.CreateInstance(queryInfo.ReturnType)
+                            : System.Convert.ChangeType(reader.GetValue(i), queryInfo.ReturnType);
+                    }
                 }
             }
             else if (queryInfo.ReturnType == typeof(string)
@@ -97,9 +102,9 @@ namespace CrystalMapper.Linq.Expressions
                 throw new InvalidOperationException(string.Format("Cannot translate result into type '{0}'", queryInfo.ReturnType));
         }
 
-        public override object  Clone()
+        public override object Clone()
         {
-           return new ProjectionExpression(this.Columns.Select(c => (ColumnExpression)c.Clone()).ToReadOnly(), this.Type, this.ProjectionFunction);
+            return new ProjectionExpression(this.Columns.Select(c => (ColumnExpression)c.Clone()).ToReadOnly(), this.Type, this.ProjectionFunction);
         }
 
         private object GetObject(Type type, DbDataReader reader, ref int index)
@@ -163,6 +168,7 @@ namespace CrystalMapper.Linq.Expressions
         {
             return type.IsPrimitive
                    || type == typeof(string)
+                   || type == typeof(DateTime)
                    || (type.IsGenericType
                        && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }

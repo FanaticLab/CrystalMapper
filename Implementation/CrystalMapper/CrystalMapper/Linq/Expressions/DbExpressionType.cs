@@ -30,7 +30,8 @@ namespace CrystalMapper.Linq.Expressions
         Average,
         Join,
         In,
-        GroupBy
+        GroupBy,
+        Array
     }
 
 }

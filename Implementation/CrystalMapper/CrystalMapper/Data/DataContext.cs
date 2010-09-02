@@ -3,7 +3,7 @@
  * 
  * Date: 6/5/2009 2:09:52 PM
  * 
- * Class: TableAttribute
+ * Class: DataContext
  * 
  * Copyright: Faraz Masood Khan @ Copyright ©  2009
  * 
