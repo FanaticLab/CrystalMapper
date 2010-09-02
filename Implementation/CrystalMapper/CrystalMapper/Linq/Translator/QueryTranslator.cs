@@ -100,7 +100,7 @@ namespace CrystalMapper.Linq.Translator
 
                         return new JoinExpression((SourceExpression)outer, (SourceExpression)inner, JoinType.CrossJoin, null, this.GetProjectionExpression(this.GetLambda(m.Arguments[2])));
                     case "Where":
-                        return new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1])));
+                        return new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1])));
 
                     case "Take":
                         return new TakeExpression((int)(m.Arguments[1] as ConstantExpression).Value, false, false, (DbExpression)this.Visit(m.Arguments[0]));
@@ -170,7 +170,7 @@ namespace CrystalMapper.Linq.Translator
                         DbBinaryExpression keyExpression = null;
 
                         if (outerKey as ProjectionExpression != null)
-                        {            
+                        {
                             ProjectionExpression outerCompositeKey = (ProjectionExpression)outerKey;
                             ProjectionExpression innerCompositeKey = innerKey as ProjectionExpression;
 
@@ -192,14 +192,14 @@ namespace CrystalMapper.Linq.Translator
                         }
                         else
                             keyExpression = new DbBinaryExpression(outerKey, innerKey, ExpressionType.Equal, typeof(bool));
-                        
+
                         return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), JoinType.InnerJoin, keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
 
                     case "Contains":
-                        SelectExpression select = (SelectExpression)this.Visit(m.Arguments[0]);
+                        SourceExpression source = (SourceExpression)this.Visit(m.Arguments[0]);
                         DbExpression member = (DbExpression)this.Visit(m.Arguments[1]);
 
-                        return new InExpression(member, select);
+                        return new InExpression(member, source);
 
                     case "GroupBy":
                         return new GroupByExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(this.GetLambda(m.Arguments[1])));
@@ -269,7 +269,7 @@ namespace CrystalMapper.Linq.Translator
                 }
             }
 
-            return new DbMethodCallExpression((DbExpression)this.Visit(m.Object), m.Method, (IEnumerable<DbExpression>)m.Arguments.Select(a => this.Visit(a)));
+            return new DbMethodCallExpression((DbExpression)this.Visit(m.Object), m.Method, (IEnumerable<DbExpression>)m.Arguments.Select(a => (DbExpression)this.Visit(a)));
         }
 
         protected override Expression VisitConstant(ConstantExpression c)
@@ -297,10 +297,23 @@ namespace CrystalMapper.Linq.Translator
             ConstantExpression constant = m.Expression as ConstantExpression;
             if (constant != null)
             {
-                if (IsMemberType(m.Member.GetMemberType()))
+                var memberType = m.Member.GetMemberType();
+                if (IsMemberType(memberType))
                     return this.Visit(Expression.Constant(m.Member.GetValue(constant.Value)));
-                else
-                    return Expression.Constant(m.Member.GetValue(constant.Value));
+                else if (memberType.IsArray && IsMemberType(memberType.GetElementType()))
+                {
+                    List<DbParameterExpression> arrayParameters = new List<DbParameterExpression>();
+                    foreach (var parameter in (Array)m.Member.GetValue(constant.Value))
+                    {
+                        var dbParameter = new DbParameterExpression(this.GetNextParameter(), parameter);
+                        arrayParameters.Add(dbParameter);
+                        this.parameters.Add(dbParameter);
+                    }
+
+                    return new ArrayExpression(arrayParameters.AsReadOnly(), memberType.GetElementType());
+                }
+
+                return Expression.Constant(m.Member.GetValue(constant.Value));
             }
 
             if (m.Expression is MemberExpression)
@@ -317,7 +330,7 @@ namespace CrystalMapper.Linq.Translator
                 if (memberMetadata != null)
                     return new DbMemberExpression(memberMetadata);
             }
-            
+
             tableMetadata = MetadataProvider.GetMetadata(m.Member.GetMemberType());
             if (tableMetadata != null)
                 return new TableExpression(null, tableMetadata);
@@ -428,7 +441,7 @@ namespace CrystalMapper.Linq.Translator
         [DebuggerStepThrough]
         private string GetNextTableAlias()
         {
-            return "[t" + tableAliasCount++ + ']';
+            return "t" + tableAliasCount++;
         }
 
         private string GetNextParameter()

@@ -8,12 +8,15 @@ namespace CrystalMapper.Linq.Expressions
 {
     internal class WhereExpression : IndirectExpression
     {
-        public DbBinaryExpression BinaryExpression { get; private set; }
+        public DbExpression BinaryExpression { get; private set; }
 
-        public WhereExpression(DbExpression source, DbBinaryExpression binaryExpression)
+        public WhereExpression(DbExpression source, DbExpression expression)
             : base(source, DbExpressionType.Where, typeof(bool))
         {
-            this.BinaryExpression = binaryExpression;
+            if (expression is DbBinaryExpression || expression is DbMethodCallExpression)
+                this.BinaryExpression = expression;
+            else
+                throw new InvalidOperationException("Where should have method call or binary expression");
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)

@@ -24,10 +24,11 @@ using CrystalMapper.Helper;
 using CrystalMapper.Cache;
 using System.Linq;
 using CrystalMapper.Linq;
+using System;
 
 
 namespace CrystalMapper.Generic
-{
+{    
     public abstract class Entity<T> : Entity
         where T : Entity<T>, new()
     {

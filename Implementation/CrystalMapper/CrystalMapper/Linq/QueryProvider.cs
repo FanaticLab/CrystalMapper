@@ -118,7 +118,10 @@ namespace CrystalMapper.Linq
             finally
             {
                 if (this.disposeDataContext && dataContext != null)
+                {
                     dataContext.Dispose();
+                    this.dataContext = null;
+                }
             }
         }   
 
@@ -136,6 +139,9 @@ namespace CrystalMapper.Linq
                 case CoreSystem.Data.DbProviderType.SQLite:
                     return SqlLang.GetSqlLang(SqlLangType.Sqlite);
                 
+                case CoreSystem.Data.DbProviderType.MySql:
+                    return SqlLang.GetSqlLang(SqlLangType.MySql);
+
                 case CoreSystem.Data.DbProviderType.UnSupported:
                 default:
                     throw new NotSupportedException(string.Format("LINQ is not supported for Provider: '{0}'", this.GetDataContext().Database.DbProvider)); ;

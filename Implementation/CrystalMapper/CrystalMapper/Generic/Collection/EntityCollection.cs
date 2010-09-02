@@ -17,7 +17,7 @@ namespace CrystalMapper.Generic.Collection
 
     public delegate TEntity[] GetChildren<TEntity>()
     where TEntity : Entity<TEntity>, new();
-
+        
     public class EntityCollection<TEntity> : ICollection<TEntity>, INotifyCollectionChanged, ICollection, INotifyPropertyChanged
         where TEntity : Entity<TEntity>, new()
     {

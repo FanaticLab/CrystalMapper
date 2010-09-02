@@ -29,7 +29,8 @@ namespace CrystalMapper.Linq.Expressions
                 case SqlLangType.TSql:
                     queryWriter.Write(" TOP (").Write(this.Count).Write(") ");
                     break;
-                case SqlLangType.Sqlite:
+                case SqlLangType.MySql:
+                case SqlLangType.Sqlite:                
                     queryWriter.Write("LIMIT ").Write(this.Count).Write(" ");
                     break;
                 case SqlLangType.PSql:

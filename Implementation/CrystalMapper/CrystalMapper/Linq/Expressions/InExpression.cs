@@ -11,12 +11,13 @@ namespace CrystalMapper.Linq.Expressions
     {
         public DbExpression Member { get { return this.Left; } }
 
-        public SelectExpression Select { get { return (SelectExpression)this.Right; } }
+        public SourceExpression Source { get { return (SourceExpression)this.Right; } }
 
-        public InExpression(DbExpression member, SelectExpression select)
-            : base(member, select, (ExpressionType)DbExpressionType.In, typeof(bool))
+        public InExpression(DbExpression member, SourceExpression source)
+            : base(member, source, (ExpressionType)DbExpressionType.In, typeof(bool))
         {
-            this.Select.WrapInBracks = false;
+            if (source is SelectExpression)
+                ((SelectExpression)this.Source).WrapInBracks = false;
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
@@ -24,7 +25,7 @@ namespace CrystalMapper.Linq.Expressions
             queryWriter.Write("(");
             this.Member.WriteQuery(sqlLang, queryWriter);
             queryWriter.Write(" IN (");
-            this.Select.WriteQuery(sqlLang, queryWriter);
+            this.Source.WriteQuery(sqlLang, queryWriter);
             queryWriter.Write("))");
         }
     }

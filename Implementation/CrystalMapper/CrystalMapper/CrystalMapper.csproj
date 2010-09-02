@@ -81,11 +81,13 @@
   <ItemGroup>
     <Compile Include="Cache\CacheManager.cs" />
     <Compile Include="Cache\CacheProvider.cs" />
+    <Compile Include="Lang\MySqlLang.cs" />
     <Compile Include="Lang\PSqlLang.cs" />
     <Compile Include="Lang\SqliteLang.cs" />
     <Compile Include="Lang\SqlLang.cs" />
     <Compile Include="Lang\TSqlLang.cs" />
     <Compile Include="Linq\Expressions\AggregateExpression.cs" />
+    <Compile Include="Linq\Expressions\ArrayExpression.cs" />
     <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
     <Compile Include="Linq\DataContextExtension.cs" />
     <Compile Include="Linq\Expressions\DbExpressionType.cs" />
@@ -168,6 +170,9 @@
       <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
       <Name>CoreSystem</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -32,11 +32,52 @@ namespace CrystalMapper.Linq.Expressions
                 case SqlLangType.TSql:
                     this.WriteTSql(sqlLang, queryWriter);
                     return;
+                case SqlLangType.MySql:
+                    this.WriterMySql(sqlLang, queryWriter);
+                    return;
                 case SqlLangType.Sqlite:                   
                 case SqlLangType.PSql:
                 default:
-                    throw new NotSupportedException(string.Format("Sql language: '{0}' is not supported yet", sqlLang.SqlLangType));
+                    throw new NotSupportedException(string.Format("Method Call is not support for language: '{0}'", sqlLang.SqlLangType));
             }
+        }
+
+        private void WriterMySql(SqlLang sqlLang, QueryWriter queryWriter)
+        {
+            if (this.Method.DeclaringType == typeof(string))
+            {
+                switch (this.Method.Name)
+                {
+                    case "StartsWith":
+                        queryWriter.Write("(");
+                        this.Object.WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(" LIKE CONCAT(");
+                        this.Arguments[0].WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(", '%'))");
+                        return;
+                    case "EndsWith":
+                        queryWriter.Write("(");
+                        this.Object.WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(" LIKE CONCAT ('%', ");
+                        this.Arguments[0].WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(") )");
+                        return;
+                    case "Contains":
+                        queryWriter.Write("(");
+                        this.Object.WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(" LIKE CONCAT('%', ");
+                        this.Arguments[0].WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(", '%') )");
+                        return;
+                    case "IsNullOrEmpty":
+                    case "ToUpper":
+                    case "ToLower":
+                        this.WriteTSql(sqlLang, queryWriter);
+                        return;
+                }
+            }
+
+            throw new NotSupportedException(string.Format("Method '{0}' is not support for language: 'MySql'", this.Method.Name));
         }
 
         private void WriteTSql(SqlLang sqlLang, QueryWriter queryWriter)

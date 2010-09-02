@@ -33,7 +33,7 @@ namespace CrystalMapper.Linq.Expressions
             this.Column.WriteQuery(sqlLang, queryWriter);
 
             if (!string.IsNullOrEmpty(this.ColumnAlias))
-                queryWriter.Write(" AS ").Write(FormatHelper.WrapInBrackets(this.ColumnAlias));
+                queryWriter.Write(" AS ").Write(sqlLang.Wrap(this.ColumnAlias));
         }
 
         public override IEnumerable<DbExpression> GetNodes()
