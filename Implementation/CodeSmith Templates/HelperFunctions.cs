@@ -22,7 +22,8 @@ public class HelperFunctions : CodeTemplate
                 case "OracleSchemaProvider" :
                 case "SQLiteSchemaProvider" :
                     return ':';        
-                case "SqlSchemaProvider" :      
+                case "SqlSchemaProvider" :   
+                case "MySQLSchemaProvider" :   
                 case "SqlCompactSchemaProvider" :
                     return '@';  
                 default:
@@ -117,10 +118,16 @@ public class HelperFunctions : CodeTemplate
 	public string GetInsertQuery(TableSchema table)
 	{       
       	string query = "\"INSERT INTO " + table.FullName + "(";
-		foreach(ColumnSchema column in table.Columns)
-        {  
-            if(!IsIdentityColumn(column))
-                query += " [" + GetColumnName(column) + "],";                
+		
+        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        {
+            foreach(ColumnSchema column in table.Columns)
+                if(!IsIdentityColumn(column))
+                    query += GetColumnName(column) + ",";                            
+        } else {
+            foreach(ColumnSchema column in table.Columns)
+                if(!IsIdentityColumn(column))
+                    query += " [" + GetColumnName(column) + "],";                         
         }
         
 		query = query.TrimEnd(new char[] {','}) + ") VALUES (";
@@ -137,22 +144,42 @@ public class HelperFunctions : CodeTemplate
 	}
 	
 	public string GetUpdateQuery(TableSchema table)
-	{     
-		string query = "\"UPDATE " + table.FullName + " SET ";
-		foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
-				query += " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +",";
-                
-		query = query.TrimEnd(new char[] {','}) + " WHERE ";
-		
-        if(table.HasPrimaryKey) 
-        {
-		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-			query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
-		} else {
+	{   
+        string query = "\"UPDATE " + table.FullName + " SET ";
         
-    	foreach(ColumnSchema column in table.Columns)
-		query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
+        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        {		
+            foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
+                    query += " " + GetColumnName(column) + " = " + GetParamName(column) +",";
+                    
+            query = query.TrimEnd(new char[] {','}) + " WHERE ";
             
+            if(table.HasPrimaryKey) 
+            {
+            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";		
+            } else {
+            
+            foreach(ColumnSchema column in table.Columns)
+            query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";               
+            }
+            
+        } else {
+            
+            foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
+                    query += " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +",";
+                    
+            query = query.TrimEnd(new char[] {','}) + " WHERE ";
+            
+            if(table.HasPrimaryKey) 
+            {
+            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
+            } else {
+            
+            foreach(ColumnSchema column in table.Columns)
+            query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";               
+            }
         }
         
 		return query.Substring(0, query.Length -  5) + "\"" ;
@@ -160,18 +187,34 @@ public class HelperFunctions : CodeTemplate
 	
 	public string GetDeleteQuery(TableSchema table)
 	{        
-		string query = "\"DELETE FROM " + table.FullName + " WHERE ";		
-        if(table.HasPrimaryKey) {
-		foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-			query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND";
-        } else {
-   		foreach(ColumnSchema column in table.Columns)
-	        query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND"; 
-        }
-            
-		query = query.Substring(0, query.Length - 3) + "\"";		
+		string query = "\"DELETE FROM " + table.FullName + " WHERE ";	
+        
+        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        {	
+            if(table.HasPrimaryKey) {
+            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query +=  " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
+            } else {
+            foreach(ColumnSchema column in table.Columns)
+                query +=  " " + GetColumnName(column) + " = " + GetParamName(column) + " AND"; 
+            }
+                
+            query = query.Substring(0, query.Length - 3) + "\"";		
 		
-		return query;
+        } else {
+            
+            if(table.HasPrimaryKey) {
+            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND";
+            } else {
+            foreach(ColumnSchema column in table.Columns)
+                query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND"; 
+            }
+                
+            query = query.Substring(0, query.Length - 3) + "\"";	
+        }
+		
+        return query;
 	}
 
     public string GetPrivateVariableNamePlural(TableSchema table, ColumnSchema column)
@@ -265,7 +308,7 @@ public class HelperFunctions : CodeTemplate
 
     private bool ColumnHasAlias(ColumnSchema column)
     {
-        return column.ExtendedProperties.Contains(extendedPropertyName);
+        return column != null && column.ExtendedProperties.Contains(extendedPropertyName);
     }
     private string GetNameFromColumn(ColumnSchema column)
     {
@@ -644,13 +687,13 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassVarName(TableKeySchema key)
     {
-        string suffix = "";
+        string suffix = "Ref";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
-            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
+            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable) && key.ForeignKeyMemberColumns[0].Column != null)
                 return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
         
-        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1)
+        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1 && key.ForeignKeyMemberColumns[0].Column != null)
             return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
                         
         return StringUtil.ToCamelCase(GetClassName(key.PrimaryKeyTable)) + suffix;
@@ -658,7 +701,7 @@ public class HelperFunctions : CodeTemplate
     
     public string GetForeignKeyClassPropName(TableKeySchema key)
     {
-        string suffix = "";
+        string suffix = "Ref";
         
         foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
             if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
