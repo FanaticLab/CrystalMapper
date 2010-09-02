@@ -45,9 +45,9 @@
 
 <%@ Register Name="BusinessObjectTemplateOracle" Template="BusinessObjectTemplate.oracle.cst" %>
 <%@ Register Name="BusinessObjectTemplateSQLite" Template="BusinessObjectTemplate.sqlite.cst" %>
+<%@ Register Name="BusinessObjectTemplateMySQL" Template="BusinessObjectTemplate.mysql.cst" %>
 <%@ Register Name="BusinessObjectTemplateSqlServer" Template="BusinessObjectTemplate.sqlserver.cst" %>
 <%@ Register Name="BusinessObjectTemplateSqlServerCe" Template="BusinessObjectTemplate.sqlserverce.cst" %>
-
 
 <script runat="template">
 
@@ -124,9 +124,21 @@ private void RenderBusinessObjects(TableSchema table)
             businessObject.ExcludedTables = this.ExcludedTables;
             businessObject.RenderToFile(GetOutputFile(fileName, null), true);
          }
-            break;         
+            break;        
+        case "MySQLSchemaProvider" :
+        {   
+            BusinessObjectTemplateMySQL businessObject = this.Create<BusinessObjectTemplateMySQL>();
+            businessObject.BusinessNamespace = this.BusinessNamespace;
+            businessObject.BaseNamespace = this.BaseNamespace;
+            businessObject.VsVersion = this.VsVersion;
+            businessObject.SourceTable = table;
+            businessObject.TablePrefix = this.TablePrefix;
+            businessObject.ExcludedTables = this.ExcludedTables;
+            businessObject.RenderToFile(GetOutputFile(fileName, null), true);
+         }
+            break;      
         default:
-            throw new InvalidOperationException (string.Format("This no template exists for schema provider '{0}'", table.Database.Provider.Name));
+            throw new InvalidOperationException (string.Format("There is no template exists for schema provider '{0}'", table.Database.Provider.Name));
     }
 }
 
