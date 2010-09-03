@@ -11,6 +11,7 @@ using System.Threading;
 using System.Data.Common;
 using System.Reflection;
 using CoreSystem.Data;
+using CrystalMapper.Generic;
 
 namespace CrystalMapper.Cache
 {

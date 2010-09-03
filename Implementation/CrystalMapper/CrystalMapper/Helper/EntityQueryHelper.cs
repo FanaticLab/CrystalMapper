@@ -3,6 +3,7 @@ using System.Reflection;
 using CrystalMapper.Mapping;
 using System.Text;
 using System.Collections.Generic;
+using CrystalMapper.Generic;
 
 namespace CrystalMapper.Helper
 {
