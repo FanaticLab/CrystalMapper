@@ -193,7 +193,16 @@ namespace CrystalMapper.Linq.Translator
                         else
                             keyExpression = new DbBinaryExpression(outerKey, innerKey, ExpressionType.Equal, typeof(bool));
 
-                        return new JoinExpression((SourceExpression)this.Visit(m.Arguments[0]), (SourceExpression)this.Visit(m.Arguments[1]), JoinType.InnerJoin, keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
+                        var outerSource = this.Visit(m.Arguments[0]);
+                        var innerSource = this.Visit(m.Arguments[1]);
+
+                        if (!(outerSource is SourceExpression))
+                            outerSource = this.MakeSelect((DbExpression)outerSource);
+
+                        if (!(innerSource is SourceExpression))
+                            innerSource = this.MakeSelect((DbExpression)innerSource);
+
+                        return new JoinExpression((SourceExpression)outerSource, (SourceExpression)innerSource, JoinType.InnerJoin, keyExpression, this.GetProjectionExpression(this.GetLambda(m.Arguments[4])));
 
                     case "Contains":
                         SourceExpression source = (SourceExpression)this.Visit(m.Arguments[0]);

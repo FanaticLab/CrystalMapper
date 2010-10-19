@@ -20,7 +20,7 @@ namespace CrystalMapper.Linq.Expressions
         public SourceExpression From { get; private set; }
 
         public WhereExpression Where { get; private set; }
-       
+
         private List<SortExpression> sortExpressions = new List<SortExpression>();
 
         private List<GroupByExpression> groupbyExpressions = new List<GroupByExpression>();
@@ -51,7 +51,7 @@ namespace CrystalMapper.Linq.Expressions
             if (projection == null)
                 throw new ArgumentNullException("projection");
 
-            this.WrapInBracks = true;        
+            this.WrapInBracks = true;
 
             do
             {
@@ -208,7 +208,7 @@ namespace CrystalMapper.Linq.Expressions
                 groupbyExp.WriteQuery(sqlLang, queryWriter);
             }
 
-            if (sqlLang.SqlLangType == SqlLangType.Sqlite && this.Take != null)
+            if ((sqlLang.SqlLangType & (SqlLangType.Sqlite | SqlLangType.MySql)) != 0 && this.Take != null)
             {
                 queryWriter.WriteLine();
                 this.Take.WriteQuery(sqlLang, queryWriter);

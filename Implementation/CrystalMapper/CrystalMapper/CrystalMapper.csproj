@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Cache\CacheManager.cs" />
     <Compile Include="Cache\CacheProvider.cs" />
+    <Compile Include="Helper\EntityQueryHelper.cs" />
+    <Compile Include="Helper\PolicyHelper.cs" />
     <Compile Include="Lang\MySqlLang.cs" />
     <Compile Include="Lang\PSqlLang.cs" />
     <Compile Include="Lang\SqliteLang.cs" />
@@ -125,7 +127,6 @@
     <Compile Include="Linq\Translator\QueryTranslator.cs" />
     <Compile Include="Linq\Helper\TypeSystem.cs" />
     <Compile Include="Policy\CacheType.cs" />
-    <Compile Include="Helper\PolicyHelper.cs" />
     <Compile Include="Policy\CachePolicy.cs" />
     <Compile Include="Policy\EntityPolicy.cs" />
     <Compile Include="Policy\PolicyManager.cs" />
@@ -138,7 +139,6 @@
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helper\EntityQueryHelper.cs" />
     <Compile Include="ObjectModel\ReadOnlyExtension.cs" />
     <Compile Include="SQLite\SQLiteWrapper.cs" />
   </ItemGroup>
