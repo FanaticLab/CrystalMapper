@@ -6,12 +6,13 @@ using CrystalMapper.Linq.Helper;
 
 namespace CrystalMapper.Lang
 {
+    [Flags]
     internal enum SqlLangType
     {
-        TSql,
-        Sqlite,
-        PSql,
-        MySql
+        TSql = 1,
+        Sqlite = 2,
+        PSql = 4,
+        MySql = 8
     }
 
     internal abstract class SqlLang
