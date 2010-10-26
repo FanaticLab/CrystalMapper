@@ -110,7 +110,12 @@ namespace CrystalMapper.Linq.Expressions
         private object GetObject(Type type, DbDataReader reader, ref int index)
         {
             if (IsMemberType(type))
-                return DbConvert.CLRValue(reader[index++]);
+            {
+               if(type.IsAssignableFrom(reader.GetFieldType(index)))
+                   return DbConvert.CLRValue(reader[index++]);
+
+                return System.Convert.ChangeType(reader[index++], type);
+            }
 
             if (type.IsSubclassOf(typeof(Entity)))
             {
