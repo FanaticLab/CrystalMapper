@@ -59,17 +59,7 @@ namespace CrystalMapper.Linq.Expressions
                 {
                     case DbExpressionType.Where:
                         WhereExpression whereExpression = source as WhereExpression;
-                        if (this.Where != null)
-                        {
-                            this.Where = new WhereExpression(whereExpression.Source,
-                                                                                    new DbBinaryExpression(this.Where.BinaryExpression,
-                                                                                                            whereExpression.BinaryExpression,
-                                                                                                            ExpressionType.And,
-                                                                                                            typeof(bool)));
-                        }
-                        else
-                            this.Where = whereExpression;
-
+                        this.AddWhere(whereExpression);
                         source = whereExpression.Source;
                         break;
                     case DbExpressionType.Take:
@@ -99,6 +89,9 @@ namespace CrystalMapper.Linq.Expressions
                                     column.Column = groupby.ByColumn;
                                 }
                             }
+
+                            if (column.Column is AggregateExpression && ((AggregateExpression)column.Column).Source is WhereExpression)
+                             this.AddWhere((WhereExpression)((AggregateExpression)column.Column).Source);                                
                         }
                         source = groupby.Source;
                         break;
@@ -119,7 +112,7 @@ namespace CrystalMapper.Linq.Expressions
 
             this.AssignAlias();
         }
-
+     
         public override string GetAlias(Type type)
         {
             return this.ReturnType == type ? this.Alias : (string.IsNullOrEmpty(this.From.GetAlias(type)) ? null : this.Alias);
@@ -238,6 +231,20 @@ namespace CrystalMapper.Linq.Expressions
 
                 dbMembers.ForEach(e => e.TableAlias = this.From.GetAlias(e.MemberMetadata.Member.DeclaringType));
             }
+        }
+
+        private void AddWhere(WhereExpression whereExpression)
+        {
+            if (this.Where != null)
+            {
+                this.Where = new WhereExpression(whereExpression.Source,
+                                                                        new DbBinaryExpression(this.Where.BinaryExpression,
+                                                                                                whereExpression.BinaryExpression,
+                                                                                                ExpressionType.And,
+                                                                                                typeof(bool)));
+            }
+            else
+                this.Where = whereExpression;
         }
     }
 }
