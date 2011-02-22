@@ -14,8 +14,6 @@ using CrystalMapper.Linq;
 using CrystalMapper.Data;
 using System.Collections;
 
-
-
 namespace CrystalMapper.Test
 {
     class Program
