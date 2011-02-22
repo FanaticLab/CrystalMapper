@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeSmith Templates", "CodeSmith Templates", "{ED9EFE1A-2183-403A-9C76-CB5563836F25}"
 	ProjectSection(SolutionItems) = preProject
 		..\CodeSmith Templates\BusinessObjectsGenerator.cst = ..\CodeSmith Templates\BusinessObjectsGenerator.cst
+		..\CodeSmith Templates\BusinessObjectTemplate.mysql.cst = ..\CodeSmith Templates\BusinessObjectTemplate.mysql.cst
 		..\CodeSmith Templates\BusinessObjectTemplate.oracle.cst = ..\CodeSmith Templates\BusinessObjectTemplate.oracle.cst
 		..\CodeSmith Templates\BusinessObjectTemplate.sqlite.cst = ..\CodeSmith Templates\BusinessObjectTemplate.sqlite.cst
 		..\CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst = ..\CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst
