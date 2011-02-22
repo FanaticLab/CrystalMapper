@@ -8,12 +8,18 @@ using System.Reflection;
 using CrystalMapper.Lang;
 using CrystalMapper.Linq.Metadata;
 
-
 namespace CrystalMapper.Linq.Expressions
 {
     internal abstract class DbExpression : Expression, ICloneable
     {
-        public DbExpressionType DbNodeType { get { return (DbExpressionType)this.NodeType; } }        
+
+#if NET40        
+        public DbExpressionType DbNodeType { get; private set; }
+
+        public override ExpressionType NodeType { get { return (ExpressionType)this.DbNodeType; } }
+#else
+        public DbExpressionType DbNodeType { get { return (DbExpressionType)this.NodeType; } }
+#endif
 
         public DbExpression(DbExpressionType nodeType)
             : this(nodeType, typeof(void))
@@ -21,7 +27,11 @@ namespace CrystalMapper.Linq.Expressions
 
         public DbExpression(DbExpressionType nodeType, Type type)
             : base((ExpressionType)nodeType, type)
-        { }
+        {
+#if NET40 
+            this.DbNodeType = nodeType;
+#endif
+        }
 
         public abstract void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter);
 
