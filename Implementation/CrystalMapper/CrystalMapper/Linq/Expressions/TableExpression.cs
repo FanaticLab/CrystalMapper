@@ -35,7 +35,7 @@ namespace CrystalMapper.Linq.Expressions
             var columns = from m in tableMetadata.Members
                           select new ColumnExpression(m, new DbMemberExpression(m));
 
-            return new ProjectionExpression(columns.ToList().AsReadOnly(), tableMetadata.Type, null);
+            return new ProjectionExpression(columns.ToList().AsReadOnly(), tableMetadata.Type);
         }
     }
 }
