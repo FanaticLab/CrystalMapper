@@ -35,7 +35,7 @@ namespace CrystalMapper.Helper
                 ColumnAttribute[] dbColumnAttributes;
                 if ((dbColumnAttributes = (ColumnAttribute[])propertyInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null
                     && dbColumnAttributes.Length == 1)
-                    selectQuery.Append("[").Append(dbColumnAttributes[0].ColumnName).Append("],");
+                    selectQuery.Append("'").Append(dbColumnAttributes[0].ColumnName).Append("',");
             }
             selectQuery.Remove(selectQuery.Length - 1, 1).Append(SQL_FROM);
 
