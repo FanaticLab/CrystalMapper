@@ -8,8 +8,9 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using CrystalMapper.Lang;
 using System.Data.Linq;
-using CrystalMapper.Linq.Metadata;
 using CrystalMapper.Generic;
+using CrystalMapper.ObjectModel;
+using CrystalMapper.Linq.Metadata;
 using System.Diagnostics;
 using CoreSystem.Data;
 using CoreSystem.ValueTypeExtension;
@@ -50,7 +51,7 @@ namespace CrystalMapper.Linq.Translator
                 return (SelectExpression)dbExpression;
 
             if ((dbExpression as SourceExpression) != null)
-                return new SelectExpression(this.GetNextTableAlias(), dbExpression, (ProjectionExpression)((SourceExpression)dbExpression).Projection.Clone());
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, this.GetSourceProjection((SourceExpression)dbExpression));
 
             if ((dbExpression as IndirectExpression) != null)
             {
@@ -65,7 +66,7 @@ namespace CrystalMapper.Linq.Translator
                     source = indirectExpression.Source;
                 }
 
-                return new SelectExpression(this.GetNextTableAlias(), dbExpression, (ProjectionExpression)((SourceExpression)source).Projection.Clone());
+                return new SelectExpression(this.GetNextTableAlias(), dbExpression, GetSourceProjection((SourceExpression)source));
             }
 
             throw new InvalidOperationException(string.Format("Unable to directly transform {0} Expression into Select Expression", dbExpression.DbNodeType));
@@ -108,26 +109,26 @@ namespace CrystalMapper.Linq.Translator
                     case "First":
                     case "Single":
                         if (m.Arguments.Count == 2)
-                            return new TakeExpression(1, false, false, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1]))));
+                            return new TakeExpression(1, false, false, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1]))));
 
                         return new TakeExpression(1, false, false, (DbExpression)this.Visit(m.Arguments[0]));
 
                     case "FirstOrDefault":
                     case "SingleOrDefault":
                         if (m.Arguments.Count == 2)
-                            return new TakeExpression(1, true, false, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1]))));
+                            return new TakeExpression(1, true, false, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1]))));
 
                         return new TakeExpression(1, true, false, (DbExpression)this.Visit(m.Arguments[0]));
 
                     case "Last":
                         if (m.Arguments.Count == 2)
-                            return new TakeExpression(1, false, true, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1]))));
+                            return new TakeExpression(1, false, true, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1]))));
 
                         return new TakeExpression(1, false, true, (DbExpression)this.Visit(m.Arguments[0]));
 
                     case "LastOrDefault":
                         if (m.Arguments.Count == 2)
-                            return new TakeExpression(1, true, true, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbBinaryExpression)this.Visit(GetLambda(m.Arguments[1]))));
+                            return new TakeExpression(1, true, true, new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1]))));
 
                         return new TakeExpression(1, true, true, (DbExpression)this.Visit(m.Arguments[0]));
 
@@ -289,10 +290,10 @@ namespace CrystalMapper.Linq.Translator
 
                 TableMetadata tableMetadata = MetadataProvider.GetMetadata(type);
 
-                if (tableMetadata == null)
-                    throw new Exception(string.Format("It was not possible to get metadata for {0}!", type.Name));
+                if (tableMetadata != null)
+                    return new TableExpression(this.GetNextTableAlias(), tableMetadata);
 
-                return new TableExpression(this.GetNextTableAlias(), tableMetadata);
+                return this.Visit(((IQueryable)c.Value).Expression);
             }
 
             DbParameterExpression dbParameter = new DbParameterExpression(this.GetNextParameter(), c.Value);
@@ -322,7 +323,9 @@ namespace CrystalMapper.Linq.Translator
                     return new ArrayExpression(arrayParameters.AsReadOnly(), memberType.GetElementType());
                 }
 
-                return Expression.Constant(m.Member.GetValue(constant.Value));
+                return (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof(IQueryable<>)) 
+                        ? this.Visit(Expression.Constant(m.Member.GetValue(constant.Value))) 
+                        : Expression.Constant(m.Member.GetValue(constant.Value));
             }
 
             if (m.Expression is MemberExpression)
@@ -335,7 +338,6 @@ namespace CrystalMapper.Linq.Translator
             if (tableMetadata != null)
             {
                 MemberMetadata memberMetadata = tableMetadata.Members.FirstOrDefault(md => md.Member == m.Member);
-
                 if (memberMetadata != null)
                     return new DbMemberExpression(memberMetadata);
             }
@@ -344,7 +346,10 @@ namespace CrystalMapper.Linq.Translator
             if (tableMetadata != null)
                 return new TableExpression(null, tableMetadata);
 
-            return new DbMemberExpression(new MemberMetadata(m.Member));
+            if (IsMemberType(m.Member.GetMemberType()))
+                return new DbMemberExpression(new MemberMetadata(m.Member));
+
+            return new ProjectionExpression(m.Type.GetProperties().Select(p => new ColumnExpression(new MemberMetadata(p), new DbMemberExpression(new MemberMetadata(p)))).ToReadOnly(), m.Type);
         }
 
         protected override Expression VisitLambda(LambdaExpression lambda)
@@ -356,7 +361,6 @@ namespace CrystalMapper.Linq.Translator
                 int index = 0;
                 string memberName;
                 PropertyInfo[] members = nex.Type.GetProperties();
-
 
                 foreach (Expression ex in nex.Arguments)
                 {
@@ -372,6 +376,24 @@ namespace CrystalMapper.Linq.Translator
                 }
 
                 return new ProjectionExpression(columns.AsReadOnly(), nex.Type, lambda.Compile());
+            }
+            else if (lambda.Body is MemberInitExpression)
+            {
+                MemberInitExpression iex = (MemberInitExpression)lambda.Body;
+                NewExpression nex = (NewExpression)iex.NewExpression;
+                List<ColumnExpression> columns = new List<ColumnExpression>();
+
+                foreach (MemberAssignment binding in iex.Bindings)
+                {
+                    DbExpression dbExpression = this.Visit(binding.Expression) as DbExpression;
+
+                    if (IsMemberType(binding.Member.GetMemberType()))
+                        columns.Add(new ColumnExpression(new MemberMetadata(binding.Member), dbExpression, binding.Member.Name));
+                    else
+                        columns.AddRange(GetColumns(binding.Member.GetMemberType()));
+                }
+
+                return new ProjectionExpression(columns.AsReadOnly(), nex.Type, iex.Bindings);
             }
 
             return this.Visit(lambda.Body);
@@ -420,7 +442,11 @@ namespace CrystalMapper.Linq.Translator
             if (p.Type.IsGenericType && p.Type.GetGenericTypeDefinition() == typeof(IGrouping<,>))
                 return this.Visit(Expression.Parameter(p.Type.GetGenericArguments()[1], "g"));
 
-            return base.VisitParameter(p);
+            List<ColumnExpression> columns = new List<ColumnExpression>();
+            foreach (var property in p.Type.GetProperties())
+                columns.Add(new ColumnExpression(new MemberMetadata(property), new DbMemberExpression(new MemberMetadata(property))));
+
+            return new ProjectionExpression(columns.ToReadOnly(), p.Type);
         }
 
         protected override Expression VisitUnary(UnaryExpression u)
@@ -493,7 +519,7 @@ namespace CrystalMapper.Linq.Translator
                 DbMemberExpression dbMember = (DbMemberExpression)expression;
                 List<ColumnExpression> columns = new List<ColumnExpression>();
                 columns.Add(new ColumnExpression(dbMember.MemberMetadata, dbMember));
-                return new ProjectionExpression(columns.AsReadOnly(), expression.Type, null);
+                return new ProjectionExpression(columns.AsReadOnly(), expression.Type);
             }
 
             if (expression is TableExpression)
@@ -501,14 +527,20 @@ namespace CrystalMapper.Linq.Translator
                 var columns = from m in (expression as TableExpression).TableMetadata.Members
                               select new ColumnExpression(m, new DbMemberExpression(m));
 
-                return new ProjectionExpression(columns.ToList().AsReadOnly(), expression.Type, null);
+                return new ProjectionExpression(columns.ToList().AsReadOnly(), expression.Type);
             }
 
             {
                 List<ColumnExpression> columns = new List<ColumnExpression>();
                 columns.Add(new ColumnExpression(null, (DbExpression)expression));
-                return new ProjectionExpression(columns.AsReadOnly(), expression.Type, null);
+                return new ProjectionExpression(columns.AsReadOnly(), expression.Type);
             }
+        }
+
+        private ProjectionExpression GetSourceProjection(SourceExpression source)
+        {
+            var projection = source.Projection;
+            return new ProjectionExpression(projection.Columns.Select(c => new ColumnExpression(c.Member, new DbMemberExpression(c.Member))).ToReadOnly(), projection.Type, projection.ProjectionFunction, projection.Bindings);
         }
 
         private bool IsMemberType(Type type)

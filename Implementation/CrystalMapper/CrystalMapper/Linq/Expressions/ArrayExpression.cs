@@ -13,7 +13,7 @@ namespace CrystalMapper.Linq.Expressions
         public ReadOnlyCollection<DbParameterExpression> Parameters { get; private set; }
 
         public ArrayExpression(ReadOnlyCollection<DbParameterExpression> parameters, Type elementType)
-            : base(null, new ProjectionExpression(EmptyColumns, elementType, null), DbExpressionType.Array, elementType)
+            : base(null, new ProjectionExpression(EmptyColumns, elementType), DbExpressionType.Array, elementType)
         {
             this.Parameters = parameters;
         }

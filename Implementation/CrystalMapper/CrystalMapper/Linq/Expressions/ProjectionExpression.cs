@@ -10,6 +10,7 @@ using System.Data.Common;
 using CoreSystem.Data;
 using System.Collections;
 using CrystalMapper.ObjectModel;
+using System.Linq.Expressions;
 
 namespace CrystalMapper.Linq.Expressions
 {
@@ -19,10 +20,27 @@ namespace CrystalMapper.Linq.Expressions
 
         public Delegate ProjectionFunction { get; private set; }
 
-        public ProjectionExpression(ReadOnlyCollection<ColumnExpression> columns, Type type, Delegate projectionFunction)
+        public ReadOnlyCollection<MemberBinding> Bindings { get; private set; }
+
+        public ProjectionExpression(ReadOnlyCollection<ColumnExpression> columns, Type type)
             : base(DbExpressionType.Projection, type)
         {
             this.Columns = columns;
+        }
+
+        public ProjectionExpression(ReadOnlyCollection<ColumnExpression> columns, Type type, Delegate projectionFunction)
+            : this(columns, type, projectionFunction, null)
+        { }
+
+        public ProjectionExpression(ReadOnlyCollection<ColumnExpression> columns, Type type, ReadOnlyCollection<MemberBinding> bindings)
+            : this(columns, type, null, bindings)
+        { }
+
+        public ProjectionExpression(ReadOnlyCollection<ColumnExpression> columns, Type type, Delegate projectionFunction, ReadOnlyCollection<MemberBinding> bindings)
+            : base(DbExpressionType.Projection, type)
+        {
+            this.Columns = columns;
+            this.Bindings = bindings;
             this.ProjectionFunction = projectionFunction;
         }
 
@@ -60,7 +78,7 @@ namespace CrystalMapper.Linq.Expressions
                     yield return entity;
                 }
             }
-            else if (queryInfo.ReturnType.IsPrimitive)
+            else if (queryInfo.ReturnType.IsPrimitive || queryInfo.ReturnType == typeof(DateTime))
             {
                 while (reader.Read())
                 {
@@ -73,7 +91,7 @@ namespace CrystalMapper.Linq.Expressions
                     }
                 }
             }
-            else if (queryInfo.ReturnType == typeof(string)
+            else if (queryInfo.ReturnType == typeof(string) 
                  || (queryInfo.ReturnType.IsGenericType && queryInfo.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
                 while (reader.Read())
@@ -84,19 +102,40 @@ namespace CrystalMapper.Linq.Expressions
             }
             else if (queryInfo.ReturnType == this.Type)
             {
-                ConstructorInfo constructor = this.Type.GetConstructors()[0];
+                int index = 0;
+                var constructor = this.Type.GetConstructors()[0];
+                List<object> parameters = new List<object>();
                 PropertyInfo[] members = this.Type.GetProperties();
 
-                while (reader.Read())
+                if (this.Bindings != null)
                 {
-                    int index = 0;
-                    List<object> parameters = new List<object>();
+                    while (reader.Read())
+                    {
+                        var value = constructor.Invoke(null);
 
-                    foreach (PropertyInfo prop in members)
-                        parameters.Add(GetObject(prop.PropertyType, reader, ref index));
+                        foreach (MemberAssignment binding in this.Bindings)
+                            binding.Member.SetValue(value, GetObject(binding.Expression.Type, reader, ref index));
 
-                    yield return constructor.Invoke(parameters.ToArray());
+                        yield return value;
+
+                        index = 0;
+                        parameters.Clear();
+                    }
                 }
+                else
+                {
+                    while (reader.Read())
+                    {
+                        foreach (PropertyInfo prop in members)
+                            parameters.Add(GetObject(prop.PropertyType, reader, ref index));
+
+                        yield return constructor.Invoke(parameters.ToArray());
+
+                        index = 0;
+                        parameters.Clear();
+                    }
+                }
+
             }
             else
                 throw new InvalidOperationException(string.Format("Cannot translate result into type '{0}'", queryInfo.ReturnType));
@@ -104,15 +143,15 @@ namespace CrystalMapper.Linq.Expressions
 
         public override object Clone()
         {
-            return new ProjectionExpression(this.Columns.Select(c => (ColumnExpression)c.Clone()).ToReadOnly(), this.Type, this.ProjectionFunction);
+            return new ProjectionExpression(this.Columns.Select(c => (ColumnExpression)c.Clone()).ToReadOnly(), this.Type, this.ProjectionFunction, this.Bindings);
         }
 
         private object GetObject(Type type, DbDataReader reader, ref int index)
         {
             if (IsMemberType(type))
             {
-               if(type.IsAssignableFrom(reader.GetFieldType(index)))
-                   return DbConvert.CLRValue(reader[index++]);
+                if (type.IsAssignableFrom(reader.GetFieldType(index)))
+                    return DbConvert.CLRValue(reader[index++]);
 
                 return System.Convert.ChangeType(reader[index++], type);
             }
