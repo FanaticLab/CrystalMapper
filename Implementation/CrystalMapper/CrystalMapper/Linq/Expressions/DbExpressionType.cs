@@ -16,6 +16,7 @@ namespace CrystalMapper.Linq.Expressions
         Where,
         Member,
         Take,
+        Skip,
         Remainder,
         Distinct,
         OrderBy,

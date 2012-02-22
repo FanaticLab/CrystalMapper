@@ -105,7 +105,8 @@ namespace CrystalMapper.Linq.Translator
 
                     case "Take":
                         return new TakeExpression((int)(m.Arguments[1] as ConstantExpression).Value, false, false, (DbExpression)this.Visit(m.Arguments[0]));
-
+                    case "Skip":
+                        return new SkipExpression((int)(m.Arguments[1] as ConstantExpression).Value, (DbExpression)this.Visit(m.Arguments[0]));
                     case "First":
                     case "Single":
                         if (m.Arguments.Count == 2)
@@ -216,8 +217,7 @@ namespace CrystalMapper.Linq.Translator
 
                     default:
                     case "Any":
-                    case "All":
-                    case "Skip":
+                    case "All":                  
                     case "Cast":
                     case "Reverse":
                     case "Intersect":

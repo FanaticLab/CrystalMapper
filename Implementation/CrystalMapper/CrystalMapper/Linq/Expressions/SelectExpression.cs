@@ -17,6 +17,8 @@ namespace CrystalMapper.Linq.Expressions
 
         public TakeExpression Take { get; private set; }
 
+        public SkipExpression Skip { get; private set; }
+
         public SourceExpression From { get; private set; }
 
         public WhereExpression Where { get; private set; }
@@ -65,6 +67,12 @@ namespace CrystalMapper.Linq.Expressions
                     case DbExpressionType.Take:
                         this.Take = source as TakeExpression;
                         source = this.Take.Source;
+                        this.Take.Skip = this.Skip;
+                        break;
+                    case DbExpressionType.Skip:
+                        this.Skip = source as SkipExpression;
+                        source = this.Skip.Source;
+                        this.Take.Skip = this.Skip;
                         break;
                     case DbExpressionType.Distinct:
                         this.Distinct = source as DistinctExpression;
@@ -205,6 +213,12 @@ namespace CrystalMapper.Linq.Expressions
             {
                 queryWriter.WriteLine();
                 this.Take.WriteQuery(sqlLang, queryWriter);
+            }
+
+            if (this.Skip != null && this.Take == null)
+            {
+                queryWriter.WriteLine();
+                this.Skip.WriteQuery(sqlLang, queryWriter);
             }
 
             if (this.WrapInBracks) queryWriter.Write(") AS ").Write(Alias);
