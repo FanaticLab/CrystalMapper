@@ -125,6 +125,7 @@
     <Compile Include="Lang\TSqlLang.cs" />
     <Compile Include="Linq\Expressions\AggregateExpression.cs" />
     <Compile Include="Linq\Expressions\ArrayExpression.cs" />
+    <Compile Include="Linq\Expressions\SkipExpression.cs" />
     <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
     <Compile Include="Linq\DataContextExtension.cs" />
     <Compile Include="Linq\Expressions\DbExpressionType.cs" />

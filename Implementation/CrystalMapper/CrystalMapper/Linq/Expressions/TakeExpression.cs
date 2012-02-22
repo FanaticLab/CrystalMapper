@@ -14,6 +14,8 @@ namespace CrystalMapper.Linq.Expressions
 
         public bool IsReverse { get; private set; }
 
+        public SkipExpression Skip { private get; set; }
+
         public TakeExpression(int count, bool useDefault, bool isReverse, DbExpression source)
             : base(source, DbExpressionType.Take, typeof(int))
         {
@@ -27,14 +29,22 @@ namespace CrystalMapper.Linq.Expressions
             switch (sqlLang.SqlLangType)
             {
                 case SqlLangType.TSql:
+                    if(this.Skip != null)
+                        throw new NotSupportedException(string.Format("Unable to transform skip expression for lang: '{0}'", sqlLang.SqlLangType));
                     queryWriter.Write(" TOP (").Write(this.Count).Write(") ");
                     break;
                 case SqlLangType.MySql:
                 case SqlLangType.Sqlite:                
-                    queryWriter.Write("LIMIT ").Write(this.Count).Write(" ");
+                    queryWriter.Write("LIMIT ");
+                    if(this.Skip != null)
+                        queryWriter.Write(this.Skip.Count).Write(", ");
+                    queryWriter.Write(this.Count).Write(" ");
                     break;
                 case SqlLangType.PSql:
-                    queryWriter.Write(" (ROWNUM <= ").Write(this.Count).Write(") ");
+                    queryWriter.Write(" (");
+                    if(this.Skip != null)
+                        queryWriter.Write(" ROWNUM > ").Write(this.Skip.Count).Write(" AND"); 
+                    queryWriter.Write(" ROWNUM <= ").Write(this.Count).Write(" ) ");
                     break;
                 default:
                     throw new NotSupportedException(string.Format("Unable to transform take expression for lang: '{0}'", sqlLang.SqlLangType));
