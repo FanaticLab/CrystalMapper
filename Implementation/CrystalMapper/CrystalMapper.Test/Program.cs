@@ -20,10 +20,12 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
-            var r = Customer.Query()
-                    .Where(c => Order.Query()
-                    .Select(o => o.CustomerID).Contains(c.CustomerID)).ToArray();
-            Write(r);
+            //var r = Customer.Query()
+            //        .Where(c => Order.Query()
+            //        .Select(o => o.CustomerID).Contains(c.CustomerID)).ToArray();
+            //Write(r);
+
+            var page = Customer.Query().Skip(10).Take(10).ToArray();
 
             int orderId = 100;
 
