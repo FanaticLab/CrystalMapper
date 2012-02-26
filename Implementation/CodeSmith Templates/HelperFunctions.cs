@@ -115,12 +115,12 @@ public class HelperFunctions : CodeTemplate
     {
         return GetVariableName(name);
     }
-
-	public string GetInsertQuery(TableSchema table)
+	
+	public string GetInsertQuery(TableSchema table, string tablePrefix=null)
 	{       
-      	string query = "\"INSERT INTO " + table.FullName + "(";
+      	string query = "\"INSERT INTO " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " (";
 		
-        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {
             foreach(ColumnSchema column in table.Columns)
                 if(!IsIdentityColumn(column))
@@ -144,9 +144,9 @@ public class HelperFunctions : CodeTemplate
 		return query;
 	}
 	
-	public string GetUpdateQuery(TableSchema table)
+	public string GetUpdateQuery(TableSchema table, string tablePrefix=null)
 	{   
-        string query = "\"UPDATE " + table.FullName + " SET ";
+        string query = "\"UPDATE " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " SET";
         
         if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {		
@@ -186,11 +186,11 @@ public class HelperFunctions : CodeTemplate
 		return query.Substring(0, query.Length -  5) + "\"" ;
 	}	
 	
-	public string GetDeleteQuery(TableSchema table)
+	public string GetDeleteQuery(TableSchema table, string tablePrefix=null)
 	{        
-		string query = "\"DELETE FROM " + table.FullName + " WHERE ";	
+		string query = "\"DELETE FROM " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " WHERE ";	
         
-        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {	
             if(table.HasPrimaryKey) {
             foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
