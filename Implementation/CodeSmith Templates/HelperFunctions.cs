@@ -24,10 +24,11 @@ public class HelperFunctions : CodeTemplate
                     return ':';        
                 case "SqlSchemaProvider" :   
                 case "MySQLSchemaProvider" :   
+				case "PostgreSQLSchemaProvider" :   
                 case "SqlCompactSchemaProvider" :
                     return '@';  
                 default:
-                    throw new InvalidOperationException (string.Format("This no template exists for schema provider '{0}'", table.Database.Provider.Name));
+                    throw new InvalidOperationException (string.Format("There is no template exists for schema provider '{0}'", table.Database.Provider.Name));
             }
     }
     
@@ -147,7 +148,7 @@ public class HelperFunctions : CodeTemplate
 	{   
         string query = "\"UPDATE " + table.FullName + " SET ";
         
-        if(table.Database.Provider.Name == "MySQLSchemaProvider")
+        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {		
             foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
                     query += " " + GetColumnName(column) + " = " + GetParamName(column) +",";
