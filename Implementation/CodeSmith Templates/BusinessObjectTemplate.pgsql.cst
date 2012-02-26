@@ -80,11 +80,11 @@ namespace <%= BusinessNamespace %>
 		
 		#region Queries
 		
-		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + "SELECT LAST_INSERT_ID();" <% } %>;
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable, this.TablePrefix) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + "SELECT LAST_INSERT_ID();" <% } %>;
 		
-		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper() %> = <%= GetUpdateQuery(SourceTable) %>;
+		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper() %> = <%= GetUpdateQuery(SourceTable, this.TablePrefix) %>;
 		
-		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper() %> = <%= GetDeleteQuery(SourceTable) %>;
+		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper() %> = <%= GetDeleteQuery(SourceTable, this.TablePrefix) %>;
 		
         #endregion
         	  	
