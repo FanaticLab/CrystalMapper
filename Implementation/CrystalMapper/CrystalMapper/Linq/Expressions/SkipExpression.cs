@@ -13,19 +13,22 @@ namespace CrystalMapper.Linq.Expressions
         public SkipExpression(int count, DbExpression source)
             : base(source, DbExpressionType.Skip, typeof(int))
         {
-            this.Count = count; 
+            this.Count = count;
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
             switch (sqlLang.SqlLangType)
-            {               
+            {             
                 case SqlLangType.MySql:
-                case SqlLangType.Sqlite:                
-                    queryWriter.Write("LIMIT ").Write(this.Count).Write(", ").Write(int.MaxValue);
+                case SqlLangType.Sqlite:
+                    queryWriter.Write("LIMIT ").Write(this.Count).Write(", ").Write(int.MaxValue).Write(" ");
+                    break;
+                case SqlLangType.PgSql:
+                    queryWriter.Write("LIMIT ").Write(int.MaxValue).Write(" OFFSET ").Write(this.Count).Write(" ");
                     break;
                 case SqlLangType.PSql:
-                    queryWriter.Write(" (ROWNUM > ").Write(this.Count).Write(") ");
+                    queryWriter.Write(" ( ROWNUM > ").Write(this.Count).Write(" ) ");
                     break;
                 default:
                     throw new NotSupportedException(string.Format("Unable to transform skip expression for lang: '{0}'", sqlLang.SqlLangType));

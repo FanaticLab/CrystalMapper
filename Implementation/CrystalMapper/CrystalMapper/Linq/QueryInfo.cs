@@ -22,7 +22,7 @@ namespace CrystalMapper.Linq
 
         public ProjectionExpression Projection { get; private set; }
 
-        public QueryInfo(ResultShape resultShape, bool useDefault, Type returnType, ProjectionExpression projection, string sqlQuery, Dictionary<string, object> paramValues )
+        public QueryInfo(ResultShape resultShape, bool useDefault, Type returnType, ProjectionExpression projection, string sqlQuery, Dictionary<string, object> paramValues)
         {
             this.UseDefault = useDefault;
             this.ReturnType = returnType;

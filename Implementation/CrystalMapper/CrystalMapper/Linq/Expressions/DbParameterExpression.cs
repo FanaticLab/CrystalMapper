@@ -24,7 +24,7 @@ namespace CrystalMapper.Linq.Expressions
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
-            queryWriter.Write(sqlLang.GetParameter(this.Parameter));
+            queryWriter.Write(this.IsDBNull ? " NULL " : sqlLang.GetParameter(this.Parameter));
         }
     }
 }

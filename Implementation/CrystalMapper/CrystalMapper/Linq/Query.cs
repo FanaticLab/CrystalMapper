@@ -5,6 +5,7 @@ using System.Text;
 using System.Linq.Expressions;
 using System.Collections;
 using CrystalMapper.Data;
+using System.Data.Common;
 
 namespace CrystalMapper.Linq
 {
