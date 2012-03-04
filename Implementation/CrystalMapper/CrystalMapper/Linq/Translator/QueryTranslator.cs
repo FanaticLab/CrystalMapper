@@ -31,7 +31,9 @@ namespace CrystalMapper.Linq.Translator
             expression = this.Visit(expression);
             SelectExpression selectExpression = this.MakeSelect(expression as DbExpression);
             Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameters.ForEach(p => parameterValues.Add(sqlLang.GetParameter(p.Parameter), p.Value));
+            foreach (var dbParameter in this.parameters)
+                if (!dbParameter.IsDBNull)
+                    parameterValues.Add(sqlLang.GetParameter(dbParameter.Parameter), dbParameter.Value);
 
             if (selectExpression != null)
             {
@@ -74,15 +76,20 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(Enumerable))
+            var declaringType = m.Method.DeclaringType;
+            if (declaringType == typeof(Queryable) || declaringType == typeof(Enumerable) || declaringType == typeof(LinqExtension))
             {
 
                 switch (m.Method.Name)
                 {
-
                     case "Select":
                         return new SelectExpression(this.GetNextTableAlias(), (DbExpression)this.Visit(m.Arguments[0]), GetProjectionExpression(m.Arguments[1]));
 
+                    case "ForUpdateAll":
+                        if (m.Arguments.Count == 2)
+                            return new ForUpdateExpression(new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1]))));
+
+                        return new ForUpdateExpression((DbExpression)this.Visit(m.Arguments[0]));
                     case "SelectMany":
 
                         MethodCallExpression mcs = this.GetLambda(m.Arguments[1]).Body as MethodCallExpression;
@@ -105,8 +112,10 @@ namespace CrystalMapper.Linq.Translator
 
                     case "Take":
                         return new TakeExpression((int)(m.Arguments[1] as ConstantExpression).Value, false, false, (DbExpression)this.Visit(m.Arguments[0]));
+
                     case "Skip":
                         return new SkipExpression((int)(m.Arguments[1] as ConstantExpression).Value, (DbExpression)this.Visit(m.Arguments[0]));
+
                     case "First":
                     case "Single":
                         if (m.Arguments.Count == 2)
@@ -114,6 +123,11 @@ namespace CrystalMapper.Linq.Translator
 
                         return new TakeExpression(1, false, false, (DbExpression)this.Visit(m.Arguments[0]));
 
+                    case "ForUpdate":
+                        if (m.Arguments.Count == 2)
+                            return new TakeExpression(1, true, false, new ForUpdateExpression(new WhereExpression((DbExpression)this.Visit(m.Arguments[0]), (DbExpression)this.Visit(GetLambda(m.Arguments[1])))));
+
+                        return new TakeExpression(1, true, false, new ForUpdateExpression((DbExpression)this.Visit(m.Arguments[0])));
                     case "FirstOrDefault":
                     case "SingleOrDefault":
                         if (m.Arguments.Count == 2)
@@ -217,7 +231,7 @@ namespace CrystalMapper.Linq.Translator
 
                     default:
                     case "Any":
-                    case "All":                  
+                    case "All":
                     case "Cast":
                     case "Reverse":
                     case "Intersect":
@@ -297,7 +311,7 @@ namespace CrystalMapper.Linq.Translator
             }
 
             DbParameterExpression dbParameter = new DbParameterExpression(this.GetNextParameter(), c.Value);
-            parameters.Add(dbParameter);
+            this.parameters.Add(dbParameter);
 
             return dbParameter;
         }
@@ -323,8 +337,8 @@ namespace CrystalMapper.Linq.Translator
                     return new ArrayExpression(arrayParameters.AsReadOnly(), memberType.GetElementType());
                 }
 
-                return (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof(IQueryable<>)) 
-                        ? this.Visit(Expression.Constant(m.Member.GetValue(constant.Value))) 
+                return (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                        ? this.Visit(Expression.Constant(m.Member.GetValue(constant.Value)))
                         : Expression.Constant(m.Member.GetValue(constant.Value));
             }
 
@@ -497,10 +511,10 @@ namespace CrystalMapper.Linq.Translator
                 throw new NotSupportedException("Multiple result shape is not supported");
 
             MethodCallExpression methodExp = expression as MethodCallExpression;
-            if (methodExp != null && ((methodExp.Method.DeclaringType == typeof(Queryable)) || (methodExp.Method.DeclaringType == typeof(Enumerable))))
+            if (methodExp != null && ((methodExp.Method.DeclaringType == typeof(Queryable)) || (methodExp.Method.DeclaringType == typeof(Enumerable)) || methodExp.Method.DeclaringType == typeof(LinqExtension)))
             {
                 string str = methodExp.Method.Name;
-                if (str != null && str.In("First", "FirstOrDefault", "Single", "SingleOrDefault", "Last", "LastOrDefault", "Count", "LongCount", "Sum", "Min", "Max", "Average"))
+                if (str != null && str.In("First", "FirstOrDefault", "Single", "SingleOrDefault", "Last", "LastOrDefault", "Count", "LongCount", "Sum", "Min", "Max", "Average", "ForUpdate"))
                     return ResultShape.Singleton;
             }
 
@@ -539,6 +553,9 @@ namespace CrystalMapper.Linq.Translator
 
         private ProjectionExpression GetSourceProjection(SourceExpression source)
         {
+            if (source is JoinExpression)
+                return source.Projection;
+
             var projection = source.Projection;
             return new ProjectionExpression(projection.Columns.Select(c => new ColumnExpression(c.Member, new DbMemberExpression(c.Member))).ToReadOnly(), projection.Type, projection.ProjectionFunction, projection.Bindings);
         }

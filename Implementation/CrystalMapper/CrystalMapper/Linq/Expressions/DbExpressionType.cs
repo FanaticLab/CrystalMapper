@@ -16,7 +16,6 @@ namespace CrystalMapper.Linq.Expressions
         Where,
         Member,
         Take,
-        Skip,
         Remainder,
         Distinct,
         OrderBy,
@@ -32,7 +31,9 @@ namespace CrystalMapper.Linq.Expressions
         Join,
         In,
         GroupBy,
-        Array
+        Array,
+        Skip,
+        ForUpdate
     }
 
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CrystalMapper.Mapping;
 
 namespace CrystalMapper.Linq.Metadata
 {
@@ -16,8 +17,12 @@ namespace CrystalMapper.Linq.Metadata
             {
                 try
                 {
-                    tableMetadata = new TableMetadata(type);
-                    tablesMetadata.Add(type, tableMetadata);
+                    TableAttribute[] tableAttributes = (TableAttribute[])type.GetCustomAttributes(typeof(TableAttribute), true);
+                    if (tableAttributes.Length > 0)
+                    {
+                        tableMetadata = new TableMetadata(type);
+                        tablesMetadata.Add(type, tableMetadata);
+                    }
                 }
                 catch { }
             }

@@ -19,10 +19,17 @@ namespace CrystalMapper.Linq.Metadata
             TableAttribute[] tableAttributes = (TableAttribute[])type.GetCustomAttributes(typeof(TableAttribute), true);
             if (tableAttributes == null || tableAttributes.Length == 0)
                 throw new InvalidOperationException(string.Format("Type '{0}' is not decorated with TableAttribute", type.Name));
-
+            
             this.Type = type;
             this.TableName = tableAttributes[0].TableName;
             this.Members = MemberMetadata.GetMembersMetadata(this.Type);            
+        }
+
+        public TableMetadata(Type type, TableAttribute attribute)
+        {            
+            this.Type = type;
+            this.TableName = attribute.TableName;
+            this.Members = MemberMetadata.GetMembersMetadata(this.Type);
         }
     }
 }

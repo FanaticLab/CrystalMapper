@@ -33,7 +33,8 @@ namespace CrystalMapper.Linq.Expressions
                     this.WriteTSql(sqlLang, queryWriter);
                     return;
                 case SqlLangType.MySql:
-                    this.WriterMySql(sqlLang, queryWriter);
+                case SqlLangType.PgSql:
+                    this.WriterMySqlOrPgSql(sqlLang, queryWriter);
                     return;
                 case SqlLangType.Sqlite:                   
                 case SqlLangType.PSql:
@@ -42,7 +43,7 @@ namespace CrystalMapper.Linq.Expressions
             }
         }
 
-        private void WriterMySql(SqlLang sqlLang, QueryWriter queryWriter)
+        private void WriterMySqlOrPgSql(SqlLang sqlLang, QueryWriter queryWriter)
         {
             if (this.Method.DeclaringType == typeof(string))
             {

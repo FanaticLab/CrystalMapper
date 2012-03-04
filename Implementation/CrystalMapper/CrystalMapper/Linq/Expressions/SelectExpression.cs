@@ -11,6 +11,8 @@ namespace CrystalMapper.Linq.Expressions
 {
     internal class SelectExpression : SourceExpression
     {
+        private bool forUpdate;
+
         public DistinctExpression Distinct { get; private set; }
 
         public AggregateExpression Aggregate { get; private set; }
@@ -22,6 +24,8 @@ namespace CrystalMapper.Linq.Expressions
         public SourceExpression From { get; private set; }
 
         public WhereExpression Where { get; private set; }
+
+        public ForUpdateExpression ForUpdate { get; private set; }
 
         private List<SortExpression> sortExpressions = new List<SortExpression>();
 
@@ -54,7 +58,6 @@ namespace CrystalMapper.Linq.Expressions
                 throw new ArgumentNullException("projection");
 
             this.WrapInBracks = true;
-
             do
             {
                 switch (source.DbNodeType)
@@ -66,13 +69,13 @@ namespace CrystalMapper.Linq.Expressions
                         break;
                     case DbExpressionType.Take:
                         this.Take = source as TakeExpression;
-                        source = this.Take.Source;
                         this.Take.Skip = this.Skip;
+                        source = this.Take.Source;
                         break;
                     case DbExpressionType.Skip:
                         this.Skip = source as SkipExpression;
-                        source = this.Skip.Source;
                         this.Take.Skip = this.Skip;
+                        source = this.Skip.Source;
                         break;
                     case DbExpressionType.Distinct:
                         this.Distinct = source as DistinctExpression;
@@ -102,6 +105,10 @@ namespace CrystalMapper.Linq.Expressions
                              this.AddWhere((WhereExpression)((AggregateExpression)column.Column).Source);                                
                         }
                         source = groupby.Source;
+                        break;
+                    case DbExpressionType.ForUpdate:
+                        this.ForUpdate = source as ForUpdateExpression;
+                        source = this.ForUpdate.Source;
                         break;
                     case DbExpressionType.Count:
                     case DbExpressionType.LongCount:
@@ -182,17 +189,20 @@ namespace CrystalMapper.Linq.Expressions
             }
 
             bool isFirst = true;
-            foreach (var orderByExp in this.sortExpressions)
+            if (this.Aggregate == null)
             {
-                if (isFirst)
+                foreach (var orderByExp in this.sortExpressions)
                 {
-                    queryWriter.WriteLine().Write("ORDER BY ");
-                    isFirst = false;
-                }
-                else
-                    queryWriter.Write(", ");
+                    if (isFirst)
+                    {
+                        queryWriter.WriteLine().Write("ORDER BY ");
+                        isFirst = false;
+                    }
+                    else
+                        queryWriter.Write(", ");
 
-                orderByExp.WriteQuery(sqlLang, queryWriter);
+                    orderByExp.WriteQuery(sqlLang, queryWriter);
+                }
             }
 
             isFirst = true;
@@ -209,19 +219,22 @@ namespace CrystalMapper.Linq.Expressions
                 groupbyExp.WriteQuery(sqlLang, queryWriter);
             }
 
-            if ((sqlLang.SqlLangType & (SqlLangType.Sqlite | SqlLangType.MySql)) != 0 && this.Take != null)
+            if ((sqlLang.SqlLangType & (SqlLangType.Sqlite | SqlLangType.MySql | SqlLangType.PgSql)) != 0 && this.Take != null)
             {
                 queryWriter.WriteLine();
                 this.Take.WriteQuery(sqlLang, queryWriter);
             }
 
-            if (this.Skip != null && this.Take == null)
+            if(this.Skip != null && this.Take == null)
             {
                 queryWriter.WriteLine();
                 this.Skip.WriteQuery(sqlLang, queryWriter);
             }
 
             if (this.WrapInBracks) queryWriter.Write(") AS ").Write(Alias);
+
+            if (this.ForUpdate != null)
+                this.ForUpdate.WriteQuery(sqlLang, queryWriter);
 
             queryWriter.Indent = currentIndent;
         }

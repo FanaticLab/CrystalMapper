@@ -20,7 +20,7 @@ namespace CrystalMapper.Linq
         private string name;
 
         private bool disposeDataContext = false;
-        
+
         private DataContext dataContext;
 
         private DataContext GetDataContext()
@@ -77,13 +77,14 @@ namespace CrystalMapper.Linq
         }
 
         public object Execute(Expression expression)
-        {          
-            QueryInfo queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);         
-            DataContext dataContext = this.GetDataContext();    
+        {
+            var queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
+            DataContext dataContext = this.GetDataContext();
             try
-            {                
+            {
                 using (DbCommand command = dataContext.CreateCommand(queryInfo.SqlQuery))
                 {
+                    command.CommandTimeout = 120;
                     foreach (string parameter in queryInfo.ParamValues.Keys)
                         command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(queryInfo.ParamValues[parameter]), parameter));
 
@@ -123,9 +124,9 @@ namespace CrystalMapper.Linq
                     this.dataContext = null;
                 }
             }
-        }   
-
-        private SqlLang GetSqlLangByProvider()
+        }
+  
+        internal SqlLang GetSqlLangByProvider()
         {
             switch (this.GetDataContext().Database.ProviderType)
             {
@@ -138,9 +139,12 @@ namespace CrystalMapper.Linq
 
                 case CoreSystem.Data.DbProviderType.SQLite:
                     return SqlLang.GetSqlLang(SqlLangType.Sqlite);
-                
+
                 case CoreSystem.Data.DbProviderType.MySql:
                     return SqlLang.GetSqlLang(SqlLangType.MySql);
+
+                case CoreSystem.Data.DbProviderType.PostgreSQL:
+                    return SqlLang.GetSqlLang(SqlLangType.PgSql);
 
                 case CoreSystem.Data.DbProviderType.UnSupported:
                 default:
