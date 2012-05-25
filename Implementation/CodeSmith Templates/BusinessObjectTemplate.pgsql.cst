@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
  
  * Author: Faraz Masood Khan 
  * 
@@ -66,7 +66,7 @@ namespace <%= BusinessNamespace %>
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "<%= this.TablePrefix + SourceTable.Name %>";	
+        public const string TABLE_NAME = "<%= GetTableName(this.SourceTable) %>";	
      
         <% foreach(ColumnSchema column in SourceTable.Columns) { %>
 		public const string <%= GetConstantColumnName(column) %> = "<%= GetColumnName(column) %>";
@@ -80,7 +80,7 @@ namespace <%= BusinessNamespace %>
 		
 		#region Queries
 		
-		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable, this.TablePrefix) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + "SELECT LAST_INSERT_ID();" <% } %>;
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable, this.TablePrefix) %>;
 		
 		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper() %> = <%= GetUpdateQuery(SourceTable, this.TablePrefix) %>;
 		
@@ -103,6 +103,7 @@ namespace <%= BusinessNamespace %>
 		protected <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassVarName(keySchema) %>;
 	
 		<% } %>
+        <%--
 	    <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>
@@ -124,7 +125,8 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
-        <% } %>        
+        <% } %>
+        --%>
         #endregion
 
  		#region Properties	
@@ -143,7 +145,7 @@ namespace <%= BusinessNamespace %>
                 }
         }	
 		
-        <% } %>	 
+        <% } %>
         <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
         <% for (int i = 0 ; i < keySchema.ForeignKeyMemberColumns.Count ; i++ ) { %>
         <%= GetPropertyDeclaration(keySchema.ForeignKeyMemberColumns[i].Column,  SystemCSharp[keySchema.ForeignKeyMemberColumns[i].Column.SystemType.ToString()]) %>               
@@ -169,7 +171,7 @@ namespace <%= BusinessNamespace %>
         }	
         
 		<% } %>	        
-        <% } %>	        
+        <% } %>
         <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
         public <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassPropName(keySchema) %>
         {
@@ -227,7 +229,8 @@ namespace <%= BusinessNamespace %>
                 }
         }	
 		
-        <% } %>	         
+        <% } %>
+        <%--
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
@@ -256,13 +259,14 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
-        
+        --%>
         #endregion        
         
         #region Methods     
 		
        public <%= GetClassName(SourceTable) %>()
         {
+        <%--
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
@@ -283,6 +287,7 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
+        --%>
         }
         
         <% if (SourceTable.HasPrimaryKey) { %>
@@ -439,6 +444,7 @@ namespace <%= BusinessNamespace %>
 
         #endregion
         
+        <%-- 
         #region Entity Relationship Functions
         
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
@@ -551,5 +557,6 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>           
         #endregion
+        --%>
     }
 }

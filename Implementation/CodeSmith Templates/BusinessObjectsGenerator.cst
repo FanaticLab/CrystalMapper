@@ -140,7 +140,7 @@ private void RenderBusinessObjects(TableSchema table)
             break;      
 		case "PostgreSQLSchemaProvider" :
         {   
-            BusinessObjectTemplateMySQL businessObject = this.Create<BusinessObjectTemplateMySQL>();
+            BusinessObjectTemplatePostgreSQL businessObject = this.Create<BusinessObjectTemplatePostgreSQL>();
             businessObject.BusinessNamespace = this.BusinessNamespace;
             businessObject.BaseNamespace = this.BaseNamespace;
             businessObject.VsVersion = this.VsVersion;

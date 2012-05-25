@@ -14,24 +14,24 @@ public enum VisualStudioVersion
 }
 
 public class HelperFunctions : CodeTemplate
-{  
+{
     private char ParamIdentifier(TableSchema table)
-    { 
-          switch(table.Database.Provider.Name)
-            {
-                case "OracleSchemaProvider" :
-                case "SQLiteSchemaProvider" :
-                    return ':';        
-                case "SqlSchemaProvider" :   
-                case "MySQLSchemaProvider" :   
-				case "PostgreSQLSchemaProvider" :   
-                case "SqlCompactSchemaProvider" :
-                    return '@';  
-                default:
-                    throw new InvalidOperationException (string.Format("There is no template exists for schema provider '{0}'", table.Database.Provider.Name));
-            }
+    {
+        switch (table.Database.Provider.Name)
+        {
+            case "OracleSchemaProvider":
+            case "SQLiteSchemaProvider":
+                return ':';
+            case "SqlSchemaProvider":
+            case "MySQLSchemaProvider":
+            case "PostgreSQLSchemaProvider":
+            case "SqlCompactSchemaProvider":
+                return '@';
+            default:
+                throw new InvalidOperationException(string.Format("There is no template exists for schema provider '{0}'", table.Database.Provider.Name));
+        }
     }
-    
+
     private MapCollection _keyWords;
     public MapCollection KeyWords
     {
@@ -62,21 +62,24 @@ public class HelperFunctions : CodeTemplate
     public string GetPropertyName(ColumnSchema column)
     {
         string propertyName = GetPropertyName(GetNameFromColumn(column));
-        
-        if(propertyName == GetClassName(column.Table))
-         {
-            if(column.SystemType.IsArray)
-                propertyName +=  StringUtil.ToPlural(StringUtil.ToPascalCase(column.SystemType.Name));
+
+        if (propertyName == GetClassName(column.Table))
+        {
+            if (column.SystemType.IsArray)
+                propertyName += StringUtil.ToPlural(StringUtil.ToPascalCase(column.SystemType.Name));
             else
-               propertyName += StringUtil.ToPascalCase(column.SystemType.Name);
-         }
-        
+                propertyName += StringUtil.ToPascalCase(column.SystemType.Name);
+        }
+
+        if (propertyName.EndsWith("Id"))
+            propertyName = propertyName.Substring(0, propertyName.Length - 2) + "ID";
+
         return propertyName;
     }
     private string GetPropertyName(string name)
     {
-		if(!name.Contains("_"))
-			name += "_";
+        if (!name.Contains("_"))
+            name += "_";
         return StringUtil.ToPascalCase(name);
     }
 
@@ -115,108 +118,152 @@ public class HelperFunctions : CodeTemplate
     {
         return GetVariableName(name);
     }
-	
-	public string GetInsertQuery(TableSchema table, string tablePrefix=null)
-	{       
-      	string query = "\"INSERT INTO " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " (";
-		
-        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+
+    public string GetInsertQuery(TableSchema table, string tablePrefix = null)
+    {
+        string query = "\"INSERT INTO " + GetTableName(table) +" (";
+
+        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {
-            foreach(ColumnSchema column in table.Columns)
-                if(!IsIdentityColumn(column))
-                    query += GetColumnName(column) + ",";                            
-        } else {
-            foreach(ColumnSchema column in table.Columns)
-                if(!IsIdentityColumn(column))
-                    query += " [" + GetColumnName(column) + "],";                         
+            foreach (ColumnSchema column in table.Columns)
+            {
+                if (!IsIdentityColumn(column))
+                    query += GetColumnName(column) + ",";
+            }
         }
-        
-		query = query.TrimEnd(new char[] {','}) + ") VALUES (";
-		
-		foreach(ColumnSchema column in table.Columns)
+        else
         {
-            if(!IsIdentityColumn(column))
-			    query += " " + GetParamName(column) + ",";            
-         }   
-            
-		query = query.TrimEnd(new char[] {','}) + ");\"";
-		
-		return query;
-	}
-	
-	public string GetUpdateQuery(TableSchema table, string tablePrefix=null)
-	{   
-        string query = "\"UPDATE " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " SET";
-        
-        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
-        {		
-            foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
-                    query += " " + GetColumnName(column) + " = " + GetParamName(column) +",";
-                    
-            query = query.TrimEnd(new char[] {','}) + " WHERE ";
-            
-            if(table.HasPrimaryKey) 
-            {
-            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-                query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";		
-            } else {
-            
-            foreach(ColumnSchema column in table.Columns)
-            query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";               
-            }
-            
-        } else {
-            
-            foreach(ColumnSchema column in table.NonPrimaryKeyColumns)		
-                    query += " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) +",";
-                    
-            query = query.TrimEnd(new char[] {','}) + " WHERE ";
-            
-            if(table.HasPrimaryKey) 
-            {
-            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-                query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";		
-            } else {
-            
-            foreach(ColumnSchema column in table.Columns)
-            query += "[" +  GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";               
-            }
+            foreach (ColumnSchema column in table.Columns)
+                if (!IsIdentityColumn(column))
+                    query += " [" + GetColumnName(column) + "],";
         }
-        
-		return query.Substring(0, query.Length -  5) + "\"" ;
-	}	
-	
-	public string GetDeleteQuery(TableSchema table, string tablePrefix=null)
-	{        
-		string query = "\"DELETE FROM " + (tablePrefix != null ? (tablePrefix + table.Name) : table.FullName) + " WHERE ";	
-        
-        if(table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
-        {	
-            if(table.HasPrimaryKey) {
-            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-                query +=  " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
-            } else {
-            foreach(ColumnSchema column in table.Columns)
-                query +=  " " + GetColumnName(column) + " = " + GetParamName(column) + " AND"; 
-            }
-                
-            query = query.Substring(0, query.Length - 3) + "\"";		
-		
-        } else {
-            
-            if(table.HasPrimaryKey) {
-            foreach(ColumnSchema column in table.PrimaryKey.MemberColumns)
-                query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND";
-            } else {
-            foreach(ColumnSchema column in table.Columns)
-                query +=  " [" + GetColumnName(column)+ "]" + " = " + GetParamName(column) + " AND"; 
-            }
-                
-            query = query.Substring(0, query.Length - 3) + "\"";	
+
+        query = query.TrimEnd(new char[] { ',' }) + ") VALUES (";
+
+
+        foreach (ColumnSchema column in table.Columns)
+        {
+            if (!IsIdentityColumn(column))
+                query += " " + GetParamName(column) + ",";
         }
-		
+
+
+
+        var identityColumn = GetIdentityColumn(table);
+        if (table.Database.Provider.Name == "PostgreSQLSchemaProvider" && identityColumn != null)
+            query = query.TrimEnd(',') + ") RETURNING " + GetColumnName(identityColumn) + ";\"";
+        else
+            query = query.TrimEnd(',') + ");\"";
+
+        ColumnSchema a;
+
         return query;
-	}
+    }
+
+    public string GetUpdateQuery(TableSchema table, string tablePrefix = null)
+    {
+        string query = "\"UPDATE " + GetTableName(table) + " SET";
+
+        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+        {
+            foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
+                query += " " + GetColumnName(column) + " = " + GetParamName(column) + ",";
+
+            query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
+
+            if (table.HasPrimaryKey)
+            {
+                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                    query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
+            }
+            else
+            {
+
+                foreach (ColumnSchema column in table.Columns)
+                    query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
+            }
+
+        }
+        else
+        {
+
+            foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
+                query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + ",";
+
+            query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
+
+            if (table.HasPrimaryKey)
+            {
+                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                    query += "[" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";
+            }
+            else
+            {
+
+                foreach (ColumnSchema column in table.Columns)
+                    query += "[" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";
+            }
+        }
+
+        return query.Substring(0, query.Length - 5) + "\"";
+    }
+
+    public string GetDeleteQuery(TableSchema table, string tablePrefix = null)
+    {
+        string query = "\"DELETE FROM " + GetTableName(table) + " WHERE ";
+
+        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+        {
+            if (table.HasPrimaryKey)
+            {
+                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
+            }
+            else
+            {
+                foreach (ColumnSchema column in table.Columns)
+                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
+            }
+
+            query = query.Substring(0, query.Length - 3) + "\"";
+
+        }
+        else
+        {
+
+            if (table.HasPrimaryKey)
+            {
+                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND";
+            }
+            else
+            {
+                foreach (ColumnSchema column in table.Columns)
+                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND";
+            }
+
+            query = query.Substring(0, query.Length - 3) + "\"";
+        }
+
+        return query;
+    }
+
+    public string GetTableName(TableSchema table, string tablePrefix = null)
+    {
+        if (tablePrefix != null)
+            return tablePrefix + table.Name;
+
+        return table.Database.Provider.Name == "PostgreSQLSchemaProvider" ? table.Name : table.FullName;
+    }
+
+    public ColumnSchema GetIdentityColumn(TableSchema table)
+    {
+        foreach (ColumnSchema column in table.Columns)
+            if (IsIdentityColumn(column))
+                return column;
+
+        return null;
+    }
 
     public string GetPrivateVariableNamePlural(TableSchema table, ColumnSchema column)
     {
@@ -232,8 +279,8 @@ public class HelperFunctions : CodeTemplate
     private string GetPrivateVariableNamePlural(string name)
     {
         return GetVariableNamePlural(name);
-    }	
-	
+    }
+
     public string GetVariableName(TableSchema table, ColumnSchema column)
     {
         if (ColumnHasAlias(column))
@@ -247,8 +294,8 @@ public class HelperFunctions : CodeTemplate
     }
     private string GetVariableName(string name)
     {
-		if(!name.Contains("_"))
-			name = name.ToLower();
+        if (!name.Contains("_"))
+            name = name.ToLower();
         return StringUtil.ToSingular(StringUtil.ToCamelCase(name));
     }
 
@@ -282,14 +329,14 @@ public class HelperFunctions : CodeTemplate
         }
 
         return StringUtil.ToSingular(StringUtil.ToPascalCase(className));
-    }	 	
-	
+    }
+
     public string GetClassNamePlural(TableSchema table)
     {
         return StringUtil.ToPlural(GetClassName(table));
     }
-    
-	public string GetTableNameWithOutPrefix(TableSchema table)
+
+    public string GetTableNameWithOutPrefix(TableSchema table)
     {
         string className;
         if (table.ExtendedProperties.Contains(extendedPropertyName))
@@ -303,8 +350,8 @@ public class HelperFunctions : CodeTemplate
         }
 
         return className;
-    }	 	
-	
+    }
+
     protected string tablePrefix = String.Empty;
 
     private bool ColumnHasAlias(ColumnSchema column)
@@ -343,18 +390,18 @@ public class HelperFunctions : CodeTemplate
             }
         return result;
     }
-	public bool IsManyToMany(TableSchema table)
-	{
-		// If there are 2 ForeignKeyColumns AND...
-		// ...there are only two columns OR
-		//    there are 3 columns and 1 is a primary key.
-		
-        if(table.ForeignKeys.Count != 2 || table.ForeignKeys[0].PrimaryKeyTable == table.ForeignKeys[1].PrimaryKeyTable)
+    public bool IsManyToMany(TableSchema table)
+    {
+        // If there are 2 ForeignKeyColumns AND...
+        // ...there are only two columns OR
+        //    there are 3 columns and 1 is a primary key.
+
+        if (table.ForeignKeys.Count != 2 || table.ForeignKeys[0].PrimaryKeyTable == table.ForeignKeys[1].PrimaryKeyTable)
             return false;
-        
-        foreach(ColumnSchema column in table.NonKeyColumns)
+
+        foreach (ColumnSchema column in table.NonKeyColumns)
         {
-            switch(column.Name.ToLower())
+            switch (column.Name.ToLower())
             {
                 case "createdon":
                 case "createdby":
@@ -362,76 +409,76 @@ public class HelperFunctions : CodeTemplate
                 case "updatedby":
                     break;
                 default:
-                return false;
-            }                
+                    return false;
+            }
         }
-    
+
         return true;
     }
-	
-	#endregion
-	
-	public string GetCascade(MemberColumnSchema column)
-	{
-		return column.AllowDBNull ? "all" : "all-delete-orphan";
-	}
-	
-	#region BusinessObject Methods
-	
-	public string GetInitialization(Type type)
-	{
-		string result;
-		
-		if(type.Equals(typeof(String)))
-			result = "String.Empty";
-		else if(type.Equals(typeof(DateTime)))
-			result = "new DateTime()";
-		else if(type.Equals(typeof(Decimal)))
-			result = "default(decimal)";
-		else if(type.Equals(typeof(Guid)))
-			result = "Guid.Empty";
-		else if(type.IsPrimitive)
-			result = String.Format("default({0})", type.Name.ToString());
-		else
-			result = "null";
-		return result;
-	}
-	public Type GetBusinessBaseIdType(TableSchema table)
-	{
-		if(IsMutliColumnPrimaryKey(table.PrimaryKey))
-			return typeof(string);
-		else
-			return GetPrimaryKeyColumn(table.PrimaryKey).SystemType;
-	}
-	
-	#endregion
-	
-	#region PrimaryKey Methods
-	
-	public MemberColumnSchema GetPrimaryKeyColumn(PrimaryKeySchema primaryKey)
-	{
-		if(primaryKey.MemberColumns.Count != 1)
-			throw new System.ApplicationException("This method will only work on primary keys with exactly one member column.");
-		return primaryKey.MemberColumns[0];
-	}
-	public bool IsMutliColumnPrimaryKey(PrimaryKeySchema primaryKey)
-	{
-		if(primaryKey.MemberColumns.Count == 0)
-			throw new System.ApplicationException("This template will only work on primary keys with exactly one member column.");
-			
-		return (primaryKey.MemberColumns.Count > 1);
-	}
-	public string GetForeignKeyColumnClassName(MemberColumnSchema mcs, TableSchema table)
-	{
-		string result = String.Empty;
-		foreach(TableKeySchema tks in table.ForeignKeys)
-			if(tks.ForeignKeyMemberColumns.Contains(mcs))
-			{
-				result = GetPropertyName(tks.PrimaryKeyTable.Name);
-				break;
-			}
-		return result;
-	}
+
+    #endregion
+
+    public string GetCascade(MemberColumnSchema column)
+    {
+        return column.AllowDBNull ? "all" : "all-delete-orphan";
+    }
+
+    #region BusinessObject Methods
+
+    public string GetInitialization(Type type)
+    {
+        string result;
+
+        if (type.Equals(typeof(String)))
+            result = "String.Empty";
+        else if (type.Equals(typeof(DateTime)))
+            result = "new DateTime()";
+        else if (type.Equals(typeof(Decimal)))
+            result = "default(decimal)";
+        else if (type.Equals(typeof(Guid)))
+            result = "Guid.Empty";
+        else if (type.IsPrimitive)
+            result = String.Format("default({0})", type.Name.ToString());
+        else
+            result = "null";
+        return result;
+    }
+    public Type GetBusinessBaseIdType(TableSchema table)
+    {
+        if (IsMutliColumnPrimaryKey(table.PrimaryKey))
+            return typeof(string);
+        else
+            return GetPrimaryKeyColumn(table.PrimaryKey).SystemType;
+    }
+
+    #endregion
+
+    #region PrimaryKey Methods
+
+    public MemberColumnSchema GetPrimaryKeyColumn(PrimaryKeySchema primaryKey)
+    {
+        if (primaryKey.MemberColumns.Count != 1)
+            throw new System.ApplicationException("This method will only work on primary keys with exactly one member column.");
+        return primaryKey.MemberColumns[0];
+    }
+    public bool IsMutliColumnPrimaryKey(PrimaryKeySchema primaryKey)
+    {
+        if (primaryKey.MemberColumns.Count == 0)
+            throw new System.ApplicationException("This template will only work on primary keys with exactly one member column.");
+
+        return (primaryKey.MemberColumns.Count > 1);
+    }
+    public string GetForeignKeyColumnClassName(MemberColumnSchema mcs, TableSchema table)
+    {
+        string result = String.Empty;
+        foreach (TableKeySchema tks in table.ForeignKeys)
+            if (tks.ForeignKeyMemberColumns.Contains(mcs))
+            {
+                result = GetPropertyName(tks.PrimaryKeyTable.Name);
+                break;
+            }
+        return result;
+    }
 
     #endregion
 
@@ -462,17 +509,17 @@ public class HelperFunctions : CodeTemplate
         for (int x = 0; x < mcsc.Count; x++)
             mcsList.Add(mcsc[x]);
         return GetMethodParameters(mcsList, isDeclaration);
-	}
-	public string GetMethodDeclaration(SearchCriteria sc)
-	{
-		StringBuilder result = new StringBuilder();
-		result.Append(sc.MethodName);
-		result.Append("(");
-		result.Append(GetMethodParameters(sc.Items, true));
-		result.Append(")");
-		return result.ToString();
-	}
-	public string GetPrimaryKeyCallParameters(List<MemberColumnSchema> mcsList)
+    }
+    public string GetMethodDeclaration(SearchCriteria sc)
+    {
+        StringBuilder result = new StringBuilder();
+        result.Append(sc.MethodName);
+        result.Append("(");
+        result.Append(GetMethodParameters(sc.Items, true));
+        result.Append(")");
+        return result.ToString();
+    }
+    public string GetPrimaryKeyCallParameters(List<MemberColumnSchema> mcsList)
     {
         System.Text.StringBuilder result = new System.Text.StringBuilder();
         for (int x = 0; x < mcsList.Count; x++)
@@ -480,7 +527,7 @@ public class HelperFunctions : CodeTemplate
             if (x > 0)
                 result.Append(", ");
 
-            if(mcsList[x].SystemType == typeof(Guid))
+            if (mcsList[x].SystemType == typeof(Guid))
                 result.AppendFormat("new {0}(keys[{1}])", mcsList[x].SystemType, x);
             else if (mcsList[x].SystemType == typeof(string))
                 result.AppendFormat("keys[{0}]", x);
@@ -489,73 +536,73 @@ public class HelperFunctions : CodeTemplate
         }
         return result.ToString();
     }
-	
-	#endregion
-	
-	public TableSchema GetForeignTable(MemberColumnSchema mcs, TableSchema table)
-	{
-		foreach(TableKeySchema tks in table.ForeignKeys)
-			if(tks.ForeignKeyMemberColumns.Contains(mcs))
-				return tks.PrimaryKeyTable;
-		throw new Exception(String.Format("Could not find Column {0} in Table {1}'s ForeignKeys.", mcs.Name, table.Name));
-	}
-	
-	protected Random random = new Random();
-	public string GetUnitTestInitialization(ColumnSchema column)
-	{
-		string result;
-		
-		if(column.SystemType.Equals(typeof(String)))
-		{
-			StringBuilder sb = new StringBuilder();
-			
+
+    #endregion
+
+    public TableSchema GetForeignTable(MemberColumnSchema mcs, TableSchema table)
+    {
+        foreach (TableKeySchema tks in table.ForeignKeys)
+            if (tks.ForeignKeyMemberColumns.Contains(mcs))
+                return tks.PrimaryKeyTable;
+        throw new Exception(String.Format("Could not find Column {0} in Table {1}'s ForeignKeys.", mcs.Name, table.Name));
+    }
+
+    protected Random random = new Random();
+    public string GetUnitTestInitialization(ColumnSchema column)
+    {
+        string result;
+
+        if (column.SystemType.Equals(typeof(String)))
+        {
+            StringBuilder sb = new StringBuilder();
+
             int size = (column.Size > 0 && column.Size < 100) ? random.Next(1, column.Size) : 10;
-			
-			sb.Append("\"");
-			for(int x=0; x<size; x++)
-			{
-				switch(x % 5)
-				{
-					case 0:
-						sb.Append("T");
-						break;
-					case 1:
-						sb.Append("e");
-						break;
-					case 2:
-						sb.Append("s");
-						break;
-					case 3:
-						sb.Append("t");
-						break;
-					case 4:
-						sb.Append(" ");
-						break;
-				}
-			}
-			sb.Append("\"");
-			
-			result = sb.ToString();
-		}
-		else if(column.SystemType.Equals(typeof(DateTime)))
-			result = "DateTime.Now";
-		else if(column.SystemType.Equals(typeof(Decimal)))
-			result = Convert.ToDecimal(random.Next(1, 100)).ToString();
-		else if(column.SystemType.Equals(typeof(Int32)))
-			result = random.Next(1, 100).ToString();
-		else if(column.SystemType.Equals(typeof(Boolean)))
-			result = (random.Next(1, 2).Equals(1)).ToString().ToLower();
-		else if(column.SystemType.Equals(typeof(Guid)))
-			result = "Guid.Empty";
-		else if(column.SystemType.IsPrimitive)
-			result = String.Format("default({0})", column.SystemType.Name.ToString());
-		else
-			result = "null";
-		
-		return result;
-	}
-	
-	public bool ContainsForeignKey(SearchCriteria sc, TableSchemaCollection tsc)
+
+            sb.Append("\"");
+            for (int x = 0; x < size; x++)
+            {
+                switch (x % 5)
+                {
+                    case 0:
+                        sb.Append("T");
+                        break;
+                    case 1:
+                        sb.Append("e");
+                        break;
+                    case 2:
+                        sb.Append("s");
+                        break;
+                    case 3:
+                        sb.Append("t");
+                        break;
+                    case 4:
+                        sb.Append(" ");
+                        break;
+                }
+            }
+            sb.Append("\"");
+
+            result = sb.ToString();
+        }
+        else if (column.SystemType.Equals(typeof(DateTime)))
+            result = "DateTime.Now";
+        else if (column.SystemType.Equals(typeof(Decimal)))
+            result = Convert.ToDecimal(random.Next(1, 100)).ToString();
+        else if (column.SystemType.Equals(typeof(Int32)))
+            result = random.Next(1, 100).ToString();
+        else if (column.SystemType.Equals(typeof(Boolean)))
+            result = (random.Next(1, 2).Equals(1)).ToString().ToLower();
+        else if (column.SystemType.Equals(typeof(Guid)))
+            result = "Guid.Empty";
+        else if (column.SystemType.IsPrimitive)
+            result = String.Format("default({0})", column.SystemType.Name.ToString());
+        else
+            result = "null";
+
+        return result;
+    }
+
+    public bool ContainsForeignKey(SearchCriteria sc, TableSchemaCollection tsc)
     {
         foreach (TableSchema ts in tsc)
             foreach (TableKeySchema tks in ts.PrimaryKeys)
@@ -564,171 +611,185 @@ public class HelperFunctions : CodeTemplate
                         return true;
         return false;
     }
-    
+
     public bool IsIdentityColumnExists(TableSchema table)
     {
-        foreach(ColumnSchema column in table.Columns)
-            if(IsIdentityColumn(column))
-                return true;          
-                
+        foreach (ColumnSchema column in table.Columns)
+            if (IsIdentityColumn(column))
+                return true;
+
         return false;
     }
-    
+
     public bool IsIdentityColumn(ColumnSchema column)
     {
-        foreach(ExtendedProperty extentedProp in column.ExtendedProperties)
-            if(extentedProp.Name == "CS_IsIdentity" && true.Equals(extentedProp.Value))
+        if (column.Database.Provider.Name == "PostgreSQLSchemaProvider"
+           && column.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase)
+           && column.Table.PrimaryKey != null)
+            foreach (MemberColumnSchema primaryKey in column.Table.PrimaryKey.MemberColumns)
+                if (primaryKey.Name == column.Name)
+                    return true;
+
+
+        foreach (ExtendedProperty extentedProp in column.ExtendedProperties)
+            if (extentedProp.Name == "CS_IsIdentity" && true.Equals(extentedProp.Value))
                 return true;
-          
+
         return false;
     }
-    
+
     public string GetChiledIdentifiedName(TableSchema sourceTable, TableSchema toManyTable, TableKeySchema tableKey)
     {
         int relationCount = 0;
-        
-        foreach(TableKeySchema key in toManyTable.ForeignKeys)  
-            if(key.PrimaryKeyTable.Equals(sourceTable)) 
-                relationCount ++;
-        
-        if(relationCount > 1)
-          return GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) + GetClassNamePlural(tableKey.ForeignKeyTable);
-        
-        return GetClassNamePlural(tableKey.ForeignKeyTable);     
+
+        foreach (TableKeySchema key in toManyTable.ForeignKeys)
+            if (key.PrimaryKeyTable.Equals(sourceTable))
+                relationCount++;
+
+        if (relationCount > 1)
+            return GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) + GetClassNamePlural(tableKey.ForeignKeyTable);
+
+        return GetClassNamePlural(tableKey.ForeignKeyTable);
     }
-    
+
     public string GetColumnName(ColumnSchema column)
     {
-        return column.Name ;
+        return column.Name;
     }
-    
+
     public string GetParamName(ColumnSchema column)
     {
-        return ParamIdentifier(column.Table) + column.Name.Replace(' ','_');
+        return ParamIdentifier(column.Table) + column.Name.Replace(' ', '_');
     }
-    
+
     public string GetConstantColumnName(ColumnSchema column)
     {
         return "COL_" + column.Name.ToUpper().Replace(' ', '_');
     }
-    
+
     public string GetConstantParamName(ColumnSchema column)
     {
         return "PARAM_" + column.Name.ToUpper().Replace(' ', '_');
-    }   
-    
+    }
+
     public string GetPropertyDeclaration(ColumnSchema column, string csharpDataType)
     {
-        string propDeclaration =string.Empty;
-        if(!column.AllowDBNull && column.SystemType.IsPrimitive) 
+        string propDeclaration = string.Empty;
+        if (!column.AllowDBNull && column.SystemType.IsPrimitive)
         {
-	      propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, default(@DataType))]
-                              public virtual @DataType @PropertyName ";
-		} else if(!column.AllowDBNull && column.SystemType.IsValueType) {
-           propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, typeof(@DataType))]
-                              public virtual @DataType @PropertyName ";
-		} else if(column.AllowDBNull && column.SystemType.IsValueType) {
-          propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
-                              public virtual @DataType? @PropertyName ";
-        } else {
-         propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
+            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, default(@DataType))]
                               public virtual @DataType @PropertyName ";
         }
-        
+        else if (!column.AllowDBNull && column.SystemType.IsValueType)
+        {
+            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, typeof(@DataType))]
+                              public virtual @DataType @PropertyName ";
+        }
+        else if (column.AllowDBNull && column.SystemType.IsValueType)
+        {
+            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
+                              public virtual @DataType? @PropertyName ";
+        }
+        else
+        {
+            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
+                              public virtual @DataType @PropertyName ";
+        }
+
         return propDeclaration.Replace("@ConstantColumn", GetConstantColumnName(column))
                               .Replace("@ConstantParam", GetConstantParamName(column))
-                              .Replace("@DataType",  csharpDataType)
-                              .Replace("@PropertyName",  GetPropertyName(column));
+                              .Replace("@DataType", csharpDataType)
+                              .Replace("@PropertyName", GetPropertyName(column));
     }
-    
+
     public string GetCollectionVariableName(TableSchema table)
     {
         return StringUtil.ToCamelCase(StringUtil.ToPlural(GetClassName(table)));
-    } 
-    
+    }
+
     public string GetCollectionPropertyName(TableSchema table)
     {
         return StringUtil.ToPascalCase(StringUtil.ToPlural(GetClassName(table)));
-    } 
-    
+    }
+
     public string GetUniqueCollectionPropName(TableSchema table, TableKeySchema keySchema)
     {
-         int count = 0;
-         foreach(TableKeySchema tks in table.ForeignKeys)
-         if(tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
-            count++;
-            
-         // fix of StringUtil bug     
-        string collectionPropName = StringUtil.ToPascalCase(StringUtil.ToPlural(StringUtil.ToPascalCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table)))));        
-        if(collectionPropName.ToLower() == "address")
+        int count = 0;
+        foreach (TableKeySchema tks in table.ForeignKeys)
+            if (tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
+                count++;
+
+        // fix of StringUtil bug     
+        string collectionPropName = StringUtil.ToPascalCase(StringUtil.ToPlural(StringUtil.ToPascalCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table)))));
+        if (collectionPropName.ToLower() == "address")
             collectionPropName += "es";
-            
-        return collectionPropName;   
+
+        return collectionPropName;
     }
-    
+
     public string GetUniqueCollectionVarName(TableSchema table, TableKeySchema keySchema)
     {
         int count = 0;
-        foreach(TableKeySchema tks in table.ForeignKeys)
-         if(tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
-            count++;
-            
+        foreach (TableKeySchema tks in table.ForeignKeys)
+            if (tks.PrimaryKeyTable.Equals(keySchema.PrimaryKeyTable))
+                count++;
+
         // fix of StringUtil bug    
-        string collectionVarName = StringUtil.ToPlural(StringUtil.ToCamelCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table))));        
-        if(collectionVarName.ToLower() == "address")
-           collectionVarName += "es";
-        
+        string collectionVarName = StringUtil.ToPlural(StringUtil.ToCamelCase((count > 1 ? (GetClassName(table) + TrimId(GetPropertyName(keySchema.ForeignKeyMemberColumns[0]))) : GetClassName(table))));
+        if (collectionVarName.ToLower() == "address")
+            collectionVarName += "es";
+
         return collectionVarName;
     }
-    
+
     public string GetClassVariableName(TableSchema table)
     {
         return StringUtil.ToCamelCase(GetClassName(table));
     }
-    
+
     public string GetForeignKeyClassVarName(TableKeySchema key)
     {
         string suffix = "Ref";
-        
-        foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
-            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable) && key.ForeignKeyMemberColumns[0].Column != null)
-                return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
-        
-        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1 && key.ForeignKeyMemberColumns[0].Column != null)
-            return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
-                        
+
+        foreach (TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
+            if (!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable) && key.ForeignKeyMemberColumns[0].Column != null)
+                return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;
+
+        if (key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1 && key.ForeignKeyMemberColumns[0].Column != null)
+            return TrimEnd(GetPrivateVariableName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;
+
         return StringUtil.ToCamelCase(GetClassName(key.PrimaryKeyTable)) + suffix;
     }
-    
+
     public string GetForeignKeyClassPropName(TableKeySchema key)
     {
         string suffix = "Ref";
-        
-        foreach(TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
-            if(!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
-                return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code")+ suffix;            
 
-        if(key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1)
-               return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;            
-                              
+        foreach (TableKeySchema k in key.ForeignKeyTable.ForeignKeys)
+            if (!k.Equals(key) && k.PrimaryKeyTable.Equals(key.PrimaryKeyTable))
+                return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;
+
+        if (key.PrimaryKeyTable.Equals(key.ForeignKeyTable) && key.ForeignKeyMemberColumns.Count == 1)
+            return TrimEnd(GetPropertyName(key.ForeignKeyMemberColumns[0].Column), "id", "code") + suffix;
+
         return GetClassName(key.PrimaryKeyTable) + suffix;
     }
-    
+
     public string TrimEnd(string value, params string[] args)
     {
-        if(args != null)
-            foreach(string arg in args)
-                if(value != null && value.Length > 0 && value.ToLower().EndsWith(arg.ToLower()))
-                return value.Substring(0, value.Length - arg.Length);
-    
+        if (args != null)
+            foreach (string arg in args)
+                if (value != null && value.Length > 0 && value.ToLower().EndsWith(arg.ToLower()))
+                    return value.Substring(0, value.Length - arg.Length);
+
         return value;
     }
-    
+
     public string TrimId(string name)
     {
-        if(name != null && name.Length > 2 && name.ToLower().EndsWith("id"))
+        if (name != null && name.Length > 2 && name.ToLower().EndsWith("id"))
             return name.Substring(0, name.Length - 2);
-            
+
         return name;
     }
 }
@@ -791,7 +852,7 @@ public class SearchCriteria
     protected MethodNameGenerationMode methodNameGenerationMode = MethodNameGenerationMode.Default;
     protected string methodName = String.Empty;
     protected string extendedProperty;
-	protected bool isPrimaryKey;
+    protected bool isPrimaryKey;
 
     #endregion
 
@@ -1010,7 +1071,7 @@ public class SearchCriteria
             List<MemberColumnSchema> mcsList = new List<MemberColumnSchema>(table.PrimaryKey.MemberColumns.ToArray());
             SearchCriteria searchCriteria = new SearchCriteria(ExtendedProperty, mcsList, true);
 
-            if(!String.IsNullOrEmpty(ExtendedProperty)
+            if (!String.IsNullOrEmpty(ExtendedProperty)
                && table.PrimaryKey.ExtendedProperties.Contains(ExtendedProperty)
                && table.PrimaryKey.ExtendedProperties[ExtendedProperty].Value != null
               )

@@ -93,13 +93,19 @@ namespace CrystalMapper.Data
         public void CommitTransaction()
         {
             if (this.transaction != null)
-                transaction.Commit();   
+            {
+                transaction.Commit();
+                transaction = null;
+            }
         }    
 
         public void RollbackTransaction()
         {
             if (this.transaction != null)
-                transaction.Rollback();           
+            {
+                transaction.Rollback();
+                transaction = null;
+            }
         }
 
         #region IDisposable Members
