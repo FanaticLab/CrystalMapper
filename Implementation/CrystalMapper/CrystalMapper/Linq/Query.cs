@@ -9,7 +9,6 @@ using System.Data.Common;
 
 namespace CrystalMapper.Linq
 {
-
     public class Query<T> : IQueryable<T>, IQueryable, IEnumerable<T>, IEnumerable, IOrderedQueryable<T>, IOrderedQueryable
     {
         QueryProvider provider;

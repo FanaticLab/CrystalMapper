@@ -19,14 +19,10 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -118,6 +114,7 @@
     <Compile Include="Cache\CacheProvider.cs" />
     <Compile Include="Helper\EntityQueryHelper.cs" />
     <Compile Include="Helper\PolicyHelper.cs" />
+    <Compile Include="Lang\PgSqlLang.cs" />
     <Compile Include="Lang\MySqlLang.cs" />
     <Compile Include="Lang\PSqlLang.cs" />
     <Compile Include="Lang\SqliteLang.cs" />
@@ -125,9 +122,10 @@
     <Compile Include="Lang\TSqlLang.cs" />
     <Compile Include="Linq\Expressions\AggregateExpression.cs" />
     <Compile Include="Linq\Expressions\ArrayExpression.cs" />
+    <Compile Include="Linq\Expressions\ForUpdateExpression.cs" />
     <Compile Include="Linq\Expressions\SkipExpression.cs" />
     <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
-    <Compile Include="Linq\DataContextExtension.cs" />
+    <Compile Include="Linq\LinqExtension.cs" />
     <Compile Include="Linq\Expressions\DbExpressionType.cs" />
     <Compile Include="Linq\Expressions\DbParameterExpression.cs" />
     <Compile Include="Linq\Expressions\DistinctExpression.cs" />
