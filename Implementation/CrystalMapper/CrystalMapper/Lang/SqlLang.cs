@@ -12,7 +12,8 @@ namespace CrystalMapper.Lang
         TSql = 1,
         Sqlite = 2,
         PSql = 4,
-        MySql = 8
+        MySql = 8,
+        PgSql = 16
     }
 
     internal abstract class SqlLang
@@ -31,6 +32,8 @@ namespace CrystalMapper.Lang
                     return new PSqlLang();
                 case SqlLangType.MySql:
                     return new MySqlLang();
+                case SqlLangType.PgSql:
+                    return new PgSqlLang();
                 default:
                     throw new NotSupportedException(string.Format("CrystalMapper does not support Sql Language Type: {0}", sqlLangType));
             }

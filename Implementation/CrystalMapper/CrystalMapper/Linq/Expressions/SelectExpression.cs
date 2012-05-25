@@ -102,7 +102,7 @@ namespace CrystalMapper.Linq.Expressions
                             }
 
                             if (column.Column is AggregateExpression && ((AggregateExpression)column.Column).Source is WhereExpression)
-                             this.AddWhere((WhereExpression)((AggregateExpression)column.Column).Source);                                
+                                this.AddWhere((WhereExpression)((AggregateExpression)column.Column).Source);
                         }
                         source = groupby.Source;
                         break;
@@ -127,7 +127,7 @@ namespace CrystalMapper.Linq.Expressions
 
             this.AssignAlias();
         }
-     
+
         public override string GetAlias(Type type)
         {
             return this.ReturnType == type ? this.Alias : (string.IsNullOrEmpty(this.From.GetAlias(type)) ? null : this.Alias);
@@ -135,74 +135,167 @@ namespace CrystalMapper.Linq.Expressions
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
-            int currentIndent = queryWriter.Indent;
-            queryWriter.Indent = queryWriter.GetLastLineLength();
-
-            if (this.WrapInBracks) queryWriter.Write("(");
-
-            queryWriter.Write("SELECT ");
-
-            if (this.Distinct != null)
-                this.Distinct.WriteQuery(sqlLang, queryWriter);
-
-            if (sqlLang.SqlLangType == SqlLangType.TSql && this.Take != null)
-                this.Take.WriteQuery(sqlLang, queryWriter);
-
-            if (this.Aggregate == null)
-                this.Projection.WriteQuery(sqlLang, queryWriter);
+            if (sqlLang.SqlLangType == SqlLangType.TSql && this.Skip != null && this.Aggregate == null)
+                this.WriteTSql(sqlLang, queryWriter);
             else
-                this.Aggregate.WriteQuery(sqlLang, queryWriter);
-
-            queryWriter.WriteLine().Write("FROM ");
-
-            this.From.WriteQuery(sqlLang, queryWriter);
-
-            if (sqlLang.SqlLangType == SqlLangType.PSql && this.Take != null)
             {
-                queryWriter.WriteLine().Write("WHERE ");
+                int currentIndent = queryWriter.Indent;
+                queryWriter.Indent = queryWriter.GetLastLineLength();
 
-                if (this.Where != null)
-                {
-                    queryWriter.Write("(");
-                    this.Where.WriteQuery(sqlLang, queryWriter);
-                    queryWriter.Write(" AND ");
+                if (this.WrapInBracks) queryWriter.Write("(");
+
+                queryWriter.Write("SELECT ");
+
+                if (this.Distinct != null)
+                    this.Distinct.WriteQuery(sqlLang, queryWriter);
+
+                if (sqlLang.SqlLangType == SqlLangType.TSql && this.Take != null && this.Skip == null)
                     this.Take.WriteQuery(sqlLang, queryWriter);
-                    queryWriter.Write(")");
-                }
+
+                if (this.Aggregate == null)
+                    this.Projection.WriteQuery(sqlLang, queryWriter);
                 else
-                    this.Take.WriteQuery(sqlLang, queryWriter);
-            }
-            else if (this.Where != null)
-            {
-                queryWriter.WriteLine().Write("WHERE ");
-                this.Where.WriteQuery(sqlLang, queryWriter);
-            }
+                    this.Aggregate.WriteQuery(sqlLang, queryWriter);
+
+                queryWriter.WriteLine().Write("FROM ");
+
+                this.From.WriteQuery(sqlLang, queryWriter);
+                if (sqlLang.SqlLangType == SqlLangType.TSql && this.ForUpdate != null)
+                    queryWriter.Write(" WITH (UPDLOCK, ROWLOCK) ");
+
+                if (sqlLang.SqlLangType == SqlLangType.PSql && this.Take != null)
+                {
+                    queryWriter.WriteLine().Write("WHERE ");
+
+                    if (this.Where != null)
+                    {
+                        queryWriter.Write("(");
+                        this.Where.WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(" AND ");
+                        this.Take.WriteQuery(sqlLang, queryWriter);
+                        queryWriter.Write(")");
+                    }
+                    else
+                        this.Take.WriteQuery(sqlLang, queryWriter);
+                }
+                else if (this.Where != null)
+                {
+                    queryWriter.WriteLine().Write("WHERE ");
+                    this.Where.WriteQuery(sqlLang, queryWriter);
+                }
 
 
-            if (this.Take != null && this.Take.IsReverse)
-            {
-                if (this.sortExpressions.Count == 0)
-                    throw new InvalidOperationException("Query must specify order by clause if last record need to be fatch");
+                if (this.Take != null && this.Take.IsReverse)
+                {
+                    if (this.sortExpressions.Count == 0)
+                        throw new InvalidOperationException("Query must specify order by clause if last record need to be fatch");
 
-                foreach (SortExpression sortExpression in this.sortExpressions)
-                    sortExpression.ReverseSortDirection();
-            }
+                    foreach (SortExpression sortExpression in this.sortExpressions)
+                        sortExpression.ReverseSortDirection();
+                }
 
-            bool isFirst = true;
-            if (this.Aggregate == null)
-            {
-                foreach (var orderByExp in this.sortExpressions)
+                bool isFirst = true;
+                if (this.Aggregate == null)
+                {
+                    foreach (var orderByExp in this.sortExpressions)
+                    {
+                        if (isFirst)
+                        {
+                            queryWriter.WriteLine().Write("ORDER BY ");
+                            isFirst = false;
+                        }
+                        else
+                            queryWriter.Write(", ");
+
+                        orderByExp.WriteQuery(sqlLang, queryWriter);
+                    }
+                }
+
+                isFirst = true;
+                foreach (var groupbyExp in this.groupbyExpressions)
                 {
                     if (isFirst)
                     {
-                        queryWriter.WriteLine().Write("ORDER BY ");
+                        queryWriter.WriteLine().Write("GROUP BY ");
                         isFirst = false;
                     }
                     else
                         queryWriter.Write(", ");
 
-                    orderByExp.WriteQuery(sqlLang, queryWriter);
+                    groupbyExp.WriteQuery(sqlLang, queryWriter);
                 }
+
+                if ((sqlLang.SqlLangType & (SqlLangType.Sqlite | SqlLangType.MySql | SqlLangType.PgSql)) != 0 && this.Take != null)
+                {
+                    queryWriter.WriteLine();
+                    this.Take.WriteQuery(sqlLang, queryWriter);
+                }
+
+                if (this.Skip != null && this.Take == null)
+                {
+                    queryWriter.WriteLine();
+                    this.Skip.WriteQuery(sqlLang, queryWriter);
+                }
+
+                if (this.WrapInBracks) queryWriter.Write(") AS ").Write(Alias);
+
+                if (sqlLang.SqlLangType != SqlLangType.TSql && this.ForUpdate != null)
+                    this.ForUpdate.WriteQuery(sqlLang, queryWriter);
+
+                queryWriter.Indent = currentIndent;
+            }
+        }
+
+        private void WriteTSql(SqlLang sqlLang, QueryWriter queryWriter)
+        {
+            int currentIndent = queryWriter.Indent;
+            queryWriter.Indent = queryWriter.GetLastLineLength();
+
+            if (this.WrapInBracks) queryWriter.Write("(");
+
+            if (this.Take != null)
+                queryWriter.Write("SELECT TOP (").Write(this.Take.Count).Write(") * FROM (SELECT ");
+            else
+                queryWriter.Write("SELECT * FROM (SELECT ");
+
+            if (this.Distinct != null)
+                this.Distinct.WriteQuery(sqlLang, queryWriter);
+
+            this.Projection.WriteQuery(sqlLang, queryWriter);
+
+            queryWriter.Write(", ROW_NUMBER() OVER (");
+
+            if (this.sortExpressions.Count == 0)
+                throw new InvalidOperationException("Query must specify order by clause if last record need to be fatch.");
+
+            if (this.Take != null && this.Take.IsReverse)
+                foreach (SortExpression sortExpression in this.sortExpressions)
+                    sortExpression.ReverseSortDirection();
+
+            bool isFirst = true;
+            foreach (var orderByExp in this.sortExpressions)
+            {
+                if (isFirst)
+                {
+                    queryWriter.WriteLine().Write("ORDER BY ");
+                    isFirst = false;
+                }
+                else
+                    queryWriter.Write(", ");
+
+                orderByExp.WriteQuery(sqlLang, queryWriter);
+            }
+
+            queryWriter.WriteLine().Write(") AS CM_ROW_NUMBER FROM ");
+
+            this.From.WriteQuery(sqlLang, queryWriter);
+            if (this.ForUpdate != null)
+                queryWriter.Write(" WITH (UPDLOCK, ROWLOCK)");
+
+            if (this.Where != null)
+            {
+                queryWriter.WriteLine().Write("WHERE ");
+                this.Where.WriteQuery(sqlLang, queryWriter);
             }
 
             isFirst = true;
@@ -219,22 +312,13 @@ namespace CrystalMapper.Linq.Expressions
                 groupbyExp.WriteQuery(sqlLang, queryWriter);
             }
 
-            if ((sqlLang.SqlLangType & (SqlLangType.Sqlite | SqlLangType.MySql | SqlLangType.PgSql)) != 0 && this.Take != null)
-            {
-                queryWriter.WriteLine();
-                this.Take.WriteQuery(sqlLang, queryWriter);
-            }
+            queryWriter.Write(") AS A").WriteLine();
 
-            if(this.Skip != null && this.Take == null)
-            {
-                queryWriter.WriteLine();
-                this.Skip.WriteQuery(sqlLang, queryWriter);
-            }
+            queryWriter.Write("WHERE CM_ROW_NUMBER > ").Write(this.Skip.Count);
+
+            queryWriter.Write("ORDER BY CM_ROW_NUMBER");
 
             if (this.WrapInBracks) queryWriter.Write(") AS ").Write(Alias);
-
-            if (this.ForUpdate != null)
-                this.ForUpdate.WriteQuery(sqlLang, queryWriter);
 
             queryWriter.Indent = currentIndent;
         }
