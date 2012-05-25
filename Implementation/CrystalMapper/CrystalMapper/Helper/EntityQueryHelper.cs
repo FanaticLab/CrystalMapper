@@ -35,7 +35,7 @@ namespace CrystalMapper.Helper
                 ColumnAttribute[] dbColumnAttributes;
                 if ((dbColumnAttributes = (ColumnAttribute[])propertyInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null
                     && dbColumnAttributes.Length == 1)
-                    selectQuery.Append("'").Append(dbColumnAttributes[0].ColumnName).Append("',");
+                    selectQuery.Append("").Append(dbColumnAttributes[0].ColumnName).Append(",");
             }
             selectQuery.Remove(selectQuery.Length - 1, 1).Append(SQL_FROM);
 
@@ -88,15 +88,15 @@ namespace CrystalMapper.Helper
                     if (propertyValue is string && !propertyValue.Equals(columnInfo.DefTypeValue))
                     {
                         string propertyValueStr = (string)propertyValue;
-                        query.Append("[").Append(columnInfo.ColumnName);
-                        query.Append((propertyValueStr.Contains("*") || propertyValueStr.Contains("%")) ? "] Like " : "] = ");
+                        query.Append("").Append(columnInfo.ColumnName);
+                        query.Append((propertyValueStr.Contains("*") || propertyValueStr.Contains("%")) ? " Like " : " = ");
                         query.Append(columnInfo.ParamName).Append(SQL_AND);
                         parameterValues.Add(columnInfo.ParamName, propertyValue);
 
                     }
                     else if (!propertyValue.Equals(columnInfo.DefTypeValue))
                     {
-                        query.Append(" [").Append(columnInfo.ColumnName).Append("] = ").Append(columnInfo.ParamName).Append(SQL_AND);
+                        query.Append(" ").Append(columnInfo.ColumnName).Append(" = ").Append(columnInfo.ParamName).Append(SQL_AND);
                         parameterValues.Add(columnInfo.ParamName, propertyValue);
 
                     }

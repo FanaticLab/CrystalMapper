@@ -103,6 +103,7 @@ namespace <%= BusinessNamespace %>
 		protected <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassVarName(keySchema) %>;
 	
 		<% } %>
+        <%--
 	    <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>
@@ -124,7 +125,8 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
-        <% } %>        
+        <% } %>
+        --%>
         #endregion
 
  		#region Properties	
@@ -227,7 +229,8 @@ namespace <%= BusinessNamespace %>
                 }
         }	
 		
-        <% } %>	         
+        <% } %>
+        <%--
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
@@ -255,14 +258,17 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
-        <% } %>
+        <% } %>        
+        --%>
         
         #endregion        
         
         #region Methods     
-		
+	   
+       
        public <%= GetClassName(SourceTable) %>()
         {
+          <%--      
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
         foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
         if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
@@ -283,7 +289,9 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>
         <% } %>
+         --%>
         }
+       
         
         <% if (SourceTable.HasPrimaryKey) { %>
         public override bool Equals(object obj)
@@ -439,6 +447,7 @@ namespace <%= BusinessNamespace %>
 
         #endregion
         
+        <%--       
         #region Entity Relationship Functions
         
         <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
@@ -551,5 +560,6 @@ namespace <%= BusinessNamespace %>
         <% } %>
         <% } %>           
         #endregion
+        --%>
     }
 }
