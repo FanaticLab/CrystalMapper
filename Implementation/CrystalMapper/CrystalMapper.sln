@@ -1,12 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper", "CrystalMapper\CrystalMapper.csproj", "{362267BA-8052-493E-A3C0-F89B0F3BF331}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.Test", "CrystalMapper.Test\CrystalMapper.Test.csproj", "{FB05239A-0E75-4E64-963C-136215002017}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreSystem", "..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj", "{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeSmith Templates", "CodeSmith Templates", "{ED9EFE1A-2183-403A-9C76-CB5563836F25}"
 	ProjectSection(SolutionItems) = preProject
 		..\CodeSmith Templates\BusinessObjectsGenerator.cst = ..\CodeSmith Templates\BusinessObjectsGenerator.cst
@@ -18,13 +12,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeSmith Templates", "Code
 		..\CodeSmith Templates\HelperFunctions.cs = ..\CodeSmith Templates\HelperFunctions.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.UnitTest", "CrystalMapper.UnitTest\CrystalMapper.UnitTest.csproj", "{160D1D21-699E-499A-9CA2-F54992777EFE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE0B8F52-6646-47B8-B2C6-002E1D99809F}"
 	ProjectSection(SolutionItems) = preProject
 		CrystalMapper.vsmdi = CrystalMapper.vsmdi
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper", "CrystalMapper\CrystalMapper.csproj", "{362267BA-8052-493E-A3C0-F89B0F3BF331}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.Test", "CrystalMapper.Test\CrystalMapper.Test.csproj", "{FB05239A-0E75-4E64-963C-136215002017}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreSystem", "..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj", "{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper.UnitTest", "CrystalMapper.UnitTest\CrystalMapper.UnitTest.csproj", "{160D1D21-699E-499A-9CA2-F54992777EFE}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
