@@ -134,7 +134,7 @@ public class HelperFunctions : CodeTemplate
         else
         {
             foreach (ColumnSchema column in table.Columns)
-                if (!IsIdentityColumn(column))
+                if (!IsIdentityColumn(column) && !IsComputed(column))
                     query += " [" + GetColumnName(column) + "],";
         }
 
@@ -143,11 +143,9 @@ public class HelperFunctions : CodeTemplate
 
         foreach (ColumnSchema column in table.Columns)
         {
-            if (!IsIdentityColumn(column))
+            if (!IsIdentityColumn(column) && !IsComputed(column))
                 query += " " + GetParamName(column) + ",";
         }
-
-
 
         var identityColumn = GetIdentityColumn(table);
         if (table.Database.Provider.Name == "PostgreSQLSchemaProvider" && identityColumn != null)
@@ -167,7 +165,8 @@ public class HelperFunctions : CodeTemplate
         if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
         {
             foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
-                query += " " + GetColumnName(column) + " = " + GetParamName(column) + ",";
+                if(!IsComputed(column))
+                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + ",";
 
             query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
 
@@ -188,7 +187,8 @@ public class HelperFunctions : CodeTemplate
         {
 
             foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
-                query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + ",";
+                if(!IsComputed(column))
+                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + ",";
 
             query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
 
@@ -263,6 +263,11 @@ public class HelperFunctions : CodeTemplate
                 return column;
 
         return null;
+    }
+
+    public static bool IsComputed(ColumnSchema column)
+    {
+        return (column.ExtendedProperties.Contains("CS_IsComputed") && ((bool)column.ExtendedProperties["CS_IsComputed"].Value));
     }
 
     public string GetPrivateVariableNamePlural(TableSchema table, ColumnSchema column)

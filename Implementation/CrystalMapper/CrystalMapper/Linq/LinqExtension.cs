@@ -19,28 +19,44 @@ namespace CrystalMapper.Linq
         public static TSource ForUpdate<TSource>(this IQueryable<TSource> source)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
+#if NET40
+            var expression = Expression.Call(null, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression);
+#else
             var expression = Expression.Call(source.Expression, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression);
+#endif
             return source.Provider.Execute<TSource>(expression);
         }
 
         public static TSource ForUpdate<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
+#if NET40
+            var expression = Expression.Call(null, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression, predicate);
+#else
             var expression = Expression.Call(source.Expression, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression, predicate);
+#endif
             return source.Provider.Execute<TSource>(expression);
         }
 
         public static TSource[] ForUpdateAll<TSource>(this IQueryable<TSource> source)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
+#if NET40
+            var expression = Expression.Call(null, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression);
+#else
             var expression = Expression.Call(source.Expression, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression);
+#endif
             return source.Provider.Execute<TSource[]>(expression);
         }
 
         public static List<TSource> ForUpdateAll<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
+#if NET40
+            var expression = Expression.Call(null, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression, predicate);
+#else
             var expression = Expression.Call(source.Expression, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression, predicate);
+#endif
             return source.Provider.Execute<List<TSource>>(expression);
         }
     }
