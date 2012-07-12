@@ -28,8 +28,8 @@ namespace CrystalMapper.Linq.Translator
         public QueryInfo Translate(SqlLang sqlLang, Expression expression)
         {
             ResultShape resultShape = GetResultShape(expression);
-            expression = this.Visit(expression);
-            SelectExpression selectExpression = this.MakeSelect(expression as DbExpression);
+            var dbExpression = this.Visit(expression);
+            SelectExpression selectExpression = this.MakeSelect(dbExpression as DbExpression);
             Dictionary<string, object> parameterValues = new Dictionary<string, object>();
             foreach (var dbParameter in this.parameters)
                 if (!dbParameter.IsDBNull)
@@ -44,7 +44,7 @@ namespace CrystalMapper.Linq.Translator
                 return new QueryInfo(resultShape, selectExpression.UseDefault, selectExpression.ReturnType, selectExpression.Projection, queryWriter.ToString(), parameterValues);
             }
 
-            throw new InvalidOperationException(string.Format("Failed to translate expression in to select expression, top node expression is: '{0}. Try to wrap it in select clause'", expression));
+            throw new InvalidOperationException(string.Format("Failed to translate expression in to select expression, top node expression is: '{0}. Try to wrap it in select clause'", dbExpression));
         }
 
         private SelectExpression MakeSelect(DbExpression dbExpression)
@@ -465,7 +465,7 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitUnary(UnaryExpression u)
         {
-            return Visit(u.Operand);
+            return new DbUnaryExpression((DbExpression)Visit(u.Operand), u.NodeType, u.Type);
         }
 
         private bool IsLambda(Expression expression)

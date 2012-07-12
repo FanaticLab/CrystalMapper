@@ -33,7 +33,8 @@ namespace CrystalMapper.Linq.Expressions
         GroupBy,
         Array,
         Skip,
-        ForUpdate
+        ForUpdate,
+        Unary
     }
 
 }
