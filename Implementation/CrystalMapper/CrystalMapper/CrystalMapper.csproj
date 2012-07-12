@@ -88,6 +88,7 @@
     <Compile Include="Lang\TSqlLang.cs" />
     <Compile Include="Linq\Expressions\AggregateExpression.cs" />
     <Compile Include="Linq\Expressions\ArrayExpression.cs" />
+    <Compile Include="Linq\Expressions\DbUnaryExpression.cs" />
     <Compile Include="Linq\Expressions\ForUpdateExpression.cs" />
     <Compile Include="Linq\Expressions\SkipExpression.cs" />
     <Compile Include="Linq\Expressions\DbMethodCallExpression.cs" />
