@@ -119,6 +119,9 @@ namespace CrystalMapper.Linq.Expressions
                         this.Aggregate = source as AggregateExpression;
                         source = this.Aggregate.Source;
                         break;
+                    case DbExpressionType.Unary:
+                        source = ((DbUnaryExpression)source).Operand;
+                        break;
                     default:
                         this.From = source as SourceExpression;
                         break;
