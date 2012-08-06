@@ -7,14 +7,14 @@ using CrystalMapper.Lang;
 
 namespace CrystalMapper.Linq.Expressions
 {
-    internal class DbUnaryExpression : DbExpression
+    internal class DbUnaryExpression : IndirectExpression
     {
         public DbExpression Operand { get; private set; }
 
         public ExpressionType Operator { get; private set; }
 
         public DbUnaryExpression(DbExpression operand, ExpressionType unaryOperator, Type type)
-            : base(DbExpressionType.Unary, type)
+            : base(operand, DbExpressionType.Unary, type)
         {
             this.Operand = operand;
             this.Operator = unaryOperator;

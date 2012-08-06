@@ -20,6 +20,9 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
+
+            var s = Order.Query().Where(o => o.Freight < 100).Count(); 
+
             var r = Customer.Query()
                     .Where(c => Order.Query()
                     .Select(o => o.CustomerID).Contains(c.CustomerID)).ToArray();
