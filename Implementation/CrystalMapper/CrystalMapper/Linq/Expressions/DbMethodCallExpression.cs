@@ -25,6 +25,11 @@ namespace CrystalMapper.Linq.Expressions
             this.Arguments = arguments.ToReadOnly();
         }
 
+        public override IEnumerable<DbExpression> GetNodes()
+        {
+            return this.Object.GetNodes();
+        }
+
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
             switch (sqlLang.SqlLangType)
