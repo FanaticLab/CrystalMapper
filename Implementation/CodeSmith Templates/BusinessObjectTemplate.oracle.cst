@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
  
  * Author: Faraz Masood Khan 
  * 
@@ -245,66 +245,6 @@ namespace <%= BusinessNamespace %>
             }
         }
 
-        #endregion
-        
-        #region Children
-        
-        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
-        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
-        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
-        public <%= GetClassName(tableKey.ForeignKeyTable) %> Get<%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>Query()
-        {
-            return new <%= GetClassName(tableKey.ForeignKeyTable) %> {                
-                                                                            <% for(int i=0; i < tableKey.PrimaryKeyMemberColumns.Count ; i++) {  %>
-                                                                            <%= GetPropertyName(tableKey.ForeignKeyMemberColumns[i]) %> = this.<%= GetPropertyName(tableKey.PrimaryKeyMemberColumns[i]) %>  <% if(i != tableKey.PrimaryKeyMemberColumns.Count - 1) { %> , <% } %>
-                                                                            <% } %>
-                                                                            };
-        }
-        
-        public <%= GetClassName(tableKey.ForeignKeyTable) %>[] <%= StringUtil.ToSingular(GetChiledIdentifiedName(SourceTable, toManyTable, tableKey)) %>List()
-        {
-            return Get<%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>Query().ToList();
-        }  
-        
-        <% } %>
-        <% } %>
-        <% } %>
-        
-        
-        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
-        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
-        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
-        if(IsManyToMany(tableKey.ForeignKeyTable)) { 
-        foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
-        if(!toManyKey.Equals(tableKey)) { %>            
-        public <%= GetClassName(toManyKey.PrimaryKeyTable) %>[] <%= GetClassName(toManyKey.PrimaryKeyTable) %>List()
-        {
-            string sqlQuery = @"SELECT <%= toManyKey.PrimaryKeyTable.FullName %>.*
-                                FROM <%= toManyKey.ForeignKeyTable.FullName %>
-                                INNER JOIN <%= toManyKey.PrimaryKeyTable.FullName %> ON                                                                            
-                                <% for(int i=0; i < toManyKey.PrimaryKeyMemberColumns.Count ; i++) {  %>
-                                <%= toManyKey.ForeignKeyTable.FullName %>.[<%= toManyKey.ForeignKeyMemberColumns[i].Column.Name %>] = <%= toManyKey.PrimaryKeyTable.FullName %>.[<%= toManyKey.PrimaryKeyMemberColumns[i].Column.Name %>] AND
-                                <% } %>
-                                <% for(int i=0; i < tableKey.PrimaryKeyMemberColumns.Count ; i++) {  %>
-                                <%= tableKey.ForeignKeyTable.FullName %>.[<%= tableKey.ForeignKeyMemberColumns[i].Column.Name %>] = <%= GetParamName(tableKey.PrimaryKeyMemberColumns[i].Column) %>  <% if(i != tableKey.PrimaryKeyMemberColumns.Count - 1) { %> AND <% } %>
-                                <% } %> 
-                                ";
-                                
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            <% foreach(MemberColumnSchema mcs in tableKey.PrimaryKeyMemberColumns) { %>
-            parameterValues.Add(<%= GetConstantParamName(mcs.Column)%>, this.<%= GetPropertyName(mcs.Column)%>);
-            <% } %>
-            
-            return <%= GetClassName(toManyKey.PrimaryKeyTable) %>.ToList(sqlQuery, parameterValues);
-            
-        }    
-        <% } %>
-        <% } %>
-        <% } %>
-        <% } %>
-        <% } %>
-        <% } %>
-        
-        #endregion
+        #endregion   
     }
 }
