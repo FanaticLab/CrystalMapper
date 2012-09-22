@@ -54,6 +54,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreSystem">
+      <HintPath>..\Lib\CoreSystem.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -91,10 +94,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CoreSystem\Implementation\CoreSystem\CoreSystem\CoreSystem.csproj">
-      <Project>{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}</Project>
-      <Name>CoreSystem</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CrystalMapper\CrystalMapper.csproj">
       <Project>{362267BA-8052-493E-A3C0-F89B0F3BF331}</Project>
       <Name>CrystalMapper</Name>
@@ -118,7 +117,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\CoreSystem.dll" />
     <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
