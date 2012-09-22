@@ -12,6 +12,7 @@ using System.Data;
 using CrystalMapper.Lang;
 using CrystalMapper.Linq.Helper;
 using CoreSystem.Data;
+using CoreSystem.Dynamic;
 
 namespace CrystalMapper.Linq
 {
@@ -68,6 +69,9 @@ namespace CrystalMapper.Linq
 
         T IQueryProvider.Execute<T>(Expression expression)
         {
+            if (typeof(T) == typeof(List<Donymous>))
+                return (T)ExecuteToDonymous(expression);
+
             return (T)Execute(expression);
         }
 
@@ -125,7 +129,32 @@ namespace CrystalMapper.Linq
                 }
             }
         }
-  
+
+        private object ExecuteToDonymous(Expression expression)
+        {
+            var queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
+            DataContext dataContext = this.GetDataContext();
+            try
+            {
+                using (DbCommand command = dataContext.CreateCommand(queryInfo.SqlQuery))
+                {
+                    command.CommandTimeout = 120;
+                    foreach (string parameter in queryInfo.ParamValues.Keys)
+                        command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(queryInfo.ParamValues[parameter]), parameter));
+
+                    return dataContext.ExecuteToDonymous(command);
+                }
+            }
+            finally
+            {
+                if (this.disposeDataContext && dataContext != null)
+                {
+                    dataContext.Dispose();
+                    this.dataContext = null;
+                }
+            }
+        }
+
         internal SqlLang GetSqlLangByProvider()
         {
             switch (this.GetDataContext().Database.ProviderType)
