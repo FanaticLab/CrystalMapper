@@ -4,21 +4,14 @@
  * 
  * Email: mk.faraz@gmail.com
  * 
- * Blogs: http://csharplive.wordpress.com
+ * Blog: http://codestand.feedbook.org
  *
  * Website: http://www.linkedin.com/in/farazmasoodkhan
  *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright: Faraz Masood Khan @ Copyright 2012
  *
 /*/
 
-Setting Up Environment:
+This project contains few of the LINQ operators tests.
 
-* To Run Test or UnitTest execute "instnwnd.sql" file in Management Studio 
-  It will create Northwind database that both test projects uses.
-
-* Point 'Default-Db' and 'Northwind' connection strings to the newly created Northwind database in app.config.
-
-* Executes tests
-
-For any queries don' hesitate to email
+For any queries don't hesitate to email or report issue on http://crystalmapper.codeplex.com

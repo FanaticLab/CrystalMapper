@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: OrderDetail
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -36,7 +35,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.[Order Details]";	
+        public const string TABLE_NAME = "dbo.Order Details";	
      
 		public const string COL_ORDERID = "OrderID";
 		public const string COL_PRODUCTID = "ProductID";
@@ -54,9 +53,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_ORDER_DETAILS = "INSERT INTO dbo.Order Details( [OrderID], [ProductID], [UnitPrice], [Quantity], [Discount]) VALUES ( @OrderID, @ProductID, @UnitPrice, @Quantity, @Discount);"  ;
+		private const string SQL_INSERT_ORDER_DETAILS = "INSERT INTO dbo.Order Details ( [OrderID], [ProductID], [UnitPrice], [Quantity], [Discount]) VALUES ( @OrderID, @ProductID, @UnitPrice, @Quantity, @Discount);"  ;
 		
-		private const string SQL_UPDATE_ORDER_DETAILS = "UPDATE dbo.Order Details SET  [UnitPrice] = @UnitPrice, [Quantity] = @Quantity, [Discount] = @Discount WHERE [OrderID] = @OrderID AND [ProductID] = @ProductID";
+		private const string SQL_UPDATE_ORDER_DETAILS = "UPDATE dbo.Order Details SET [UnitPrice] = @UnitPrice, [Quantity] = @Quantity, [Discount] = @Discount WHERE [OrderID] = @OrderID AND [ProductID] = @ProductID";
 		
 		private const string SQL_DELETE_ORDER_DETAILS = "DELETE FROM dbo.Order Details WHERE  [OrderID] = @OrderID AND [ProductID] = @ProductID ";
 		
@@ -250,10 +249,6 @@ namespace CrystalMapper.Test.Northwind
         #endregion        
         
         #region Methods     
-		
-       public OrderDetail()
-        {
-        }
         
         public override bool Equals(object obj)
         {
@@ -329,10 +324,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
         #endregion
     }
 }

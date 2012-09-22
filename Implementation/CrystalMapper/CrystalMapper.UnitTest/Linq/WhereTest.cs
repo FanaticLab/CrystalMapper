@@ -10,7 +10,7 @@ namespace CrystalMapper.UnitTest.Linq
     /// <summary>
     /// Summary description for WhereTest
     /// </summary>
-    [TestClass]
+    [TestClass]    
     public class WhereTest
     {
         public WhereTest()

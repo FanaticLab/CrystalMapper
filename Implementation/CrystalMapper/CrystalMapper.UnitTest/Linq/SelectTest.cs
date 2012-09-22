@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CrystalMapper.UnitTest.Northwind;
 using System.Data.SqlClient;
 using System.Configuration;
+using CrystalMapper.Data;
 
 namespace CrystalMapper.UnitTest.Linq
 {
@@ -21,11 +22,11 @@ namespace CrystalMapper.UnitTest.Linq
 
         public SelectTest()
         {
-            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings[Constant.DbName].ConnectionString))
+            using (var dataContext = new DataContext())
             {
-                using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM CUSTOMERS", connection))
+                using (var command = dataContext.CreateCommand("SELECT COUNT(*) FROM CUSTOMERS"))
                 {
-                    connection.Open();
+                    
                     totalCustomers = Convert.ToInt32(command.ExecuteScalar());
 
                     command.CommandText = "SELECT TOP 1 CUSTOMERID FROM CUSTOMERS";
@@ -33,9 +34,7 @@ namespace CrystalMapper.UnitTest.Linq
 
 
                     command.CommandText = "SELECT TOP 1 CUSTOMERID FROM CUSTOMERS ORDER BY CUSTOMERID DESC";
-                    lastCustomerID = Convert.ToString(command.ExecuteScalar());                 
-
-                    connection.Close();
+                    lastCustomerID = Convert.ToString(command.ExecuteScalar());
                 }
             }
         }
@@ -56,7 +55,7 @@ namespace CrystalMapper.UnitTest.Linq
             {
                 testContextInstance = value;
             }
-        }      
+        }
 
         [TestMethod]
         public void SelectAll()
@@ -79,9 +78,9 @@ namespace CrystalMapper.UnitTest.Linq
         {
             var customer = Customer.Query().FirstOrDefault();
             Assert.IsNotNull(customer);
-            
+
             customer = Customer.Query().FirstOrDefault(c => c.CustomerID == "----");
-            Assert.IsNull(customer);           
+            Assert.IsNull(customer);
         }
 
         [TestMethod]
@@ -89,7 +88,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             var customer = Customer.Query().Single();
 
-            Assert.IsNotNull(customer);            
+            Assert.IsNotNull(customer);
         }
 
         [TestMethod]
@@ -109,7 +108,7 @@ namespace CrystalMapper.UnitTest.Linq
             var customer = Customer.Query().Last();
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void SelectLast()
         {
             var customer = Customer.Query().OrderBy(c => c.CustomerID).Last();

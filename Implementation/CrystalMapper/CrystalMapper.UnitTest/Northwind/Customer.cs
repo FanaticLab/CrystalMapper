@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:42 PM
  * 
  * Class: Customer
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
@@ -66,9 +65,9 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO dbo.Customers( [CustomerID], [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax]) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
+		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO dbo.Customers ( [CustomerID], [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax]) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERS = "UPDATE dbo.Customers SET  [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax WHERE [CustomerID] = @CustomerID";
+		private const string SQL_UPDATE_CUSTOMERS = "UPDATE dbo.Customers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax WHERE [CustomerID] = @CustomerID";
 		
 		private const string SQL_DELETE_CUSTOMERS = "DELETE FROM dbo.Customers WHERE  [CustomerID] = @CustomerID ";
 		
@@ -98,12 +97,6 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected string fax = default(string);
 	
-        protected EntityCollection< CustomerCustomerDemo> customerCustomerDemos ;
-        
-        protected EntityCollection< Order> orders ;
-        
-        protected EntityCollection< CustomerDemographic> customerDemographics ;
-        
         #endregion
 
  		#region Properties	
@@ -262,32 +255,10 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        public EntityCollection< CustomerCustomerDemo> CustomerCustomerDemos 
-        {
-            get { return this.customerCustomerDemos;}
-        }
-        
-        public EntityCollection< Order> Orders 
-        {
-            get { return this.orders;}
-        }
-        
-        public EntityCollection< CustomerDemographic> CustomerDemographics 
-        {
-            get { return this.customerDemographics;}
-        }  
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Customer()
-        {
-             this.customerCustomerDemos = new EntityCollection< CustomerCustomerDemo>(this, new Associate< CustomerCustomerDemo>(this.AssociateCustomerCustomerDemos), new DeAssociate< CustomerCustomerDemo>(this.DeAssociateCustomerCustomerDemos), new GetChildren< CustomerCustomerDemo>(this.GetChildrenCustomerCustomerDemos));
-             this.orders = new EntityCollection< Order>(this, new Associate< Order>(this.AssociateOrders), new DeAssociate< Order>(this.DeAssociateOrders), new GetChildren< Order>(this.GetChildrenOrders));
-            this.customerDemographics = new EntityCollection< CustomerDemographic>(this, new Associate< CustomerDemographic>(this.AssociateCustomerDemographics), new DeAssociate< CustomerDemographic>(this.DeAssociateCustomerDemographics), new GetChildren< CustomerDemographic>(this.GetChildrenCustomerDemographics));
-        }
         
         public override bool Equals(object obj)
         {
@@ -377,104 +348,6 @@ namespace CrystalMapper.UnitTest.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateCustomerCustomerDemos(CustomerCustomerDemo customerCustomerDemo)
-        {
-           customerCustomerDemo.CustomerRef = this;
-        }
-        
-        private void DeAssociateCustomerCustomerDemos(CustomerCustomerDemo customerCustomerDemo)
-        {
-          if(customerCustomerDemo.CustomerRef == this)
-             customerCustomerDemo.CustomerRef = null;
-        }
-        
-            
-        private CustomerCustomerDemo[] GetChildrenCustomerCustomerDemos()
-        {
-            if (this.customerid != default(string))
-            {  
-                CustomerCustomerDemo childrenQuery = new CustomerCustomerDemo();
-                childrenQuery.CustomerRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateOrders(Order order)
-        {
-           order.CustomerRef = this;
-        }
-        
-        private void DeAssociateOrders(Order order)
-        {
-          if(order.CustomerRef == this)
-             order.CustomerRef = null;
-        }
-        
-            
-        private Order[] GetChildrenOrders()
-        {
-            if (this.customerid != default(string))
-            {  
-                Order childrenQuery = new Order();
-                childrenQuery.CustomerRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateCustomerDemographics(CustomerDemographic customerDemographic)
-        {
-           CustomerCustomerDemo customerCustomerDemo = new  CustomerCustomerDemo();                   
-           customerCustomerDemo.CustomerDemographicRef = customerDemographic;
-           
-           this.customerCustomerDemos.Add(customerCustomerDemo); 
-           customerDemographic.CustomerCustomerDemos.AddOnly(customerCustomerDemo);
-        }
-        
-        private void DeAssociateCustomerDemographics(CustomerDemographic customerDemographic)
-        {
-           CustomerCustomerDemo removeCustomerCustomerDemo = null; 
-           foreach(CustomerCustomerDemo customerCustomerDemo  in  this.customerCustomerDemos)
-             if(customerCustomerDemo.CustomerDemographicRef == customerDemographic)
-             {
-                customerCustomerDemo.CustomerDemographicRef = null;
-                removeCustomerCustomerDemo = customerCustomerDemo;
-                break;
-             }            
-            
-            if(removeCustomerCustomerDemo != null)
-            {
-                this.customerCustomerDemos.Remove(removeCustomerCustomerDemo); 
-                customerDemographic.CustomerCustomerDemos.RemoveOnly(removeCustomerCustomerDemo);
-            }
-        }
-        
-        private CustomerDemographic[] GetChildrenCustomerDemographics()
-        {
-            if (this.customerid != default(string))
-            {
-                this.customerCustomerDemos.Load() ;
-                
-                string sqlQuery = @"SELECT dbo.CustomerDemographics.*
-                                    FROM dbo.CustomerCustomerDemo
-                                    INNER JOIN dbo.CustomerDemographics ON                                                                            
-                                    dbo.CustomerCustomerDemo.[CustomerTypeID] = dbo.CustomerDemographics.[CustomerTypeID] AND
-                                    dbo.CustomerCustomerDemo.[CustomerID] = @CustomerID  
-                                    ";
-                                    
-                Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-                parameterValues.Add(PARAM_CUSTOMERID, this.CustomerID);
-                
-                return CustomerDemographic.ToList(sqlQuery, parameterValues);            
-            }
-            else return null;            
-        }  
-        
         #endregion
     }
 }

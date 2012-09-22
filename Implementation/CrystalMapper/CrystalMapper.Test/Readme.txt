@@ -4,14 +4,15 @@
  * 
  * Email: mk.faraz@gmail.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Blog: http://codestand.feedbook.org
  *
  * Website: http://www.linkedin.com/in/farazmasoodkhan
  *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright: Faraz Masood Khan @ Copyright 2012
  *
 /*/
 
-Database Creation:
-To Run Test or UnitTest execute "instnwnd.sql" file in Management Studio 
-It will create Northwind database that both test project uses.
+This project contains few Linq query tests.
+
+For any queries don't hesitate to email or report issue on http://crystalmapper.codeplex.com
+

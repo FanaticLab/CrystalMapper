@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: Product
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -64,9 +63,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_PRODUCTS = "INSERT INTO dbo.Products( [ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder], [ReorderLevel], [Discontinued]) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_PRODUCTS = "INSERT INTO dbo.Products ( [ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder], [ReorderLevel], [Discontinued]) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_PRODUCTS = "UPDATE dbo.Products SET  [ProductName] = @ProductName, [SupplierID] = @SupplierID, [CategoryID] = @CategoryID, [QuantityPerUnit] = @QuantityPerUnit, [UnitPrice] = @UnitPrice, [UnitsInStock] = @UnitsInStock, [UnitsOnOrder] = @UnitsOnOrder, [ReorderLevel] = @ReorderLevel, [Discontinued] = @Discontinued WHERE [ProductID] = @ProductID";
+		private const string SQL_UPDATE_PRODUCTS = "UPDATE dbo.Products SET [ProductName] = @ProductName, [SupplierID] = @SupplierID, [CategoryID] = @CategoryID, [QuantityPerUnit] = @QuantityPerUnit, [UnitPrice] = @UnitPrice, [UnitsInStock] = @UnitsInStock, [UnitsOnOrder] = @UnitsOnOrder, [ReorderLevel] = @ReorderLevel, [Discontinued] = @Discontinued WHERE [ProductID] = @ProductID";
 		
 		private const string SQL_DELETE_PRODUCTS = "DELETE FROM dbo.Products WHERE  [ProductID] = @ProductID ";
 		
@@ -98,8 +97,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected Supplier supplierRef;
 	
-        protected EntityCollection< OrderDetail> orderDetails ;
-        
         #endregion
 
  		#region Properties	
@@ -338,20 +335,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< OrderDetail> OrderDetails 
-        {
-            get { return this.orderDetails;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Product()
-        {
-             this.orderDetails = new EntityCollection< OrderDetail>(this, new Associate< OrderDetail>(this.AssociateOrderDetails), new DeAssociate< OrderDetail>(this.DeAssociateOrderDetails), new GetChildren< OrderDetail>(this.GetChildrenOrderDetails));
-        }
         
         public override bool Equals(object obj)
         {
@@ -438,33 +425,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateOrderDetails(OrderDetail orderDetail)
-        {
-           orderDetail.ProductRef = this;
-        }
-        
-        private void DeAssociateOrderDetails(OrderDetail orderDetail)
-        {
-          if(orderDetail.ProductRef == this)
-             orderDetail.ProductRef = null;
-        }
-        
-            
-        private OrderDetail[] GetChildrenOrderDetails()
-        {
-            if (this.productid != default(int))
-            {  
-                OrderDetail childrenQuery = new OrderDetail();
-                childrenQuery.ProductRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }

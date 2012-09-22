@@ -9,7 +9,7 @@ namespace CrystalMapper.UnitTest.Linq
     /// <summary>
     /// Summary description for GroupByTest
     /// </summary>
-    [TestClass]
+    [TestClass]    
     public class GroupByTest
     {
       

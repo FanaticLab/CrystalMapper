@@ -10,7 +10,7 @@ namespace CrystalMapper.UnitTest.Linq
     /// <summary>
     /// Summary description for ProjectionTest
     /// </summary>
-    [TestClass]
+    [TestClass]    
     public class ProjectionTest
     {
         [TestMethod]

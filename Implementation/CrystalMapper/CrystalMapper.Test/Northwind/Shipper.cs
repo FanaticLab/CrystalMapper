@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: Shipper
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -50,9 +49,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SHIPPERS = "INSERT INTO dbo.Shippers( [CompanyName], [Phone]) VALUES ( @CompanyName, @Phone);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SHIPPERS = "INSERT INTO dbo.Shippers ( [CompanyName], [Phone]) VALUES ( @CompanyName, @Phone);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SHIPPERS = "UPDATE dbo.Shippers SET  [CompanyName] = @CompanyName, [Phone] = @Phone WHERE [ShipperID] = @ShipperID";
+		private const string SQL_UPDATE_SHIPPERS = "UPDATE dbo.Shippers SET [CompanyName] = @CompanyName, [Phone] = @Phone WHERE [ShipperID] = @ShipperID";
 		
 		private const string SQL_DELETE_SHIPPERS = "DELETE FROM dbo.Shippers WHERE  [ShipperID] = @ShipperID ";
 		
@@ -66,8 +65,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected string phone = default(string);
 	
-        protected EntityCollection< Order> orders ;
-        
         #endregion
 
  		#region Properties	
@@ -114,20 +111,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< Order> Orders 
-        {
-            get { return this.orders;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Shipper()
-        {
-             this.orders = new EntityCollection< Order>(this, new Associate< Order>(this.AssociateOrders), new DeAssociate< Order>(this.DeAssociateOrders), new GetChildren< Order>(this.GetChildrenOrders));
-        }
         
         public override bool Equals(object obj)
         {
@@ -193,33 +180,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateOrders(Order order)
-        {
-           order.ShipperRef = this;
-        }
-        
-        private void DeAssociateOrders(Order order)
-        {
-          if(order.ShipperRef == this)
-             order.ShipperRef = null;
-        }
-        
-            
-        private Order[] GetChildrenOrders()
-        {
-            if (this.shipperid != default(int))
-            {  
-                Order childrenQuery = new Order();
-                childrenQuery.ShipperRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }

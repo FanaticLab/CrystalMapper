@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: CustomerCustomerDemo
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -48,9 +47,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERCUSTOMERDEMO = "INSERT INTO dbo.CustomerCustomerDemo( [CustomerID], [CustomerTypeID]) VALUES ( @CustomerID, @CustomerTypeID);"  ;
+		private const string SQL_INSERT_CUSTOMERCUSTOMERDEMO = "INSERT INTO dbo.CustomerCustomerDemo ( [CustomerID], [CustomerTypeID]) VALUES ( @CustomerID, @CustomerTypeID);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERCUSTOMERDEMO = "UPDATE dbo.CustomerCustomerDemo SET  WHERE [CustomerID] = @CustomerID AND [CustomerTypeID] = @CustomerTypeID";
+		private const string SQL_UPDATE_CUSTOMERCUSTOMERDEMO = "UPDATE dbo.CustomerCustomerDemo SET WHERE [CustomerID] = @CustomerID AND [CustomerTypeID] = @CustomerTypeID";
 		
 		private const string SQL_DELETE_CUSTOMERCUSTOMERDEMO = "DELETE FROM dbo.CustomerCustomerDemo WHERE  [CustomerID] = @CustomerID AND [CustomerTypeID] = @CustomerTypeID ";
 		
@@ -196,10 +195,6 @@ namespace CrystalMapper.Test.Northwind
         #endregion        
         
         #region Methods     
-		
-       public CustomerCustomerDemo()
-        {
-        }
         
         public override bool Equals(object obj)
         {
@@ -266,10 +261,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
         #endregion
     }
 }

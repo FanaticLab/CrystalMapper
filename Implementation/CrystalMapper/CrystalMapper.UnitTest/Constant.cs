@@ -7,6 +7,6 @@ namespace CrystalMapper.UnitTest
 {
     public static class Constant
     {
-        public const string DbName = "Northwind";
+        public const string DbName = "Default-Db";
     }
 }

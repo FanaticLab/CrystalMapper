@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:42 PM
  * 
  * Class: Employee
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
@@ -80,9 +79,9 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_EMPLOYEES = "INSERT INTO dbo.Employees( [LastName], [FirstName], [Title], [TitleOfCourtesy], [BirthDate], [HireDate], [Address], [City], [Region], [PostalCode], [Country], [HomePhone], [Extension], [Photo], [Notes], [ReportsTo], [PhotoPath]) VALUES ( @LastName, @FirstName, @Title, @TitleOfCourtesy, @BirthDate, @HireDate, @Address, @City, @Region, @PostalCode, @Country, @HomePhone, @Extension, @Photo, @Notes, @ReportsTo, @PhotoPath);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_EMPLOYEES = "INSERT INTO dbo.Employees ( [LastName], [FirstName], [Title], [TitleOfCourtesy], [BirthDate], [HireDate], [Address], [City], [Region], [PostalCode], [Country], [HomePhone], [Extension], [Photo], [Notes], [ReportsTo], [PhotoPath]) VALUES ( @LastName, @FirstName, @Title, @TitleOfCourtesy, @BirthDate, @HireDate, @Address, @City, @Region, @PostalCode, @Country, @HomePhone, @Extension, @Photo, @Notes, @ReportsTo, @PhotoPath);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_EMPLOYEES = "UPDATE dbo.Employees SET  [LastName] = @LastName, [FirstName] = @FirstName, [Title] = @Title, [TitleOfCourtesy] = @TitleOfCourtesy, [BirthDate] = @BirthDate, [HireDate] = @HireDate, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [HomePhone] = @HomePhone, [Extension] = @Extension, [Photo] = @Photo, [Notes] = @Notes, [ReportsTo] = @ReportsTo, [PhotoPath] = @PhotoPath WHERE [EmployeeID] = @EmployeeID";
+		private const string SQL_UPDATE_EMPLOYEES = "UPDATE dbo.Employees SET [LastName] = @LastName, [FirstName] = @FirstName, [Title] = @Title, [TitleOfCourtesy] = @TitleOfCourtesy, [BirthDate] = @BirthDate, [HireDate] = @HireDate, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [HomePhone] = @HomePhone, [Extension] = @Extension, [Photo] = @Photo, [Notes] = @Notes, [ReportsTo] = @ReportsTo, [PhotoPath] = @PhotoPath WHERE [EmployeeID] = @EmployeeID";
 		
 		private const string SQL_DELETE_EMPLOYEES = "DELETE FROM dbo.Employees WHERE  [EmployeeID] = @EmployeeID ";
 		
@@ -128,14 +127,6 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected Employee reportstoRef;
 	
-        protected EntityCollection< Employee> employees ;
-        
-        protected EntityCollection< EmployeeTerritory> employeeTerritories ;
-        
-        protected EntityCollection< Order> orders ;
-        
-        protected EntityCollection< Territory> territories ;
-        
         #endregion
 
  		#region Properties	
@@ -439,38 +430,10 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        public EntityCollection< Employee> Employees 
-        {
-            get { return this.employees;}
-        }
-        
-        public EntityCollection< EmployeeTerritory> EmployeeTerritories 
-        {
-            get { return this.employeeTerritories;}
-        }
-        
-        public EntityCollection< Order> Orders 
-        {
-            get { return this.orders;}
-        }
-        
-        public EntityCollection< Territory> Territories 
-        {
-            get { return this.territories;}
-        }  
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Employee()
-        {
-             this.employees = new EntityCollection< Employee>(this, new Associate< Employee>(this.AssociateEmployees), new DeAssociate< Employee>(this.DeAssociateEmployees), new GetChildren< Employee>(this.GetChildrenEmployees));
-             this.employeeTerritories = new EntityCollection< EmployeeTerritory>(this, new Associate< EmployeeTerritory>(this.AssociateEmployeeTerritories), new DeAssociate< EmployeeTerritory>(this.DeAssociateEmployeeTerritories), new GetChildren< EmployeeTerritory>(this.GetChildrenEmployeeTerritories));
-             this.orders = new EntityCollection< Order>(this, new Associate< Order>(this.AssociateOrders), new DeAssociate< Order>(this.DeAssociateOrders), new GetChildren< Order>(this.GetChildrenOrders));
-            this.territories = new EntityCollection< Territory>(this, new Associate< Territory>(this.AssociateTerritories), new DeAssociate< Territory>(this.DeAssociateTerritories), new GetChildren< Territory>(this.GetChildrenTerritories));
-        }
         
         public override bool Equals(object obj)
         {
@@ -581,127 +544,6 @@ namespace CrystalMapper.UnitTest.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateEmployees(Employee employee)
-        {
-           employee.ReportsToRef = this;
-        }
-        
-        private void DeAssociateEmployees(Employee employee)
-        {
-          if(employee.ReportsToRef == this)
-             employee.ReportsToRef = null;
-        }
-        
-            
-        private Employee[] GetChildrenEmployees()
-        {
-            if (this.employeeid != default(int))
-            {  
-                Employee childrenQuery = new Employee();
-                childrenQuery.ReportsToRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateEmployeeTerritories(EmployeeTerritory employeeTerritory)
-        {
-           employeeTerritory.EmployeeRef = this;
-        }
-        
-        private void DeAssociateEmployeeTerritories(EmployeeTerritory employeeTerritory)
-        {
-          if(employeeTerritory.EmployeeRef == this)
-             employeeTerritory.EmployeeRef = null;
-        }
-        
-            
-        private EmployeeTerritory[] GetChildrenEmployeeTerritories()
-        {
-            if (this.employeeid != default(int))
-            {  
-                EmployeeTerritory childrenQuery = new EmployeeTerritory();
-                childrenQuery.EmployeeRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateOrders(Order order)
-        {
-           order.EmployeeRef = this;
-        }
-        
-        private void DeAssociateOrders(Order order)
-        {
-          if(order.EmployeeRef == this)
-             order.EmployeeRef = null;
-        }
-        
-            
-        private Order[] GetChildrenOrders()
-        {
-            if (this.employeeid != default(int))
-            {  
-                Order childrenQuery = new Order();
-                childrenQuery.EmployeeRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateTerritories(Territory territory)
-        {
-           EmployeeTerritory employeeTerritory = new  EmployeeTerritory();                   
-           employeeTerritory.TerritoryRef = territory;
-           
-           this.employeeTerritories.Add(employeeTerritory); 
-           territory.EmployeeTerritories.AddOnly(employeeTerritory);
-        }
-        
-        private void DeAssociateTerritories(Territory territory)
-        {
-           EmployeeTerritory removeEmployeeTerritory = null; 
-           foreach(EmployeeTerritory employeeTerritory  in  this.employeeTerritories)
-             if(employeeTerritory.TerritoryRef == territory)
-             {
-                employeeTerritory.TerritoryRef = null;
-                removeEmployeeTerritory = employeeTerritory;
-                break;
-             }            
-            
-            if(removeEmployeeTerritory != null)
-            {
-                this.employeeTerritories.Remove(removeEmployeeTerritory); 
-                territory.EmployeeTerritories.RemoveOnly(removeEmployeeTerritory);
-            }
-        }
-        
-        private Territory[] GetChildrenTerritories()
-        {
-            if (this.employeeid != default(int))
-            {
-                this.employeeTerritories.Load() ;
-                
-                string sqlQuery = @"SELECT dbo.Territories.*
-                                    FROM dbo.EmployeeTerritories
-                                    INNER JOIN dbo.Territories ON                                                                            
-                                    dbo.EmployeeTerritories.[TerritoryID] = dbo.Territories.[TerritoryID] AND
-                                    dbo.EmployeeTerritories.[EmployeeID] = @EmployeeID  
-                                    ";
-                                    
-                Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-                parameterValues.Add(PARAM_EMPLOYEEID, this.EmployeeID);
-                
-                return Territory.ToList(sqlQuery, parameterValues);            
-            }
-            else return null;            
-        }  
-        
         #endregion
     }
 }

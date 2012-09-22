@@ -134,7 +134,6 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Generic\Entity.cs" />
-    <Compile Include="Generic\Collection\EntityCollection.cs" />
     <Compile Include="Mapping\LoadOption.cs" />
     <Compile Include="PersistedStatus.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />

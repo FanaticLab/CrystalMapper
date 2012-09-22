@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:42 PM
  * 
  * Class: EmployeeTerritory
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
@@ -48,9 +47,9 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_EMPLOYEETERRITORIES = "INSERT INTO dbo.EmployeeTerritories( [EmployeeID], [TerritoryID]) VALUES ( @EmployeeID, @TerritoryID);"  ;
+		private const string SQL_INSERT_EMPLOYEETERRITORIES = "INSERT INTO dbo.EmployeeTerritories ( [EmployeeID], [TerritoryID]) VALUES ( @EmployeeID, @TerritoryID);"  ;
 		
-		private const string SQL_UPDATE_EMPLOYEETERRITORIES = "UPDATE dbo.EmployeeTerritories SET  WHERE [EmployeeID] = @EmployeeID AND [TerritoryID] = @TerritoryID";
+		private const string SQL_UPDATE_EMPLOYEETERRITORIES = "UPDATE dbo.EmployeeTerritories SET WHERE [EmployeeID] = @EmployeeID AND [TerritoryID] = @TerritoryID";
 		
 		private const string SQL_DELETE_EMPLOYEETERRITORIES = "DELETE FROM dbo.EmployeeTerritories WHERE  [EmployeeID] = @EmployeeID AND [TerritoryID] = @TerritoryID ";
 		
@@ -196,10 +195,6 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion        
         
         #region Methods     
-		
-       public EmployeeTerritory()
-        {
-        }
         
         public override bool Equals(object obj)
         {
@@ -266,10 +261,6 @@ namespace CrystalMapper.UnitTest.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
         #endregion
     }
 }
