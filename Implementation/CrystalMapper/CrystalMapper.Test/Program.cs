@@ -13,6 +13,7 @@ using CrystalMapper.Test.Northwind;
 using CrystalMapper.Linq;
 using CrystalMapper.Data;
 using System.Collections;
+using CoreSystem.Dynamic;
 
 namespace CrystalMapper.Test
 {
@@ -21,7 +22,10 @@ namespace CrystalMapper.Test
         static void Main(string[] args)
         {
 
-            var s = Order.Query().Where(o => o.Freight < 100).Count(); 
+            var a = Customer.Query().ToDonymous();
+
+
+            var s = Order.Query().Where(o => o.Freight < 100).Count();
 
             var r = Customer.Query()
                     .Where(c => Order.Query()
@@ -46,15 +50,20 @@ namespace CrystalMapper.Test
             Write(r3);
 
             var query = from c in Customer.Query()
-                     join o in Order.Query() on c.CustomerID equals o.CustomerID
-                     group o by o.CustomerID into g
-                     select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID) };
+                        join o in Order.Query() on c.CustomerID equals o.CustomerID
+                        group o by o.CustomerID into g
+                        select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID) };
 
             var result = query.ToArray();
 
             Write(result);
 
+
             Console.ReadLine();
+        }
+
+        class Class1 {
+            public string prp { get; set; }
         }
 
         static void Write(IEnumerable collection)
@@ -62,6 +71,6 @@ namespace CrystalMapper.Test
             int count = 0;
             foreach (var obj in collection)
                 Console.WriteLine("{0}: {1}", count++, obj);
-        }
+        }      
     }
 }

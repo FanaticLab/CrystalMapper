@@ -19,6 +19,7 @@ using System.Data.Common;
 using System.Collections.Generic;
 
 using CoreSystem.Data;
+using CoreSystem.Dynamic;
 
 namespace CrystalMapper.Data
 {
@@ -78,6 +79,16 @@ namespace CrystalMapper.Data
         {
             return (this.transaction != null ?
                 this.database.CreateCommand(cmdText, transaction) : this.database.CreateCommand(cmdText, this.connection));
+        }
+
+        public List<Donymous> ExecuteToDonymous(string cmdText)
+        {
+            return this.transaction != null ? this.database.ExecuteToDonymous(cmdText, this.transaction) : this.database.ExecuteToDonymous(cmdText, this.connection);
+        }
+
+        public List<Donymous> ExecuteToDonymous(DbCommand command)
+        {
+            return this.database.ExecuteToDonymous(command);
         }
 
         public DbParameter CreateParameter()

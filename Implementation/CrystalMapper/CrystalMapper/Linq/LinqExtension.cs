@@ -6,6 +6,7 @@ using CrystalMapper.Generic;
 using CrystalMapper.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using CoreSystem.Dynamic;
 
 namespace CrystalMapper.Linq
 {
@@ -58,6 +59,11 @@ namespace CrystalMapper.Linq
             var expression = Expression.Call(source.Expression, forUpdate.MakeGenericMethod(typeof(TSource)), source.Expression, predicate);
 #endif
             return source.Provider.Execute<List<TSource>>(expression);
+        }
+
+        public static List<Donymous> ToDonymous<TSource>(this IQueryable<TSource> source)
+        {
+            return source.Provider.Execute<List<Donymous>>(source.Expression);
         }
     }
 }
