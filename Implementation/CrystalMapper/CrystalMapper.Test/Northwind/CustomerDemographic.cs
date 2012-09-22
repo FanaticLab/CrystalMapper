@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: CustomerDemographic
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -48,9 +47,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERDEMOGRAPHICS = "INSERT INTO dbo.CustomerDemographics( [CustomerTypeID], [CustomerDesc]) VALUES ( @CustomerTypeID, @CustomerDesc);"  ;
+		private const string SQL_INSERT_CUSTOMERDEMOGRAPHICS = "INSERT INTO dbo.CustomerDemographics ( [CustomerTypeID], [CustomerDesc]) VALUES ( @CustomerTypeID, @CustomerDesc);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERDEMOGRAPHICS = "UPDATE dbo.CustomerDemographics SET  [CustomerDesc] = @CustomerDesc WHERE [CustomerTypeID] = @CustomerTypeID";
+		private const string SQL_UPDATE_CUSTOMERDEMOGRAPHICS = "UPDATE dbo.CustomerDemographics SET [CustomerDesc] = @CustomerDesc WHERE [CustomerTypeID] = @CustomerTypeID";
 		
 		private const string SQL_DELETE_CUSTOMERDEMOGRAPHICS = "DELETE FROM dbo.CustomerDemographics WHERE  [CustomerTypeID] = @CustomerTypeID ";
 		
@@ -62,10 +61,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected string customerdesc = default(string);
 	
-        protected EntityCollection< CustomerCustomerDemo> customerCustomerDemos ;
-        
-        protected EntityCollection< Customer> customers ;
-        
         #endregion
 
  		#region Properties	
@@ -98,26 +93,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< CustomerCustomerDemo> CustomerCustomerDemos 
-        {
-            get { return this.customerCustomerDemos;}
-        }
-        
-        public EntityCollection< Customer> Customers 
-        {
-            get { return this.customers;}
-        }  
-        
         
         #endregion        
         
         #region Methods     
-		
-       public CustomerDemographic()
-        {
-             this.customerCustomerDemos = new EntityCollection< CustomerCustomerDemo>(this, new Associate< CustomerCustomerDemo>(this.AssociateCustomerCustomerDemos), new DeAssociate< CustomerCustomerDemo>(this.DeAssociateCustomerCustomerDemos), new GetChildren< CustomerCustomerDemo>(this.GetChildrenCustomerCustomerDemos));
-            this.customers = new EntityCollection< Customer>(this, new Associate< Customer>(this.AssociateCustomers), new DeAssociate< Customer>(this.DeAssociateCustomers), new GetChildren< Customer>(this.GetChildrenCustomers));
-        }
         
         public override bool Equals(object obj)
         {
@@ -180,81 +159,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateCustomerCustomerDemos(CustomerCustomerDemo customerCustomerDemo)
-        {
-           customerCustomerDemo.CustomerDemographicRef = this;
-        }
-        
-        private void DeAssociateCustomerCustomerDemos(CustomerCustomerDemo customerCustomerDemo)
-        {
-          if(customerCustomerDemo.CustomerDemographicRef == this)
-             customerCustomerDemo.CustomerDemographicRef = null;
-        }
-        
-            
-        private CustomerCustomerDemo[] GetChildrenCustomerCustomerDemos()
-        {
-            if (this.customertypeid != default(string))
-            {  
-                CustomerCustomerDemo childrenQuery = new CustomerCustomerDemo();
-                childrenQuery.CustomerDemographicRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateCustomers(Customer customer)
-        {
-           CustomerCustomerDemo customerCustomerDemo = new  CustomerCustomerDemo();                   
-           customerCustomerDemo.CustomerRef = customer;
-           
-           this.customerCustomerDemos.Add(customerCustomerDemo); 
-           customer.CustomerCustomerDemos.AddOnly(customerCustomerDemo);
-        }
-        
-        private void DeAssociateCustomers(Customer customer)
-        {
-           CustomerCustomerDemo removeCustomerCustomerDemo = null; 
-           foreach(CustomerCustomerDemo customerCustomerDemo  in  this.customerCustomerDemos)
-             if(customerCustomerDemo.CustomerRef == customer)
-             {
-                customerCustomerDemo.CustomerRef = null;
-                removeCustomerCustomerDemo = customerCustomerDemo;
-                break;
-             }            
-            
-            if(removeCustomerCustomerDemo != null)
-            {
-                this.customerCustomerDemos.Remove(removeCustomerCustomerDemo); 
-                customer.CustomerCustomerDemos.RemoveOnly(removeCustomerCustomerDemo);
-            }
-        }
-        
-        private Customer[] GetChildrenCustomers()
-        {
-            if (this.customertypeid != default(string))
-            {
-                this.customerCustomerDemos.Load() ;
-                
-                string sqlQuery = @"SELECT dbo.Customers.*
-                                    FROM dbo.CustomerCustomerDemo
-                                    INNER JOIN dbo.Customers ON                                                                            
-                                    dbo.CustomerCustomerDemo.[CustomerID] = dbo.Customers.[CustomerID] AND
-                                    dbo.CustomerCustomerDemo.[CustomerTypeID] = @CustomerTypeID  
-                                    ";
-                                    
-                Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-                parameterValues.Add(PARAM_CUSTOMERTYPEID, this.CustomerTypeID);
-                
-                return Customer.ToList(sqlQuery, parameterValues);            
-            }
-            else return null;            
-        }  
-        
         #endregion
     }
 }

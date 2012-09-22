@@ -10,7 +10,7 @@ namespace CrystalMapper.UnitTest.Linq
     /// <summary>
     /// Summary description for JoinTest
     /// </summary>
-    [TestClass]
+    [TestClass]    
     public class JoinTest
     {
         public JoinTest()

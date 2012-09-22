@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:42 PM
  * 
  * Class: Supplier
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
@@ -68,9 +67,9 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO dbo.Suppliers( [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax], [HomePage]) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO dbo.Suppliers ( [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax], [HomePage]) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SUPPLIERS = "UPDATE dbo.Suppliers SET  [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax, [HomePage] = @HomePage WHERE [SupplierID] = @SupplierID";
+		private const string SQL_UPDATE_SUPPLIERS = "UPDATE dbo.Suppliers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax, [HomePage] = @HomePage WHERE [SupplierID] = @SupplierID";
 		
 		private const string SQL_DELETE_SUPPLIERS = "DELETE FROM dbo.Suppliers WHERE  [SupplierID] = @SupplierID ";
 		
@@ -102,8 +101,6 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected string homepage = default(string);
 	
-        protected EntityCollection< Product> products ;
-        
         #endregion
 
  		#region Properties	
@@ -276,20 +273,10 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        public EntityCollection< Product> Products 
-        {
-            get { return this.products;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Supplier()
-        {
-             this.products = new EntityCollection< Product>(this, new Associate< Product>(this.AssociateProducts), new DeAssociate< Product>(this.DeAssociateProducts), new GetChildren< Product>(this.GetChildrenProducts));
-        }
         
         public override bool Equals(object obj)
         {
@@ -382,33 +369,6 @@ namespace CrystalMapper.UnitTest.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateProducts(Product product)
-        {
-           product.SupplierRef = this;
-        }
-        
-        private void DeAssociateProducts(Product product)
-        {
-          if(product.SupplierRef == this)
-             product.SupplierRef = null;
-        }
-        
-            
-        private Product[] GetChildrenProducts()
-        {
-            if (this.supplierid != default(int))
-            {  
-                Product childrenQuery = new Product();
-                childrenQuery.SupplierRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }

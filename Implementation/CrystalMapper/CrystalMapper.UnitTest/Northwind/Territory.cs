@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:42 PM
  * 
  * Class: Territory
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
@@ -50,9 +49,9 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_TERRITORIES = "INSERT INTO dbo.Territories( [TerritoryID], [TerritoryDescription], [RegionID]) VALUES ( @TerritoryID, @TerritoryDescription, @RegionID);"  ;
+		private const string SQL_INSERT_TERRITORIES = "INSERT INTO dbo.Territories ( [TerritoryID], [TerritoryDescription], [RegionID]) VALUES ( @TerritoryID, @TerritoryDescription, @RegionID);"  ;
 		
-		private const string SQL_UPDATE_TERRITORIES = "UPDATE dbo.Territories SET  [TerritoryDescription] = @TerritoryDescription, [RegionID] = @RegionID WHERE [TerritoryID] = @TerritoryID";
+		private const string SQL_UPDATE_TERRITORIES = "UPDATE dbo.Territories SET [TerritoryDescription] = @TerritoryDescription, [RegionID] = @RegionID WHERE [TerritoryID] = @TerritoryID";
 		
 		private const string SQL_DELETE_TERRITORIES = "DELETE FROM dbo.Territories WHERE  [TerritoryID] = @TerritoryID ";
 		
@@ -68,10 +67,6 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected Region regionRef;
 	
-        protected EntityCollection< EmployeeTerritory> employeeTerritories ;
-        
-        protected EntityCollection< Employee> employees ;
-        
         #endregion
 
  		#region Properties	
@@ -165,26 +160,10 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        public EntityCollection< EmployeeTerritory> EmployeeTerritories 
-        {
-            get { return this.employeeTerritories;}
-        }
-        
-        public EntityCollection< Employee> Employees 
-        {
-            get { return this.employees;}
-        }  
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Territory()
-        {
-             this.employeeTerritories = new EntityCollection< EmployeeTerritory>(this, new Associate< EmployeeTerritory>(this.AssociateEmployeeTerritories), new DeAssociate< EmployeeTerritory>(this.DeAssociateEmployeeTerritories), new GetChildren< EmployeeTerritory>(this.GetChildrenEmployeeTerritories));
-            this.employees = new EntityCollection< Employee>(this, new Associate< Employee>(this.AssociateEmployees), new DeAssociate< Employee>(this.DeAssociateEmployees), new GetChildren< Employee>(this.GetChildrenEmployees));
-        }
         
         public override bool Equals(object obj)
         {
@@ -250,81 +229,6 @@ namespace CrystalMapper.UnitTest.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateEmployeeTerritories(EmployeeTerritory employeeTerritory)
-        {
-           employeeTerritory.TerritoryRef = this;
-        }
-        
-        private void DeAssociateEmployeeTerritories(EmployeeTerritory employeeTerritory)
-        {
-          if(employeeTerritory.TerritoryRef == this)
-             employeeTerritory.TerritoryRef = null;
-        }
-        
-            
-        private EmployeeTerritory[] GetChildrenEmployeeTerritories()
-        {
-            if (this.territoryid != default(string))
-            {  
-                EmployeeTerritory childrenQuery = new EmployeeTerritory();
-                childrenQuery.TerritoryRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
-        private void AssociateEmployees(Employee employee)
-        {
-           EmployeeTerritory employeeTerritory = new  EmployeeTerritory();                   
-           employeeTerritory.EmployeeRef = employee;
-           
-           this.employeeTerritories.Add(employeeTerritory); 
-           employee.EmployeeTerritories.AddOnly(employeeTerritory);
-        }
-        
-        private void DeAssociateEmployees(Employee employee)
-        {
-           EmployeeTerritory removeEmployeeTerritory = null; 
-           foreach(EmployeeTerritory employeeTerritory  in  this.employeeTerritories)
-             if(employeeTerritory.EmployeeRef == employee)
-             {
-                employeeTerritory.EmployeeRef = null;
-                removeEmployeeTerritory = employeeTerritory;
-                break;
-             }            
-            
-            if(removeEmployeeTerritory != null)
-            {
-                this.employeeTerritories.Remove(removeEmployeeTerritory); 
-                employee.EmployeeTerritories.RemoveOnly(removeEmployeeTerritory);
-            }
-        }
-        
-        private Employee[] GetChildrenEmployees()
-        {
-            if (this.territoryid != default(string))
-            {
-                this.employeeTerritories.Load() ;
-                
-                string sqlQuery = @"SELECT dbo.Employees.*
-                                    FROM dbo.EmployeeTerritories
-                                    INNER JOIN dbo.Employees ON                                                                            
-                                    dbo.EmployeeTerritories.[EmployeeID] = dbo.Employees.[EmployeeID] AND
-                                    dbo.EmployeeTerritories.[TerritoryID] = @TerritoryID  
-                                    ";
-                                    
-                Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-                parameterValues.Add(PARAM_TERRITORYID, this.TerritoryID);
-                
-                return Employee.ToList(sqlQuery, parameterValues);            
-            }
-            else return null;            
-        }  
-        
         #endregion
     }
 }

@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: Region
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -48,9 +47,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_REGION = "INSERT INTO dbo.Region( [RegionID], [RegionDescription]) VALUES ( @RegionID, @RegionDescription);"  ;
+		private const string SQL_INSERT_REGION = "INSERT INTO dbo.Region ( [RegionID], [RegionDescription]) VALUES ( @RegionID, @RegionDescription);"  ;
 		
-		private const string SQL_UPDATE_REGION = "UPDATE dbo.Region SET  [RegionDescription] = @RegionDescription WHERE [RegionID] = @RegionID";
+		private const string SQL_UPDATE_REGION = "UPDATE dbo.Region SET [RegionDescription] = @RegionDescription WHERE [RegionID] = @RegionID";
 		
 		private const string SQL_DELETE_REGION = "DELETE FROM dbo.Region WHERE  [RegionID] = @RegionID ";
 		
@@ -62,8 +61,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected string regiondescription = default(string);
 	
-        protected EntityCollection< Territory> territories ;
-        
         #endregion
 
  		#region Properties	
@@ -96,20 +93,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< Territory> Territories 
-        {
-            get { return this.territories;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Region()
-        {
-             this.territories = new EntityCollection< Territory>(this, new Associate< Territory>(this.AssociateTerritories), new DeAssociate< Territory>(this.DeAssociateTerritories), new GetChildren< Territory>(this.GetChildrenTerritories));
-        }
         
         public override bool Equals(object obj)
         {
@@ -172,33 +159,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateTerritories(Territory territory)
-        {
-           territory.RegionRef = this;
-        }
-        
-        private void DeAssociateTerritories(Territory territory)
-        {
-          if(territory.RegionRef == this)
-             territory.RegionRef = null;
-        }
-        
-            
-        private Territory[] GetChildrenTerritories()
-        {
-            if (this.regionid != default(int))
-            {  
-                Territory childrenQuery = new Territory();
-                childrenQuery.RegionRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }

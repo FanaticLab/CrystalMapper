@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: Category
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -52,9 +51,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CATEGORIES = "INSERT INTO dbo.Categories( [CategoryName], [Description], [Picture]) VALUES ( @CategoryName, @Description, @Picture);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_CATEGORIES = "INSERT INTO dbo.Categories ( [CategoryName], [Description], [Picture]) VALUES ( @CategoryName, @Description, @Picture);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_CATEGORIES = "UPDATE dbo.Categories SET  [CategoryName] = @CategoryName, [Description] = @Description, [Picture] = @Picture WHERE [CategoryID] = @CategoryID";
+		private const string SQL_UPDATE_CATEGORIES = "UPDATE dbo.Categories SET [CategoryName] = @CategoryName, [Description] = @Description, [Picture] = @Picture WHERE [CategoryID] = @CategoryID";
 		
 		private const string SQL_DELETE_CATEGORIES = "DELETE FROM dbo.Categories WHERE  [CategoryID] = @CategoryID ";
 		
@@ -70,8 +69,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected byte[] picture = default(byte[]);
 	
-        protected EntityCollection< Product> products ;
-        
         #endregion
 
  		#region Properties	
@@ -132,20 +129,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< Product> Products 
-        {
-            get { return this.products;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Category()
-        {
-             this.products = new EntityCollection< Product>(this, new Associate< Product>(this.AssociateProducts), new DeAssociate< Product>(this.DeAssociateProducts), new GetChildren< Product>(this.GetChildrenProducts));
-        }
         
         public override bool Equals(object obj)
         {
@@ -214,33 +201,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateProducts(Product product)
-        {
-           product.CategoryRef = this;
-        }
-        
-        private void DeAssociateProducts(Product product)
-        {
-          if(product.CategoryRef == this)
-             product.CategoryRef = null;
-        }
-        
-            
-        private Product[] GetChildrenProducts()
-        {
-            if (this.categoryid != default(int))
-            {  
-                Product childrenQuery = new Product();
-                childrenQuery.CategoryRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }

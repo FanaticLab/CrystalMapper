@@ -12,7 +12,7 @@ namespace CrystalMapper.UnitTest.Linq
     /// <summary>
     /// Summary description for AggregateTest
     /// </summary>
-    [TestClass]
+    [TestClass]    
     public class AggregateTest
     {
 

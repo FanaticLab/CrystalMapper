@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Author: CrystalMapper 
  * 
- * Date:  Wednesday, March 10, 2010 9:38 PM
+ * Date:  Saturday, September 22, 2012 8:41 PM
  * 
  * Class: Order
  * 
@@ -27,7 +27,6 @@ using CrystalMapper;
 using CrystalMapper.Data;
 using CrystalMapper.Mapping;
 using CrystalMapper.Generic;
-using CrystalMapper.Generic.Collection;
 
 namespace CrystalMapper.Test.Northwind
 {
@@ -72,9 +71,9 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_ORDERS = "INSERT INTO dbo.Orders( [CustomerID], [EmployeeID], [OrderDate], [RequiredDate], [ShippedDate], [ShipVia], [Freight], [ShipName], [ShipAddress], [ShipCity], [ShipRegion], [ShipPostalCode], [ShipCountry]) VALUES ( @CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry);"   + "SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_ORDERS = "INSERT INTO dbo.Orders ( [CustomerID], [EmployeeID], [OrderDate], [RequiredDate], [ShippedDate], [ShipVia], [Freight], [ShipName], [ShipAddress], [ShipCity], [ShipRegion], [ShipPostalCode], [ShipCountry]) VALUES ( @CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_ORDERS = "UPDATE dbo.Orders SET  [CustomerID] = @CustomerID, [EmployeeID] = @EmployeeID, [OrderDate] = @OrderDate, [RequiredDate] = @RequiredDate, [ShippedDate] = @ShippedDate, [ShipVia] = @ShipVia, [Freight] = @Freight, [ShipName] = @ShipName, [ShipAddress] = @ShipAddress, [ShipCity] = @ShipCity, [ShipRegion] = @ShipRegion, [ShipPostalCode] = @ShipPostalCode, [ShipCountry] = @ShipCountry WHERE [OrderID] = @OrderID";
+		private const string SQL_UPDATE_ORDERS = "UPDATE dbo.Orders SET [CustomerID] = @CustomerID, [EmployeeID] = @EmployeeID, [OrderDate] = @OrderDate, [RequiredDate] = @RequiredDate, [ShippedDate] = @ShippedDate, [ShipVia] = @ShipVia, [Freight] = @Freight, [ShipName] = @ShipName, [ShipAddress] = @ShipAddress, [ShipCity] = @ShipCity, [ShipRegion] = @ShipRegion, [ShipPostalCode] = @ShipPostalCode, [ShipCountry] = @ShipCountry WHERE [OrderID] = @OrderID";
 		
 		private const string SQL_DELETE_ORDERS = "DELETE FROM dbo.Orders WHERE  [OrderID] = @OrderID ";
 		
@@ -116,8 +115,6 @@ namespace CrystalMapper.Test.Northwind
 	
 		protected Shipper shipperRef;
 	
-        protected EntityCollection< OrderDetail> orderDetails ;
-        
         #endregion
 
  		#region Properties	
@@ -459,20 +456,10 @@ namespace CrystalMapper.Test.Northwind
                 }
         }	
 		
-        public EntityCollection< OrderDetail> OrderDetails 
-        {
-            get { return this.orderDetails;}
-        }
-        
         
         #endregion        
         
         #region Methods     
-		
-       public Order()
-        {
-             this.orderDetails = new EntityCollection< OrderDetail>(this, new Associate< OrderDetail>(this.AssociateOrderDetails), new DeAssociate< OrderDetail>(this.DeAssociateOrderDetails), new GetChildren< OrderDetail>(this.GetChildrenOrderDetails));
-        }
         
         public override bool Equals(object obj)
         {
@@ -571,33 +558,6 @@ namespace CrystalMapper.Test.Northwind
             }
         }
 
-        #endregion
-        
-        #region Entity Relationship Functions
-        
-        private void AssociateOrderDetails(OrderDetail orderDetail)
-        {
-           orderDetail.OrderRef = this;
-        }
-        
-        private void DeAssociateOrderDetails(OrderDetail orderDetail)
-        {
-          if(orderDetail.OrderRef == this)
-             orderDetail.OrderRef = null;
-        }
-        
-            
-        private OrderDetail[] GetChildrenOrderDetails()
-        {
-            if (this.orderid != default(int))
-            {  
-                OrderDetail childrenQuery = new OrderDetail();
-                childrenQuery.OrderRef = this;
-                
-                return childrenQuery.ToList(); 
-            } else return null;
-        }
-        
         #endregion
     }
 }
