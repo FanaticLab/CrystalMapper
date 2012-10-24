@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeSmith Templates", "CodeSmith Templates", "{ED9EFE1A-2183-403A-9C76-CB5563836F25}"
 	ProjectSection(SolutionItems) = preProject
-		..\CodeSmith Templates\BusinessObjectsGenerator.cst = ..\CodeSmith Templates\BusinessObjectsGenerator.cst
-		..\CodeSmith Templates\BusinessObjectTemplate.mysql.cst = ..\CodeSmith Templates\BusinessObjectTemplate.mysql.cst
-		..\CodeSmith Templates\BusinessObjectTemplate.oracle.cst = ..\CodeSmith Templates\BusinessObjectTemplate.oracle.cst
-		..\CodeSmith Templates\BusinessObjectTemplate.sqlite.cst = ..\CodeSmith Templates\BusinessObjectTemplate.sqlite.cst
-		..\CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst = ..\CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst
-		..\CodeSmith Templates\BusinessObjectTemplate.sqlserverce.cst = ..\CodeSmith Templates\BusinessObjectTemplate.sqlserverce.cst
-		..\CodeSmith Templates\HelperFunctions.cs = ..\CodeSmith Templates\HelperFunctions.cs
+		CodeSmith Templates\BusinessObjectsGenerator.cst = CodeSmith Templates\BusinessObjectsGenerator.cst
+		CodeSmith Templates\BusinessObjectTemplate.mysql.cst = CodeSmith Templates\BusinessObjectTemplate.mysql.cst
+		CodeSmith Templates\BusinessObjectTemplate.oracle.cst = CodeSmith Templates\BusinessObjectTemplate.oracle.cst
+		CodeSmith Templates\BusinessObjectTemplate.pgsql.cst = CodeSmith Templates\BusinessObjectTemplate.pgsql.cst
+		CodeSmith Templates\BusinessObjectTemplate.sqlite.cst = CodeSmith Templates\BusinessObjectTemplate.sqlite.cst
+		CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst = CodeSmith Templates\BusinessObjectTemplate.sqlserver.cst
+		CodeSmith Templates\BusinessObjectTemplate.sqlserverce.cst = CodeSmith Templates\BusinessObjectTemplate.sqlserverce.cst
+		CodeSmith Templates\HelperFunctions.cs = CodeSmith Templates\HelperFunctions.cs
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE0B8F52-6646-47B8-B2C6-002E1D99809F}"
 	ProjectSection(SolutionItems) = preProject
 		CrystalMapper.vsmdi = CrystalMapper.vsmdi
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalMapper", "CrystalMapper\CrystalMapper.csproj", "{362267BA-8052-493E-A3C0-F89B0F3BF331}"
