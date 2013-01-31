@@ -2,17 +2,11 @@
  
  * Author: Faraz Masood Khan 
  * 
- * Date: 1/10/2009
- * 
- * File: BusinessObjectsTemplate.sqlserver.cst
+ * Email: faraz@fanaticlab.com
  *
- * Version: 2.0.0.0
- * 
- * Copyright: Faraz Masood Khan @ Copyright 2009
- * 
- * Email: mk.faraz@gmail.com
- * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project Url: http://crystalmapper.codeplex.com
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2013
 
 --%>
 <%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
@@ -29,19 +23,17 @@
 <%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
 <% this.tablePrefix = TablePrefix; %>
 /*
- * Author: CrystalMapper 
+ * Author: CrystalMapper Templates
  * 
  * Date:  <%= DateTime.Now.ToString("f") %>
  * 
  * Class: <%= GetClassName(SourceTable) %>
  * 
- * Email: mk.faraz@gmail.com
+ * Email: faraz@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project Url: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright: Faraz Masood Khan @ Copyright <%= DateTime.Now.ToString("yyyy") %>
  *
 /*/
 
