@@ -29,6 +29,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{9D88AC6F-2D6C-47B2-ABED-76B2BACC6B2B}"
 	ProjectSection(SolutionItems) = preProject
 		Lib\CoreSystem.dll = Lib\CoreSystem.dll
+		Lib\CoreSystem.xml = Lib\CoreSystem.xml
 	EndProjectSection
 EndProject
 Global
