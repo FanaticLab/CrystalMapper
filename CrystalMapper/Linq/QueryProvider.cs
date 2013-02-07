@@ -120,6 +120,11 @@ namespace CrystalMapper.Linq
                     }
                 }
             }
+            catch (DbException ex)
+            {
+                ex.Data.Add("SqlQuery", queryInfo.SqlQuery);
+                throw ex;
+            }
             finally
             {
                 if (this.disposeDataContext && dataContext != null)
