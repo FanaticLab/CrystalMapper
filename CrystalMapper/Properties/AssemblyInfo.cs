@@ -7,11 +7,11 @@ using System;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CrystalMapper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Object relational mapping library, very fast and simple")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CrystalMapper")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCopyright("Copyright © 2013 Faraz Masood Khan")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
