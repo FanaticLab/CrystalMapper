@@ -22,9 +22,13 @@ namespace CrystalMapper.Linq.Expressions
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
         {
+            queryWriter.Write("(");
+
             queryWriter.Write(this.GetOperator());
 
             this.Operand.WriteQuery(sqlLang, queryWriter);
+
+            queryWriter.Write(")");
         }
 
         public override IEnumerable<DbExpression> GetNodes()
