@@ -80,12 +80,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache\CacheManager.cs" />
-    <Compile Include="Cache\CacheProvider.cs" />
     <Compile Include="Context\DataContext.cs" />
     <Compile Include="Context\DbContext.cs" />
     <Compile Include="Helper\EntityQueryHelper.cs" />
-    <Compile Include="Helper\PolicyHelper.cs" />
     <Compile Include="IRecord.cs" />
     <Compile Include="Lang\PgSqlLang.cs" />
     <Compile Include="Lang\MySqlLang.cs" />
@@ -134,10 +131,6 @@
     <Compile Include="Linq\Translator\ExpressionVisitor.cs" />
     <Compile Include="Linq\Translator\QueryTranslator.cs" />
     <Compile Include="Linq\Helper\TypeSystem.cs" />
-    <Compile Include="Policy\CacheType.cs" />
-    <Compile Include="Policy\CachePolicy.cs" />
-    <Compile Include="Policy\EntityPolicy.cs" />
-    <Compile Include="Policy\PolicyManager.cs" />
     <Compile Include="Mapping\LoadOption.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
