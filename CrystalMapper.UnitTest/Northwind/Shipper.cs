@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: Shipper
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Shipper : Entity< Shipper>  
+    public partial class Shipper : IRecord 
     {		
 		#region Table Schema
 		
@@ -68,71 +65,71 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_SHIPPERID, PARAM_SHIPPERID, default(int))]
-                              public virtual int ShipperID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_SHIPPERID, PARAM_SHIPPERID, default(int))]
+        public virtual int ShipperID 
         {
             get { return this.shipperid; }
 			set	{ 
                   if(this.shipperid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipperID"));  
+                        this.OnPropertyChanging("ShipperID");  
                         this.shipperid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipperID"));
+                        this.OnPropertyChanged("ShipperID");
                     }   
                 }
         }	
 		
-        [Column( COL_COMPANYNAME, PARAM_COMPANYNAME )]
-                              public virtual string CompanyName 
+        [Column(COL_COMPANYNAME, PARAM_COMPANYNAME )]
+        public virtual string CompanyName 
         {
             get { return this.companyname; }
 			set	{ 
                   if(this.companyname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CompanyName"));  
+                        this.OnPropertyChanging("CompanyName");  
                         this.companyname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CompanyName"));
+                        this.OnPropertyChanged("CompanyName");
                     }   
                 }
         }	
 		
-        [Column( COL_PHONE, PARAM_PHONE )]
-                              public virtual string Phone 
+        [Column(COL_PHONE, PARAM_PHONE )]
+        public virtual string Phone 
         {
             get { return this.phone; }
 			set	{ 
                   if(this.phone != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Phone"));  
+                        this.OnPropertyChanging("Phone");  
                         this.phone = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Phone"));
+                        this.OnPropertyChanged("Phone");
                     }   
                 }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Shipper entity = obj as Shipper;           
+            Shipper record = obj as Shipper;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.ShipperID == entity.ShipperID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.ShipperID == record.ShipperID
                         && this.ShipperID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.shipperid.GetHashCode();
@@ -140,44 +137,55 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.shipperid = (int)reader[COL_SHIPPERID];
 			this.companyname = (string)reader[COL_COMPANYNAME];
 			this.phone = DbConvert.ToString(reader[COL_PHONE]);
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_SHIPPERS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.CompanyName, PARAM_COMPANYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Phone), PARAM_PHONE));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
                 this.ShipperID = Convert.ToInt32(command.ExecuteScalar());
                 return true;                
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_SHIPPERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.ShipperID, PARAM_SHIPPERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CompanyName, PARAM_COMPANYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Phone), PARAM_PHONE));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPERID, this.ShipperID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_SHIPPERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.ShipperID, PARAM_SHIPPERID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPERID, this.ShipperID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

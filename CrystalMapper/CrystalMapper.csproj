@@ -82,9 +82,11 @@
   <ItemGroup>
     <Compile Include="Cache\CacheManager.cs" />
     <Compile Include="Cache\CacheProvider.cs" />
-    <Compile Include="Data\DbContext.cs" />
+    <Compile Include="Context\DataContext.cs" />
+    <Compile Include="Context\DbContext.cs" />
     <Compile Include="Helper\EntityQueryHelper.cs" />
     <Compile Include="Helper\PolicyHelper.cs" />
+    <Compile Include="IRecord.cs" />
     <Compile Include="Lang\PgSqlLang.cs" />
     <Compile Include="Lang\MySqlLang.cs" />
     <Compile Include="Lang\PSqlLang.cs" />
@@ -136,11 +138,7 @@
     <Compile Include="Policy\CachePolicy.cs" />
     <Compile Include="Policy\EntityPolicy.cs" />
     <Compile Include="Policy\PolicyManager.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="Data\DataContext.cs" />
-    <Compile Include="Generic\Entity.cs" />
     <Compile Include="Mapping\LoadOption.cs" />
-    <Compile Include="PersistedStatus.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

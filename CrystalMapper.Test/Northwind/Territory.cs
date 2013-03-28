@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:41 PM
+ * Date:  Thursday, March 28, 2013 7:07 PM
  * 
  * Class: Territory
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Test.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Territory : Entity< Territory>  
+    public partial class Territory : IRecord 
     {		
 		#region Table Schema
 		
@@ -70,37 +67,41 @@ namespace CrystalMapper.Test.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_TERRITORYID, PARAM_TERRITORYID )]
-                              public virtual string TerritoryID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_TERRITORYID, PARAM_TERRITORYID )]
+        public virtual string TerritoryID 
         {
             get { return this.territoryid; }
 			set	{ 
                   if(this.territoryid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("TerritoryID"));  
+                        this.OnPropertyChanging("TerritoryID");  
                         this.territoryid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("TerritoryID"));
+                        this.OnPropertyChanged("TerritoryID");
                     }   
                 }
         }	
 		
-        [Column( COL_TERRITORYDESCRIPTION, PARAM_TERRITORYDESCRIPTION )]
-                              public virtual string TerritoryDescription 
+        [Column(COL_TERRITORYDESCRIPTION, PARAM_TERRITORYDESCRIPTION )]
+        public virtual string TerritoryDescription 
         {
             get { return this.territorydescription; }
 			set	{ 
                   if(this.territorydescription != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("TerritoryDescription"));  
+                        this.OnPropertyChanging("TerritoryDescription");  
                         this.territorydescription = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("TerritoryDescription"));
+                        this.OnPropertyChanged("TerritoryDescription");
                     }   
                 }
         }	
 		
-        [Column( COL_REGIONID, PARAM_REGIONID, default(int))]
-                              public virtual int RegionID                
+        [Column(COL_REGIONID, PARAM_REGIONID, default(int))]
+        public virtual int RegionID                
         {
             get
             {
@@ -113,9 +114,9 @@ namespace CrystalMapper.Test.Northwind
             {
                 if(this.regionid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("RegionID"));                    
+                    this.OnPropertyChanging("RegionID");                    
                     this.regionid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("RegionID"));
+                    this.OnPropertyChanged("RegionID");
                     
                     this.regionRef = null;
                 }                
@@ -124,64 +125,45 @@ namespace CrystalMapper.Test.Northwind
         
         public Region RegionRef
         {
-            get { 
-                    if(this.regionRef == null
-                       && this.regionid != default(int)) 
+            get { return this.regionRef; }
+			set	
+            { 
+                if(this.regionRef != value)
+                {
+                    this.OnPropertyChanging("RegionRef");
+                    
+                    if((this.regionRef = value) != null) 
                     {
-                        Region regionQuery = new Region {
-                                                        RegionID = this.regionid  
-                                                        };
-                        
-                        Region[]  regions = regionQuery.ToList();                        
-                        if(regions.Length == 1)
-                            this.regionRef = regions[0];                        
+                        this.regionid = this.regionRef.RegionID;
+                    }
+                    else
+                    {
+		                this.regionid = default(int);
                     }
                     
-                    return this.regionRef; 
-                }
-			set	{ 
-                  if(this.regionRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("RegionRef"));
-                        if (this.regionRef != null)
-                            this.Parents.Remove(this.regionRef);                            
-                        
-                        if((this.regionRef = value) != null) 
-                        {
-                            this.Parents.Add(this.regionRef); 
-                            this.regionid = this.regionRef.RegionID;
-                        }
-                        else
-                        {
-		                    this.regionid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("RegionRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("RegionRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Territory entity = obj as Territory;           
+            Territory record = obj as Territory;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.TerritoryID == entity.TerritoryID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.TerritoryID == record.TerritoryID
                         && this.TerritoryID != default(string)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.territoryid.GetHashCode();
@@ -189,44 +171,55 @@ namespace CrystalMapper.Test.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.territoryid = (string)reader[COL_TERRITORYID];
 			this.territorydescription = (string)reader[COL_TERRITORYDESCRIPTION];
 			this.regionid = (int)reader[COL_REGIONID];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_TERRITORIES))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryDescription, PARAM_TERRITORYDESCRIPTION));
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionID, PARAM_REGIONID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYDESCRIPTION, this.TerritoryDescription));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONID, this.RegionID));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_TERRITORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryDescription, PARAM_TERRITORYDESCRIPTION));
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionID, PARAM_REGIONID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYDESCRIPTION, this.TerritoryDescription));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONID, this.RegionID));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_TERRITORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

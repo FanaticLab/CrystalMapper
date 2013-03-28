@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: Order
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Order : Entity< Order>  
+    public partial class Order : IRecord 
     {		
 		#region Table Schema
 		
@@ -118,163 +115,167 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_ORDERID, PARAM_ORDERID, default(int))]
-                              public virtual int OrderID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_ORDERID, PARAM_ORDERID, default(int))]
+        public virtual int OrderID 
         {
             get { return this.orderid; }
 			set	{ 
                   if(this.orderid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("OrderID"));  
+                        this.OnPropertyChanging("OrderID");  
                         this.orderid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("OrderID"));
+                        this.OnPropertyChanged("OrderID");
                     }   
                 }
         }	
 		
-        [Column( COL_ORDERDATE, PARAM_ORDERDATE )]
-                              public virtual System.DateTime? OrderDate 
+        [Column(COL_ORDERDATE, PARAM_ORDERDATE )]
+        public virtual System.DateTime? OrderDate 
         {
             get { return this.orderdate; }
 			set	{ 
                   if(this.orderdate != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("OrderDate"));  
+                        this.OnPropertyChanging("OrderDate");  
                         this.orderdate = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("OrderDate"));
+                        this.OnPropertyChanged("OrderDate");
                     }   
                 }
         }	
 		
-        [Column( COL_REQUIREDDATE, PARAM_REQUIREDDATE )]
-                              public virtual System.DateTime? RequiredDate 
+        [Column(COL_REQUIREDDATE, PARAM_REQUIREDDATE )]
+        public virtual System.DateTime? RequiredDate 
         {
             get { return this.requireddate; }
 			set	{ 
                   if(this.requireddate != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("RequiredDate"));  
+                        this.OnPropertyChanging("RequiredDate");  
                         this.requireddate = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("RequiredDate"));
+                        this.OnPropertyChanged("RequiredDate");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPPEDDATE, PARAM_SHIPPEDDATE )]
-                              public virtual System.DateTime? ShippedDate 
+        [Column(COL_SHIPPEDDATE, PARAM_SHIPPEDDATE )]
+        public virtual System.DateTime? ShippedDate 
         {
             get { return this.shippeddate; }
 			set	{ 
                   if(this.shippeddate != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShippedDate"));  
+                        this.OnPropertyChanging("ShippedDate");  
                         this.shippeddate = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShippedDate"));
+                        this.OnPropertyChanged("ShippedDate");
                     }   
                 }
         }	
 		
-        [Column( COL_FREIGHT, PARAM_FREIGHT )]
-                              public virtual decimal? Freight 
+        [Column(COL_FREIGHT, PARAM_FREIGHT )]
+        public virtual decimal? Freight 
         {
             get { return this.freight; }
 			set	{ 
                   if(this.freight != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Freight"));  
+                        this.OnPropertyChanging("Freight");  
                         this.freight = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Freight"));
+                        this.OnPropertyChanged("Freight");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPNAME, PARAM_SHIPNAME )]
-                              public virtual string ShipName 
+        [Column(COL_SHIPNAME, PARAM_SHIPNAME )]
+        public virtual string ShipName 
         {
             get { return this.shipname; }
 			set	{ 
                   if(this.shipname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipName"));  
+                        this.OnPropertyChanging("ShipName");  
                         this.shipname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipName"));
+                        this.OnPropertyChanged("ShipName");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPADDRESS, PARAM_SHIPADDRESS )]
-                              public virtual string ShipAddress 
+        [Column(COL_SHIPADDRESS, PARAM_SHIPADDRESS )]
+        public virtual string ShipAddress 
         {
             get { return this.shipaddress; }
 			set	{ 
                   if(this.shipaddress != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipAddress"));  
+                        this.OnPropertyChanging("ShipAddress");  
                         this.shipaddress = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipAddress"));
+                        this.OnPropertyChanged("ShipAddress");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPCITY, PARAM_SHIPCITY )]
-                              public virtual string ShipCity 
+        [Column(COL_SHIPCITY, PARAM_SHIPCITY )]
+        public virtual string ShipCity 
         {
             get { return this.shipcity; }
 			set	{ 
                   if(this.shipcity != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipCity"));  
+                        this.OnPropertyChanging("ShipCity");  
                         this.shipcity = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipCity"));
+                        this.OnPropertyChanged("ShipCity");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPREGION, PARAM_SHIPREGION )]
-                              public virtual string ShipRegion 
+        [Column(COL_SHIPREGION, PARAM_SHIPREGION )]
+        public virtual string ShipRegion 
         {
             get { return this.shipregion; }
 			set	{ 
                   if(this.shipregion != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipRegion"));  
+                        this.OnPropertyChanging("ShipRegion");  
                         this.shipregion = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipRegion"));
+                        this.OnPropertyChanged("ShipRegion");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPPOSTALCODE, PARAM_SHIPPOSTALCODE )]
-                              public virtual string ShipPostalCode 
+        [Column(COL_SHIPPOSTALCODE, PARAM_SHIPPOSTALCODE )]
+        public virtual string ShipPostalCode 
         {
             get { return this.shippostalcode; }
 			set	{ 
                   if(this.shippostalcode != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipPostalCode"));  
+                        this.OnPropertyChanging("ShipPostalCode");  
                         this.shippostalcode = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipPostalCode"));
+                        this.OnPropertyChanged("ShipPostalCode");
                     }   
                 }
         }	
 		
-        [Column( COL_SHIPCOUNTRY, PARAM_SHIPCOUNTRY )]
-                              public virtual string ShipCountry 
+        [Column(COL_SHIPCOUNTRY, PARAM_SHIPCOUNTRY )]
+        public virtual string ShipCountry 
         {
             get { return this.shipcountry; }
 			set	{ 
                   if(this.shipcountry != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipCountry"));  
+                        this.OnPropertyChanging("ShipCountry");  
                         this.shipcountry = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipCountry"));
+                        this.OnPropertyChanged("ShipCountry");
                     }   
                 }
         }	
 		
-        [Column( COL_CUSTOMERID, PARAM_CUSTOMERID )]
-                              public virtual string CustomerID                
+        [Column(COL_CUSTOMERID, PARAM_CUSTOMERID )]
+        public virtual string CustomerID                
         {
             get
             {
@@ -287,17 +288,17 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.customerid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerID"));                    
+                    this.OnPropertyChanging("CustomerID");                    
                     this.customerid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerID"));
+                    this.OnPropertyChanged("CustomerID");
                     
                     this.customerRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_EMPLOYEEID, PARAM_EMPLOYEEID )]
-                              public virtual int? EmployeeID                
+        [Column(COL_EMPLOYEEID, PARAM_EMPLOYEEID )]
+        public virtual int? EmployeeID                
         {
             get
             {
@@ -310,17 +311,17 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.employeeid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("EmployeeID"));                    
+                    this.OnPropertyChanging("EmployeeID");                    
                     this.employeeid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("EmployeeID"));
+                    this.OnPropertyChanged("EmployeeID");
                     
                     this.employeeRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_SHIPVIA, PARAM_SHIPVIA )]
-                              public virtual int? ShipVia                
+        [Column(COL_SHIPVIA, PARAM_SHIPVIA )]
+        public virtual int? ShipVia                
         {
             get
             {
@@ -333,9 +334,9 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.shipvium != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("ShipVia"));                    
+                    this.OnPropertyChanging("ShipVia");                    
                     this.shipvium = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("ShipVia"));
+                    this.OnPropertyChanged("ShipVia");
                     
                     this.shipperRef = null;
                 }                
@@ -344,140 +345,91 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Customer CustomerRef
         {
-            get { 
-                    if(this.customerRef == null
-                       && this.customerid != default(string)) 
+            get { return this.customerRef; }
+			set	
+            { 
+                if(this.customerRef != value)
+                {
+                    this.OnPropertyChanging("CustomerRef");
+                    
+                    if((this.customerRef = value) != null) 
                     {
-                        Customer customerQuery = new Customer {
-                                                        CustomerID = this.customerid  
-                                                        };
-                        
-                        Customer[]  customers = customerQuery.ToList();                        
-                        if(customers.Length == 1)
-                            this.customerRef = customers[0];                        
+                        this.customerid = this.customerRef.CustomerID;
+                    }
+                    else
+                    {
+		                this.customerid = default(string);
                     }
                     
-                    return this.customerRef; 
-                }
-			set	{ 
-                  if(this.customerRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerRef"));
-                        if (this.customerRef != null)
-                            this.Parents.Remove(this.customerRef);                            
-                        
-                        if((this.customerRef = value) != null) 
-                        {
-                            this.Parents.Add(this.customerRef); 
-                            this.customerid = this.customerRef.CustomerID;
-                        }
-                        else
-                        {
-		                    this.customerid = default(string);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("CustomerRef");
+                }   
+             }
         }	
 		
         public Employee EmployeeRef
         {
-            get { 
-                    if(this.employeeRef == null
-                       && this.employeeid.HasValue )
+            get { return this.employeeRef; }
+			set	
+            { 
+                if(this.employeeRef != value)
+                {
+                    this.OnPropertyChanging("EmployeeRef");
+                    
+                    if((this.employeeRef = value) != null) 
                     {
-                        Employee employeeQuery = new Employee {
-                                                        EmployeeID = this.employeeid.Value  
-                                                        };
-                        
-                        Employee[]  employees = employeeQuery.ToList();                        
-                        if(employees.Length == 1)
-                            this.employeeRef = employees[0];                        
+                        this.employeeid = this.employeeRef.EmployeeID;
+                    }
+                    else
+                    {
+		                this.employeeid = default(int);
                     }
                     
-                    return this.employeeRef; 
-                }
-			set	{ 
-                  if(this.employeeRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("EmployeeRef"));
-                        if (this.employeeRef != null)
-                            this.Parents.Remove(this.employeeRef);                            
-                        
-                        if((this.employeeRef = value) != null) 
-                        {
-                            this.Parents.Add(this.employeeRef); 
-                            this.employeeid = this.employeeRef.EmployeeID;
-                        }
-                        else
-                        {
-		                    this.employeeid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("EmployeeRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("EmployeeRef");
+                }   
+             }
         }	
 		
         public Shipper ShipperRef
         {
-            get { 
-                    if(this.shipperRef == null
-                       && this.shipvium.HasValue )
+            get { return this.shipperRef; }
+			set	
+            { 
+                if(this.shipperRef != value)
+                {
+                    this.OnPropertyChanging("ShipperRef");
+                    
+                    if((this.shipperRef = value) != null) 
                     {
-                        Shipper shipperQuery = new Shipper {
-                                                        ShipperID = this.shipvium.Value  
-                                                        };
-                        
-                        Shipper[]  shippers = shipperQuery.ToList();                        
-                        if(shippers.Length == 1)
-                            this.shipperRef = shippers[0];                        
+                        this.shipvium = this.shipperRef.ShipperID;
+                    }
+                    else
+                    {
+		                this.shipvium = default(int);
                     }
                     
-                    return this.shipperRef; 
-                }
-			set	{ 
-                  if(this.shipperRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ShipperRef"));
-                        if (this.shipperRef != null)
-                            this.Parents.Remove(this.shipperRef);                            
-                        
-                        if((this.shipperRef = value) != null) 
-                        {
-                            this.Parents.Add(this.shipperRef); 
-                            this.shipvium = this.shipperRef.ShipperID;
-                        }
-                        else
-                        {
-		                    this.shipvium = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ShipperRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("ShipperRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Order entity = obj as Order;           
+            Order record = obj as Order;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.OrderID == entity.OrderID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.OrderID == record.OrderID
                         && this.OrderID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.orderid.GetHashCode();
@@ -485,7 +437,7 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.orderid = (int)reader[COL_ORDERID];
 			this.customerid = DbConvert.ToString(reader[COL_CUSTOMERID]);
@@ -501,61 +453,72 @@ namespace CrystalMapper.UnitTest.Northwind
 			this.shipregion = DbConvert.ToString(reader[COL_SHIPREGION]);
 			this.shippostalcode = DbConvert.ToString(reader[COL_SHIPPOSTALCODE]);
 			this.shipcountry = DbConvert.ToString(reader[COL_SHIPCOUNTRY]);
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_ORDERS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CustomerID), PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.EmployeeID), PARAM_EMPLOYEEID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.OrderDate), PARAM_ORDERDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.RequiredDate), PARAM_REQUIREDDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShippedDate), PARAM_SHIPPEDDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipVia), PARAM_SHIPVIA));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Freight), PARAM_FREIGHT));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipName), PARAM_SHIPNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipAddress), PARAM_SHIPADDRESS));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipCity), PARAM_SHIPCITY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipRegion), PARAM_SHIPREGION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipPostalCode), PARAM_SHIPPOSTALCODE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipCountry), PARAM_SHIPCOUNTRY));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, DbConvert.DbValue(this.CustomerID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_EMPLOYEEID, DbConvert.DbValue(this.EmployeeID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERDATE, DbConvert.DbValue(this.OrderDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REQUIREDDATE, DbConvert.DbValue(this.RequiredDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPEDDATE, DbConvert.DbValue(this.ShippedDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPVIA, DbConvert.DbValue(this.ShipVia)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_FREIGHT, DbConvert.DbValue(this.Freight)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPNAME, DbConvert.DbValue(this.ShipName)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPADDRESS, DbConvert.DbValue(this.ShipAddress)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCITY, DbConvert.DbValue(this.ShipCity)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPREGION, DbConvert.DbValue(this.ShipRegion)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPOSTALCODE, DbConvert.DbValue(this.ShipPostalCode)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCOUNTRY, DbConvert.DbValue(this.ShipCountry)));
                 this.OrderID = Convert.ToInt32(command.ExecuteScalar());
                 return true;                
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_ORDERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.OrderID, PARAM_ORDERID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CustomerID), PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.EmployeeID), PARAM_EMPLOYEEID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.OrderDate), PARAM_ORDERDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.RequiredDate), PARAM_REQUIREDDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShippedDate), PARAM_SHIPPEDDATE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipVia), PARAM_SHIPVIA));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Freight), PARAM_FREIGHT));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipName), PARAM_SHIPNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipAddress), PARAM_SHIPADDRESS));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipCity), PARAM_SHIPCITY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipRegion), PARAM_SHIPREGION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipPostalCode), PARAM_SHIPPOSTALCODE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ShipCountry), PARAM_SHIPCOUNTRY));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERID, this.OrderID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, DbConvert.DbValue(this.CustomerID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_EMPLOYEEID, DbConvert.DbValue(this.EmployeeID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERDATE, DbConvert.DbValue(this.OrderDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REQUIREDDATE, DbConvert.DbValue(this.RequiredDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPEDDATE, DbConvert.DbValue(this.ShippedDate)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPVIA, DbConvert.DbValue(this.ShipVia)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_FREIGHT, DbConvert.DbValue(this.Freight)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPNAME, DbConvert.DbValue(this.ShipName)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPADDRESS, DbConvert.DbValue(this.ShipAddress)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCITY, DbConvert.DbValue(this.ShipCity)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPREGION, DbConvert.DbValue(this.ShipRegion)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPOSTALCODE, DbConvert.DbValue(this.ShipPostalCode)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCOUNTRY, DbConvert.DbValue(this.ShipCountry)));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_ORDERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.OrderID, PARAM_ORDERID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERID, this.OrderID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

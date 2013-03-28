@@ -682,23 +682,23 @@ public class HelperFunctions : CodeTemplate
         string propDeclaration = string.Empty;
         if (!column.AllowDBNull && column.SystemType.IsPrimitive)
         {
-            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, default(@DataType))]
-                              public virtual @DataType @PropertyName ";
+            propDeclaration = @"[Column(@ConstantColumn, @ConstantParam, default(@DataType))]
+        public virtual @DataType @PropertyName ";
         }
         else if (!column.AllowDBNull && column.SystemType.IsValueType)
         {
-            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam, typeof(@DataType))]
-                              public virtual @DataType @PropertyName ";
+            propDeclaration = @"[Column(@ConstantColumn, @ConstantParam, typeof(@DataType))]
+        public virtual @DataType @PropertyName ";
         }
         else if (column.AllowDBNull && column.SystemType.IsValueType)
         {
-            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
-                              public virtual @DataType? @PropertyName ";
+            propDeclaration = @"[Column(@ConstantColumn, @ConstantParam )]
+        public virtual @DataType? @PropertyName ";
         }
         else
         {
-            propDeclaration = @"[Column( @ConstantColumn, @ConstantParam )]
-                              public virtual @DataType @PropertyName ";
+            propDeclaration = @"[Column(@ConstantColumn, @ConstantParam )]
+        public virtual @DataType @PropertyName ";
         }
 
         return propDeclaration.Replace("@ConstantColumn", GetConstantColumnName(column))

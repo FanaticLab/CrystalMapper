@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:41 PM
+ * Date:  Thursday, March 28, 2013 7:07 PM
  * 
  * Class: Customer
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Test.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Customer : Entity< Customer>  
+    public partial class Customer : IRecord 
     {		
 		#region Table Schema
 		
@@ -100,183 +97,183 @@ namespace CrystalMapper.Test.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_CUSTOMERID, PARAM_CUSTOMERID )]
-                              public virtual string CustomerID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_CUSTOMERID, PARAM_CUSTOMERID )]
+        public virtual string CustomerID 
         {
             get { return this.customerid; }
 			set	{ 
                   if(this.customerid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerID"));  
+                        this.OnPropertyChanging("CustomerID");  
                         this.customerid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerID"));
+                        this.OnPropertyChanged("CustomerID");
                     }   
                 }
         }	
 		
-        [Column( COL_COMPANYNAME, PARAM_COMPANYNAME )]
-                              public virtual string CompanyName 
+        [Column(COL_COMPANYNAME, PARAM_COMPANYNAME )]
+        public virtual string CompanyName 
         {
             get { return this.companyname; }
 			set	{ 
                   if(this.companyname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CompanyName"));  
+                        this.OnPropertyChanging("CompanyName");  
                         this.companyname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CompanyName"));
+                        this.OnPropertyChanged("CompanyName");
                     }   
                 }
         }	
 		
-        [Column( COL_CONTACTNAME, PARAM_CONTACTNAME )]
-                              public virtual string ContactName 
+        [Column(COL_CONTACTNAME, PARAM_CONTACTNAME )]
+        public virtual string ContactName 
         {
             get { return this.contactname; }
 			set	{ 
                   if(this.contactname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ContactName"));  
+                        this.OnPropertyChanging("ContactName");  
                         this.contactname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ContactName"));
+                        this.OnPropertyChanged("ContactName");
                     }   
                 }
         }	
 		
-        [Column( COL_CONTACTTITLE, PARAM_CONTACTTITLE )]
-                              public virtual string ContactTitle 
+        [Column(COL_CONTACTTITLE, PARAM_CONTACTTITLE )]
+        public virtual string ContactTitle 
         {
             get { return this.contacttitle; }
 			set	{ 
                   if(this.contacttitle != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ContactTitle"));  
+                        this.OnPropertyChanging("ContactTitle");  
                         this.contacttitle = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ContactTitle"));
+                        this.OnPropertyChanged("ContactTitle");
                     }   
                 }
         }	
 		
-        [Column( COL_ADDRESS, PARAM_ADDRESS )]
-                              public virtual string Address 
+        [Column(COL_ADDRESS, PARAM_ADDRESS )]
+        public virtual string Address 
         {
             get { return this.address; }
 			set	{ 
                   if(this.address != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Address"));  
+                        this.OnPropertyChanging("Address");  
                         this.address = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Address"));
+                        this.OnPropertyChanged("Address");
                     }   
                 }
         }	
 		
-        [Column( COL_CITY, PARAM_CITY )]
-                              public virtual string City 
+        [Column(COL_CITY, PARAM_CITY )]
+        public virtual string City 
         {
             get { return this.city; }
 			set	{ 
                   if(this.city != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("City"));  
+                        this.OnPropertyChanging("City");  
                         this.city = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("City"));
+                        this.OnPropertyChanged("City");
                     }   
                 }
         }	
 		
-        [Column( COL_REGION, PARAM_REGION )]
-                              public virtual string Region 
+        [Column(COL_REGION, PARAM_REGION )]
+        public virtual string Region 
         {
             get { return this.region; }
 			set	{ 
                   if(this.region != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Region"));  
+                        this.OnPropertyChanging("Region");  
                         this.region = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Region"));
+                        this.OnPropertyChanged("Region");
                     }   
                 }
         }	
 		
-        [Column( COL_POSTALCODE, PARAM_POSTALCODE )]
-                              public virtual string PostalCode 
+        [Column(COL_POSTALCODE, PARAM_POSTALCODE )]
+        public virtual string PostalCode 
         {
             get { return this.postalcode; }
 			set	{ 
                   if(this.postalcode != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("PostalCode"));  
+                        this.OnPropertyChanging("PostalCode");  
                         this.postalcode = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("PostalCode"));
+                        this.OnPropertyChanged("PostalCode");
                     }   
                 }
         }	
 		
-        [Column( COL_COUNTRY, PARAM_COUNTRY )]
-                              public virtual string Country 
+        [Column(COL_COUNTRY, PARAM_COUNTRY )]
+        public virtual string Country 
         {
             get { return this.country; }
 			set	{ 
                   if(this.country != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Country"));  
+                        this.OnPropertyChanging("Country");  
                         this.country = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Country"));
+                        this.OnPropertyChanged("Country");
                     }   
                 }
         }	
 		
-        [Column( COL_PHONE, PARAM_PHONE )]
-                              public virtual string Phone 
+        [Column(COL_PHONE, PARAM_PHONE )]
+        public virtual string Phone 
         {
             get { return this.phone; }
 			set	{ 
                   if(this.phone != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Phone"));  
+                        this.OnPropertyChanging("Phone");  
                         this.phone = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Phone"));
+                        this.OnPropertyChanged("Phone");
                     }   
                 }
         }	
 		
-        [Column( COL_FAX, PARAM_FAX )]
-                              public virtual string Fax 
+        [Column(COL_FAX, PARAM_FAX )]
+        public virtual string Fax 
         {
             get { return this.fax; }
 			set	{ 
                   if(this.fax != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Fax"));  
+                        this.OnPropertyChanging("Fax");  
                         this.fax = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Fax"));
+                        this.OnPropertyChanged("Fax");
                     }   
                 }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Customer entity = obj as Customer;           
+            Customer record = obj as Customer;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.CustomerID == entity.CustomerID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.CustomerID == record.CustomerID
                         && this.CustomerID != default(string)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.customerid.GetHashCode();
@@ -284,7 +281,7 @@ namespace CrystalMapper.Test.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.customerid = (string)reader[COL_CUSTOMERID];
 			this.companyname = (string)reader[COL_COMPANYNAME];
@@ -297,55 +294,66 @@ namespace CrystalMapper.Test.Northwind
 			this.country = DbConvert.ToString(reader[COL_COUNTRY]);
 			this.phone = DbConvert.ToString(reader[COL_PHONE]);
 			this.fax = DbConvert.ToString(reader[COL_FAX]);
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMERS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CompanyName, PARAM_COMPANYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ContactName), PARAM_CONTACTNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ContactTitle), PARAM_CONTACTTITLE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Address), PARAM_ADDRESS));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.City), PARAM_CITY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Region), PARAM_REGION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.PostalCode), PARAM_POSTALCODE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Country), PARAM_COUNTRY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Phone), PARAM_PHONE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Fax), PARAM_FAX));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTNAME, DbConvert.DbValue(this.ContactName)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTTITLE, DbConvert.DbValue(this.ContactTitle)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ADDRESS, DbConvert.DbValue(this.Address)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CITY, DbConvert.DbValue(this.City)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGION, DbConvert.DbValue(this.Region)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_POSTALCODE, DbConvert.DbValue(this.PostalCode)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COUNTRY, DbConvert.DbValue(this.Country)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_FAX, DbConvert.DbValue(this.Fax)));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CompanyName, PARAM_COMPANYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ContactName), PARAM_CONTACTNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ContactTitle), PARAM_CONTACTTITLE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Address), PARAM_ADDRESS));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.City), PARAM_CITY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Region), PARAM_REGION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.PostalCode), PARAM_POSTALCODE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Country), PARAM_COUNTRY));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Phone), PARAM_PHONE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Fax), PARAM_FAX));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTNAME, DbConvert.DbValue(this.ContactName)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTTITLE, DbConvert.DbValue(this.ContactTitle)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ADDRESS, DbConvert.DbValue(this.Address)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CITY, DbConvert.DbValue(this.City)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGION, DbConvert.DbValue(this.Region)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_POSTALCODE, DbConvert.DbValue(this.PostalCode)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_COUNTRY, DbConvert.DbValue(this.Country)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_FAX, DbConvert.DbValue(this.Fax)));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMERS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

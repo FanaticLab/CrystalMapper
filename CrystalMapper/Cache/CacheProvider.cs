@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CoreSystem.Data;
 using System.Data.Common;
 
@@ -28,10 +28,10 @@ namespace CrystalMapper.Cache
             return new DataContext(CacheProvider.CacheDb);  
         }
 
-        public static DataContext GetCacheContext(DbConnection connection)
-        {
-            return new DataContext(CacheDb, connection);
-        }
+        //public static DataContext GetCacheContext(DbConnection connection)
+        //{
+        //    return new DataContext(CacheDb, connection);
+        //}
 
         public static string GetProviderType(Type type)
         {

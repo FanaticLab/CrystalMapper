@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using System.Data.Common;
 using System.Collections;
 using CrystalMapper.Linq.Translator;
@@ -13,10 +13,11 @@ using CrystalMapper.Lang;
 using CrystalMapper.Linq.Helper;
 using CoreSystem.Data;
 using CoreSystem.Dynamic;
+using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
-    public class QueryProvider : IQueryProvider
+    internal class QueryProvider : IQueryProvider
     {
         private string name;
 
@@ -28,23 +29,22 @@ namespace CrystalMapper.Linq
         {
             if (this.dataContext == null)
             {
-                this.dataContext = string.IsNullOrEmpty(name) ? new DataContext() : new DataContext(name);
+                this.dataContext = new DataContext(name);
                 this.disposeDataContext = true;
             }
 
             return this.dataContext;
         }
 
-        public QueryProvider()
-        { }
-
         public QueryProvider(string name)
         {
+            Guard.CheckNullOrWhiteSpace(name, "QueryProvider(name)");
             this.name = name;
         }
 
         public QueryProvider(DataContext dataContext)
         {
+            Guard.CheckNull(dataContext, "QueryProvider(dataContext)");
             this.dataContext = dataContext;
         }
 
@@ -90,7 +90,7 @@ namespace CrystalMapper.Linq
                 {
                     command.CommandTimeout = 120;
                     foreach (string parameter in queryInfo.ParamValues.Keys)
-                        command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(queryInfo.ParamValues[parameter]), parameter));
+                        command.Parameters.Add(dataContext.CreateParameter(parameter, DbConvert.DbValue(queryInfo.ParamValues[parameter])));
 
                     if (queryInfo.ResultShape == ResultShape.None)
                         return command.ExecuteNonQuery();
@@ -145,9 +145,9 @@ namespace CrystalMapper.Linq
                 {
                     command.CommandTimeout = 120;
                     foreach (string parameter in queryInfo.ParamValues.Keys)
-                        command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(queryInfo.ParamValues[parameter]), parameter));
+                        command.Parameters.Add(dataContext.CreateParameter(parameter, DbConvert.DbValue(queryInfo.ParamValues[parameter])));
 
-                    return dataContext.ExecuteToDonymous(command);
+                    return DataContext.ToDonymous(command);
                 }
             }
             finally

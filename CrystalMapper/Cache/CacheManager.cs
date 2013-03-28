@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Policy;
 using CrystalMapper.Helper;
 using System.Data;
@@ -11,7 +11,6 @@ using System.Threading;
 using System.Data.Common;
 using System.Reflection;
 using CoreSystem.Data;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Cache
 {
@@ -24,7 +23,7 @@ namespace CrystalMapper.Cache
         }
 
         public static DataContext GetDataContext<T>()
-            where T : Entity<T>, new()
+            where T : IRecord, new()
         {
             CachePolicy cachePolicy = PolicyHelper<T>.CachePolicy;
             if (cachePolicy != null)
@@ -37,7 +36,7 @@ namespace CrystalMapper.Cache
         }
 
         private static void RefreshCache<T>(CachePolicy cachePolicy)
-            where T : Entity<T>, new()
+            where T : IRecord, new()
         {
             if (!Monitor.TryEnter(cachePolicy))
                 return;
@@ -53,7 +52,7 @@ namespace CrystalMapper.Cache
         }
 
         private static void AsyncRefresh<T>(object cachePolicy)
-            where T : Entity<T>, new()
+            where T : IRecord, new()
         {
             lock (cachePolicy)
             {
@@ -65,7 +64,8 @@ namespace CrystalMapper.Cache
                     string createTableStatement = PrepareCreateTableStatement<T>();
                     string InsertTableStatement = PrepareInsertStatement<T>();
 
-                    T[] entities = new T().ToList(new DataContext(DbFactory.GetDefaultDatabase()));
+                    var db = new DbContext();
+                    T[] entities = db.ToArray<T>();
 
                     using (DataContext dataContext = CacheProvider.GetCacheContext())
                     {
@@ -88,7 +88,7 @@ namespace CrystalMapper.Cache
                                 {
                                     PropertyInfo propertyInfo = EntityQuery<T>.ColumnProperties[i];
                                     ColumnAttribute colAttribute = EntityQuery<T>.ColumnInfos[i];
-                                    DbParameter dbParam = dataContext.CreateParameter(propertyInfo.GetValue(entity, null) ?? DBNull.Value, colAttribute.ParamName);
+                                    DbParameter dbParam = dataContext.CreateParameter(colAttribute.ParamName, DbConvert.DbValue(propertyInfo.GetValue(entity, null)));
                                     if (dbParam.Value is DateTime)
                                         dbParam.DbType = DbType.DateTime;
                                     command.Parameters.Add(dbParam);
@@ -106,7 +106,7 @@ namespace CrystalMapper.Cache
         }
 
         private static string PrepareCreateTableStatement<T>()
-                  where T : Entity<T>, new()
+                  where T : IRecord, new()
         {
             string createTableQuery = "CREATE TABLE [" + EntityQuery<T>.TableName + "] (";
 
@@ -123,13 +123,13 @@ namespace CrystalMapper.Cache
         }
 
         private static string PrepareDropTableStatement<T>()
-            where T : Entity<T>, new()
+            where T : IRecord, new()
         {
             return "DROP TABLE [" + EntityQuery<T>.TableName + "];";
         }
 
         private static string PrepareInsertStatement<T>()
-            where T : Entity<T>, new()
+            where T : IRecord, new()
         {
             string insertAutoQuery = "INSERT INTO [" + EntityQuery<T>.TableName + "] (";
             foreach (ColumnAttribute columnAttribute in EntityQuery<T>.ColumnInfos)

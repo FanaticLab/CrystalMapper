@@ -11,7 +11,7 @@ using CrystalMapper.Policy;
 using System.Threading;
 using CrystalMapper.Test.Northwind;
 using CrystalMapper.Linq;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using System.Collections;
 using CoreSystem.Dynamic;
 using System.Data.Common;
@@ -22,32 +22,35 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
-            var s = Order.Query().Where(o => o.Freight < 100).Count();
+            var db = new DbContext();
+            var s = db.Query<Order>().Where(o => o.Freight < 100).Count();
 
-            var r = Customer.Query()
-                    .Where(c => Order.Query()
-                    .Select(o => o.CustomerID).Contains(c.CustomerID)).ToArray();
+            var r = db.Query<Customer>()
+                    .Where(c => db.Query<Order>()
+                                  .Select(o => o.CustomerID)
+                                  .Contains(c.CustomerID)).ToArray();
             Write(r);
 
             int orderId = 100;
 
-            var q2 = (from c in Customer.Query()
-                      join o in Order.Query().Select(o => new { o.CustomerID, OrderID = o.OrderID - 1000 }) on c.CustomerID equals o.CustomerID
+            var q2 = (from c in db.Query<Customer>()
+                      join o in db.Query<Order>().Select(o => new { o.CustomerID, OrderID = o.OrderID - 1000 }) on c.CustomerID equals o.CustomerID
                       where o.OrderID > orderId
                       select new { c, o });
 
             var r2 = q2.ToArray();
             Write(r2);
 
-            var q3 = (from c in Customer.Query()
-                      from o in Order.Query().Where(o => o.OrderID > 100)
+            var q3 = (from c in db.Query<Customer>()
+                      from o in db.Query<Order>().Where(o => o.OrderID > 100)
                       select new { c, o }).Take(1000);
 
             var r3 = q3.ToArray();
+
             Write(r3);
 
-            var query = from c in Customer.Query()
-                        join o in Order.Query() on c.CustomerID equals o.CustomerID
+            var query = from c in db.Query<Customer>()
+                        join o in db.Query<Order>() on c.CustomerID equals o.CustomerID
                         group o by o.CustomerID into g
                         select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID) };
 
@@ -55,13 +58,7 @@ namespace CrystalMapper.Test
 
             Write(result);
 
-
             Console.ReadLine();
-        }
-
-        class Class1
-        {
-            public string prp { get; set; }
         }
 
         static void Write(IEnumerable collection)

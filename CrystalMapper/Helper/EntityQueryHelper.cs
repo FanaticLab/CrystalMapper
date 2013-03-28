@@ -3,12 +3,11 @@ using System.Reflection;
 using CrystalMapper.Mapping;
 using System.Text;
 using System.Collections.Generic;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Helper
 {
     public static class EntityQuery<T>
-        where T : Entity<T>, new()
+        where T : IRecord, new()
     {
         #region SQL Operators
 
@@ -70,7 +69,7 @@ namespace CrystalMapper.Helper
             return EntityQuery<T>.SelectQuery;
         }
 
-        public static string GetQuery(Entity<T> entity, out Dictionary<string, object> parameterValues)
+        public static string GetQuery(IRecord entity, out Dictionary<string, object> parameterValues)
         {
             StringBuilder query = new StringBuilder(SelectQuery);
             parameterValues = new Dictionary<string, object>();

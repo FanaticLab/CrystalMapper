@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: EmployeeTerritory
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class EmployeeTerritory : Entity< EmployeeTerritory>  
+    public partial class EmployeeTerritory : IRecord 
     {		
 		#region Table Schema
 		
@@ -68,9 +65,13 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_EMPLOYEEID, PARAM_EMPLOYEEID, default(int))]
-                              public virtual int EmployeeID                
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_EMPLOYEEID, PARAM_EMPLOYEEID, default(int))]
+        public virtual int EmployeeID                
         {
             get
             {
@@ -83,17 +84,17 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.employeeid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("EmployeeID"));                    
+                    this.OnPropertyChanging("EmployeeID");                    
                     this.employeeid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("EmployeeID"));
+                    this.OnPropertyChanged("EmployeeID");
                     
                     this.employeeRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_TERRITORYID, PARAM_TERRITORYID )]
-                              public virtual string TerritoryID                
+        [Column(COL_TERRITORYID, PARAM_TERRITORYID )]
+        public virtual string TerritoryID                
         {
             get
             {
@@ -106,9 +107,9 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.territoryid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("TerritoryID"));                    
+                    this.OnPropertyChanging("TerritoryID");                    
                     this.territoryid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("TerritoryID"));
+                    this.OnPropertyChanged("TerritoryID");
                     
                     this.territoryRef = null;
                 }                
@@ -117,104 +118,70 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Employee EmployeeRef
         {
-            get { 
-                    if(this.employeeRef == null
-                       && this.employeeid != default(int)) 
+            get { return this.employeeRef; }
+			set	
+            { 
+                if(this.employeeRef != value)
+                {
+                    this.OnPropertyChanging("EmployeeRef");
+                    
+                    if((this.employeeRef = value) != null) 
                     {
-                        Employee employeeQuery = new Employee {
-                                                        EmployeeID = this.employeeid  
-                                                        };
-                        
-                        Employee[]  employees = employeeQuery.ToList();                        
-                        if(employees.Length == 1)
-                            this.employeeRef = employees[0];                        
+                        this.employeeid = this.employeeRef.EmployeeID;
+                    }
+                    else
+                    {
+		                this.employeeid = default(int);
                     }
                     
-                    return this.employeeRef; 
-                }
-			set	{ 
-                  if(this.employeeRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("EmployeeRef"));
-                        if (this.employeeRef != null)
-                            this.Parents.Remove(this.employeeRef);                            
-                        
-                        if((this.employeeRef = value) != null) 
-                        {
-                            this.Parents.Add(this.employeeRef); 
-                            this.employeeid = this.employeeRef.EmployeeID;
-                        }
-                        else
-                        {
-		                    this.employeeid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("EmployeeRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("EmployeeRef");
+                }   
+             }
         }	
 		
         public Territory TerritoryRef
         {
-            get { 
-                    if(this.territoryRef == null
-                       && this.territoryid != default(string)) 
+            get { return this.territoryRef; }
+			set	
+            { 
+                if(this.territoryRef != value)
+                {
+                    this.OnPropertyChanging("TerritoryRef");
+                    
+                    if((this.territoryRef = value) != null) 
                     {
-                        Territory territoryQuery = new Territory {
-                                                        TerritoryID = this.territoryid  
-                                                        };
-                        
-                        Territory[]  territories = territoryQuery.ToList();                        
-                        if(territories.Length == 1)
-                            this.territoryRef = territories[0];                        
+                        this.territoryid = this.territoryRef.TerritoryID;
+                    }
+                    else
+                    {
+		                this.territoryid = default(string);
                     }
                     
-                    return this.territoryRef; 
-                }
-			set	{ 
-                  if(this.territoryRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("TerritoryRef"));
-                        if (this.territoryRef != null)
-                            this.Parents.Remove(this.territoryRef);                            
-                        
-                        if((this.territoryRef = value) != null) 
-                        {
-                            this.Parents.Add(this.territoryRef); 
-                            this.territoryid = this.territoryRef.TerritoryID;
-                        }
-                        else
-                        {
-		                    this.territoryid = default(string);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("TerritoryRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("TerritoryRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            EmployeeTerritory entity = obj as EmployeeTerritory;           
+            EmployeeTerritory record = obj as EmployeeTerritory;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.EmployeeID == entity.EmployeeID
-                        && this.TerritoryID == entity.TerritoryID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.EmployeeID == record.EmployeeID
+                        && this.TerritoryID == record.TerritoryID
                         && this.EmployeeID != default(int)
-                        && this.TerritoryID != default(string)
+                                                && this.TerritoryID != default(string)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.employeeid.GetHashCode();
@@ -223,42 +190,53 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.employeeid = (int)reader[COL_EMPLOYEEID];
 			this.territoryid = (string)reader[COL_TERRITORYID];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_EMPLOYEETERRITORIES))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.EmployeeID, PARAM_EMPLOYEEID));
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_EMPLOYEEID, this.EmployeeID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_EMPLOYEETERRITORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.EmployeeID, PARAM_EMPLOYEEID));
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_EMPLOYEEID, this.EmployeeID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_EMPLOYEETERRITORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.EmployeeID, PARAM_EMPLOYEEID));				
-				command.Parameters.Add(dataContext.CreateParameter(this.TerritoryID, PARAM_TERRITORYID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_EMPLOYEEID, this.EmployeeID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_TERRITORYID, this.TerritoryID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

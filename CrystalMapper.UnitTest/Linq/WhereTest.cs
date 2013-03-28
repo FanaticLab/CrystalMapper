@@ -4,15 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CrystalMapper.UnitTest.Northwind;
+using CrystalMapper.Context;
 
 namespace CrystalMapper.UnitTest.Linq
 {
     /// <summary>
     /// Summary description for WhereTest
     /// </summary>
-    [TestClass]    
+    [TestClass]
     public class WhereTest
     {
+        private DbContext db = new DbContext();
+
         public WhereTest()
         {
             //
@@ -41,7 +44,7 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void WhereEqualTest()
         {
-            var customers = Customer.Query().Where(c => c.CustomerID == "ALFKI").ToList();
+            var customers = db.Query<Customer>().Where(c => c.CustomerID == "ALFKI").ToList();
 
             Assert.AreEqual(1, customers.Count);
         }
@@ -49,7 +52,7 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void WhereNotEqualTest()
         {
-            var customers = Customer.Query().Where(c => c.CustomerID != "ALFKI").ToList();
+            var customers = db.Query<Customer>().Where(c => c.CustomerID != "ALFKI").ToList();
 
             Assert.AreNotEqual(0, customers.Count);
         }
@@ -59,7 +62,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             Assert.AreEqual(
                             TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT > 100")
-                            , Order.Query().Where(o => o.Freight > 100).Count());
+                            , db.Query<Order>().Where(o => o.Freight > 100).Count());
         }
 
         [TestMethod]
@@ -67,7 +70,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             Assert.AreEqual(
                           TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT < 100")
-                          , Order.Query().Where(o => o.Freight < 100).Count());
+                          , db.Query<Order>().Where(o => o.Freight < 100).Count());
         }
 
         [TestMethod]
@@ -75,7 +78,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             Assert.AreEqual(
                             TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT >= 100")
-                            , Order.Query().Where(o => o.Freight > 100).Count());
+                            , db.Query<Order>().Where(o => o.Freight > 100).Count());
         }
 
         [TestMethod]
@@ -83,7 +86,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             Assert.AreEqual(
                           TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT <= 100")
-                          , Order.Query().Where(o => o.Freight < 100).Count());
+                          , db.Query<Order>().Where(o => o.Freight < 100).Count());
         }
     }
 }

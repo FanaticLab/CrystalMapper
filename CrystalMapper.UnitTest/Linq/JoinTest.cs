@@ -4,15 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CrystalMapper.UnitTest.Northwind;
+using CrystalMapper.Context;
 
 namespace CrystalMapper.UnitTest.Linq
 {
     /// <summary>
     /// Summary description for JoinTest
     /// </summary>
-    [TestClass]    
+    [TestClass]
     public class JoinTest
     {
+        private DbContext db = new DbContext();
+
         public JoinTest()
         {
             //
@@ -23,9 +26,9 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void CrossJoinTest()
         {
-            var count = (from c in Customer.Query()
-                             from o in Order.Query()
-                             select new { Customer = c, Order = o }).Count();
+            var count = (from c in db.Query<Customer>()
+                         from o in db.Query<Order>()
+                         select new { Customer = c, Order = o }).Count();
 
             Assert.AreEqual(TestHelper.ExecuteScalar("SELECT COUNT(*) FROM CUSTOMERS CROSS JOIN ORDERS"), count);
         }
@@ -33,8 +36,8 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void InnerJoinTest()
         {
-            var count = (from c in Customer.Query()
-                         join o in Order.Query() on c.CustomerID equals o.CustomerID
+            var count = (from c in db.Query<Customer>()
+                         join o in db.Query<Order>() on c.CustomerID equals o.CustomerID
                          select new { Customer = c, Order = o }).Count();
 
             Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
@@ -45,8 +48,8 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void LeftOuterJoinTest()
         {
-            var count = (from c in Customer.Query()
-                         join o in Order.Query() on c.CustomerID equals o.CustomerID into l
+            var count = (from c in db.Query<Customer>()
+                         join o in db.Query<Order>() on c.CustomerID equals o.CustomerID into l
                          from ol in l.DefaultIfEmpty()
                          select new { Customer = c, Order = ol }).Count();
 

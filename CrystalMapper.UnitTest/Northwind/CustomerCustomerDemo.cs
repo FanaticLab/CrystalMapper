@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: CustomerCustomerDemo
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class CustomerCustomerDemo : Entity< CustomerCustomerDemo>  
+    public partial class CustomerCustomerDemo : IRecord 
     {		
 		#region Table Schema
 		
@@ -68,9 +65,13 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_CUSTOMERTYPEID, PARAM_CUSTOMERTYPEID )]
-                              public virtual string CustomerTypeID                
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_CUSTOMERTYPEID, PARAM_CUSTOMERTYPEID )]
+        public virtual string CustomerTypeID                
         {
             get
             {
@@ -83,17 +84,17 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.customertypeid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerTypeID"));                    
+                    this.OnPropertyChanging("CustomerTypeID");                    
                     this.customertypeid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerTypeID"));
+                    this.OnPropertyChanged("CustomerTypeID");
                     
                     this.customerDemographicRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_CUSTOMERID, PARAM_CUSTOMERID )]
-                              public virtual string CustomerID                
+        [Column(COL_CUSTOMERID, PARAM_CUSTOMERID )]
+        public virtual string CustomerID                
         {
             get
             {
@@ -106,9 +107,9 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.customerid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerID"));                    
+                    this.OnPropertyChanging("CustomerID");                    
                     this.customerid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerID"));
+                    this.OnPropertyChanged("CustomerID");
                     
                     this.customerRef = null;
                 }                
@@ -117,104 +118,70 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public CustomerDemographic CustomerDemographicRef
         {
-            get { 
-                    if(this.customerDemographicRef == null
-                       && this.customertypeid != default(string)) 
+            get { return this.customerDemographicRef; }
+			set	
+            { 
+                if(this.customerDemographicRef != value)
+                {
+                    this.OnPropertyChanging("CustomerDemographicRef");
+                    
+                    if((this.customerDemographicRef = value) != null) 
                     {
-                        CustomerDemographic customerDemographicQuery = new CustomerDemographic {
-                                                        CustomerTypeID = this.customertypeid  
-                                                        };
-                        
-                        CustomerDemographic[]  customerDemographics = customerDemographicQuery.ToList();                        
-                        if(customerDemographics.Length == 1)
-                            this.customerDemographicRef = customerDemographics[0];                        
+                        this.customertypeid = this.customerDemographicRef.CustomerTypeID;
+                    }
+                    else
+                    {
+		                this.customertypeid = default(string);
                     }
                     
-                    return this.customerDemographicRef; 
-                }
-			set	{ 
-                  if(this.customerDemographicRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerDemographicRef"));
-                        if (this.customerDemographicRef != null)
-                            this.Parents.Remove(this.customerDemographicRef);                            
-                        
-                        if((this.customerDemographicRef = value) != null) 
-                        {
-                            this.Parents.Add(this.customerDemographicRef); 
-                            this.customertypeid = this.customerDemographicRef.CustomerTypeID;
-                        }
-                        else
-                        {
-		                    this.customertypeid = default(string);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerDemographicRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("CustomerDemographicRef");
+                }   
+             }
         }	
 		
         public Customer CustomerRef
         {
-            get { 
-                    if(this.customerRef == null
-                       && this.customerid != default(string)) 
+            get { return this.customerRef; }
+			set	
+            { 
+                if(this.customerRef != value)
+                {
+                    this.OnPropertyChanging("CustomerRef");
+                    
+                    if((this.customerRef = value) != null) 
                     {
-                        Customer customerQuery = new Customer {
-                                                        CustomerID = this.customerid  
-                                                        };
-                        
-                        Customer[]  customers = customerQuery.ToList();                        
-                        if(customers.Length == 1)
-                            this.customerRef = customers[0];                        
+                        this.customerid = this.customerRef.CustomerID;
+                    }
+                    else
+                    {
+		                this.customerid = default(string);
                     }
                     
-                    return this.customerRef; 
-                }
-			set	{ 
-                  if(this.customerRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerRef"));
-                        if (this.customerRef != null)
-                            this.Parents.Remove(this.customerRef);                            
-                        
-                        if((this.customerRef = value) != null) 
-                        {
-                            this.Parents.Add(this.customerRef); 
-                            this.customerid = this.customerRef.CustomerID;
-                        }
-                        else
-                        {
-		                    this.customerid = default(string);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("CustomerRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            CustomerCustomerDemo entity = obj as CustomerCustomerDemo;           
+            CustomerCustomerDemo record = obj as CustomerCustomerDemo;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.CustomerID == entity.CustomerID
-                        && this.CustomerTypeID == entity.CustomerTypeID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.CustomerID == record.CustomerID
+                        && this.CustomerTypeID == record.CustomerTypeID
                         && this.CustomerID != default(string)
-                        && this.CustomerTypeID != default(string)
+                                                && this.CustomerTypeID != default(string)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.customerid.GetHashCode();
@@ -223,42 +190,53 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.customerid = (string)reader[COL_CUSTOMERID];
 			this.customertypeid = (string)reader[COL_CUSTOMERTYPEID];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMERCUSTOMERDEMO))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMERCUSTOMERDEMO))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMERCUSTOMERDEMO))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerID, PARAM_CUSTOMERID));				
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
