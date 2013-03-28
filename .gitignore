@@ -1,3 +1,4 @@
+*.csproj.user
 CrystalMapper.Test/obj/
 CrystalMapper.Test/bin/
 CrystalMapper.UnitTest/obj/
@@ -5,3 +6,4 @@ CrystalMapper.UnitTest/bin/
 CrystalMapper.suo
 CrystalMapper/bin/
 CrystalMapper/obj/
+TestResults/
