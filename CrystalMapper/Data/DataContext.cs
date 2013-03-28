@@ -20,6 +20,8 @@ using System.Collections.Generic;
 
 using CoreSystem.Data;
 using CoreSystem.Dynamic;
+using System.Linq;
+using CrystalMapper.Linq;
 
 namespace CrystalMapper.Data
 {
@@ -96,10 +98,15 @@ namespace CrystalMapper.Data
             return this.database.CreateParameter();
         }
 
-        public DbParameter CreateParameter(object value, string paramName)
+        public DbParameter CreateParameter(string paramName, object paramValue)
         {
-            return this.database.CreateParameter(value, paramName);
-        }                 
+            return this.database.CreateParameter(paramValue, paramName);
+        }
+
+        public IQueryable<T> Query<T>()
+        {
+            return new Query<T>(this);
+        }
 
         public void CommitTransaction()
         {

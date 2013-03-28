@@ -22,62 +22,6 @@ namespace CrystalMapper.Test
     {
         static void Main(string[] args)
         {
-
-            //Order order = new Order { OrderID = 722 };
-            //Order[] orders = order.ToList(); // Orders array containing one order;
-
-
-            // Using 'Default-Db' connection string
-            using (DataContext dataContext2 = new DataContext())
-            {
-                // Getting Order Date greater than now
-                using (DbCommand command = dataContext2.CreateCommand("SELECT * FROM Orders WHERE OrderDate > @OrderDate"))
-                {
-                    command.Parameters.Add(dataContext2.CreateParameter(DateTime.Now, "@OrderDate"));
-                    using (DbDataReader reader = command.ExecuteReader())
-                    {
-                        // Converting results to Order's array
-                        Order[] orders1 = Order.ToList(reader);
-                    }
-                }
-            }
-
-            Order[] orders;
-            // Using 'Default-Db' connection string
-            orders = (from order in Order.Query()
-                      where order.OrderDate > DateTime.Now
-                      select order).ToArray();
-
-            // Using 'MyAdventuresDb' connnection string
-            orders = (from order in Order.Query("MyAdventuresDb")
-                      where order.OrderDate > DateTime.Now
-                      select order).ToArray();
-
-            // Using same 'MyAdventuresDb' connnection for all queries
-            using (DataContext dataContext1 = new DataContext("MyAdventuresDb"))
-            {
-                Order[] todayOrders = (from order in Order.Query(dataContext1)
-                                       where order.OrderDate > DateTime.Today
-                                       select order).ToArray();
-
-                Order[] futureOrders = (from order in Order.Query(dataContext1)
-                                        where order.RequiredDate > DateTime.Today
-                                        select order).ToArray();
-
-            }
-
-            using (DataContext dataCotnext = new DataContext())
-            {
-                // Begining transaction
-                dataCotnext.BeginTransaction();
-
-                Customer customer = new Customer { ContactName = "Faraz Masood Khan", CompanyName = "FanaticLab" };
-                customer.Save(dataContext);
-
-                Order order = new Order { CustomerRef = customer, 
-            }
-
-
             var s = Order.Query().Where(o => o.Freight < 100).Count();
 
             var r = Customer.Query()
