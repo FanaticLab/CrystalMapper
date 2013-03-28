@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using System.Data.Common;
 using CoreSystem.Data;
 

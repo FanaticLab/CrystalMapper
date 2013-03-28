@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using CrystalMapper.Lang;
 using System.Data.Linq;
-using CrystalMapper.Generic;
 using CrystalMapper.ObjectModel;
 using CrystalMapper.Linq.Metadata;
 using System.Diagnostics;
@@ -278,11 +277,16 @@ namespace CrystalMapper.Linq.Translator
                 else if (!m.Method.IsStatic && m.Arguments.Count == 1 && m.Arguments[0].Type == m.Object.Type)
                     return this.Visit(Expression.Equal(m.Object, m.Arguments[0]));
             }
-            else if (m.Method.DeclaringType.IsGenericType && m.Method.DeclaringType.GetGenericTypeDefinition() == typeof(Entity<>) && m.Method.Name == "Query")
+            else if (typeof(IQueryable).IsAssignableFrom(m.Method.ReturnType))
             {
-                IQueryable queryable = m.Method.Invoke(null, null) as IQueryable;
-                if (queryable != null)
-                    return this.Visit(queryable.Expression);
+                var constantExpression = this.Visit(m.Object) as ConstantExpression;
+                if (constantExpression != null)
+                {
+                    var arguments = m.Arguments.Select(a => this.Visit(a)).Where(a => a is ConstantExpression).Select(a => ((ConstantExpression)a).Value).ToArray();
+                    IQueryable queryable = m.Method.Invoke(constantExpression.Value, arguments) as IQueryable;
+                    if (constantExpression != null && queryable != null)
+                        return this.Visit(queryable.Expression);
+                }
             }
             else if (m.Method.DeclaringType == typeof(Enumerable))
             {
@@ -443,7 +447,7 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitParameter(ParameterExpression p)
         {
-            if (p != null && p.Type.IsSubclassOf(typeof(Entity)))
+            if (p != null && typeof(IRecord).IsAssignableFrom(p.Type))
             {
                 TableMetadata tableMetadata = MetadataProvider.GetMetadata(p.Type);
 

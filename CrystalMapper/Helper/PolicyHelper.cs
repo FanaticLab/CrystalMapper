@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CrystalMapper.Policy;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Helper
 {
     public static class PolicyHelper<T> 
-        where T: Entity<T>, new()
+        where T: IRecord, new()
     {
         public static readonly CachePolicy CachePolicy;
 

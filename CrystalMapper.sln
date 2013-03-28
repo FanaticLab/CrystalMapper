@@ -88,7 +88,6 @@ Global
 		{FB05239A-0E75-4E64-963C-136215002017}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB05239A-0E75-4E64-963C-136215002017}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FB05239A-0E75-4E64-963C-136215002017}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FB05239A-0E75-4E64-963C-136215002017}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FB05239A-0E75-4E64-963C-136215002017}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
 		{FB05239A-0E75-4E64-963C-136215002017}.Release|Win32.ActiveCfg = Release|Any CPU
 		{FB05239A-0E75-4E64-963C-136215002017}.StockDebug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -112,7 +111,6 @@ Global
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.Release|Win32.ActiveCfg = Release|Any CPU
 		{160D1D21-699E-499A-9CA2-F54992777EFE}.StockDebug|Any CPU.ActiveCfg = Debug|Any CPU

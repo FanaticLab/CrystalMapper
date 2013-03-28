@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CrystalMapper.UnitTest.Northwind;
 using System.Data.SqlClient;
 using System.Configuration;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 
 namespace CrystalMapper.UnitTest.Linq
 {
@@ -20,13 +20,15 @@ namespace CrystalMapper.UnitTest.Linq
         private string firstCustomerID;
         private string lastCustomerID;
 
+        private DbContext db = new DbContext();
+
         public SelectTest()
         {
             using (var dataContext = new DataContext())
             {
                 using (var command = dataContext.CreateCommand("SELECT COUNT(*) FROM CUSTOMERS"))
                 {
-                    
+
                     totalCustomers = Convert.ToInt32(command.ExecuteScalar());
 
                     command.CommandText = "SELECT TOP 1 CUSTOMERID FROM CUSTOMERS";
@@ -60,7 +62,7 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void SelectAll()
         {
-            var customerList = Customer.Query().ToList();
+            var customerList = db.Query<Customer>().ToList();
 
             Assert.AreEqual(totalCustomers, customerList.Count);
         }
@@ -68,7 +70,7 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void SelectFirst()
         {
-            var customer = Customer.Query().First();
+            var customer = db.Query<Customer>().First();
 
             Assert.IsNotNull(customer);
         }
@@ -76,17 +78,17 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void SelectFirstOrDefault()
         {
-            var customer = Customer.Query().FirstOrDefault();
+            var customer = db.Query<Customer>().FirstOrDefault();
             Assert.IsNotNull(customer);
 
-            customer = Customer.Query().FirstOrDefault(c => c.CustomerID == "----");
+            customer = db.Query<Customer>().FirstOrDefault(c => c.CustomerID == "----");
             Assert.IsNull(customer);
         }
 
         [TestMethod]
         public void SelectSingle()
         {
-            var customer = Customer.Query().Single();
+            var customer = db.Query<Customer>().Single();
 
             Assert.IsNotNull(customer);
         }
@@ -94,10 +96,10 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void SelectSingleOrDefault()
         {
-            var customer = Customer.Query().SingleOrDefault();
+            var customer = db.Query<Customer>().SingleOrDefault();
             Assert.IsNotNull(customer);
 
-            customer = Customer.Query().SingleOrDefault(c => c.CustomerID == "----");
+            customer = db.Query<Customer>().SingleOrDefault(c => c.CustomerID == "----");
             Assert.IsNull(customer);
         }
 
@@ -105,13 +107,13 @@ namespace CrystalMapper.UnitTest.Linq
         [ExpectedException(typeof(InvalidOperationException))]
         public void SelectSelectLastWithOutOrderBy()
         {
-            var customer = Customer.Query().Last();
+            var customer = db.Query<Customer>().Last();
         }
 
         [TestMethod]
         public void SelectLast()
         {
-            var customer = Customer.Query().OrderBy(c => c.CustomerID).Last();
+            var customer = db.Query<Customer>().OrderBy(c => c.CustomerID).Last();
 
             Assert.IsNotNull(customer);
             Assert.AreEqual(lastCustomerID, customer.CustomerID);
@@ -120,12 +122,12 @@ namespace CrystalMapper.UnitTest.Linq
         [TestMethod]
         public void SelectLastOrDefault()
         {
-            var customer = Customer.Query().OrderBy(c => c.CustomerID).LastOrDefault();
+            var customer = db.Query<Customer>().OrderBy(c => c.CustomerID).LastOrDefault();
 
             Assert.IsNotNull(customer);
             Assert.AreEqual(lastCustomerID, customer.CustomerID);
 
-            customer = Customer.Query().OrderBy(c => c.CustomerID).LastOrDefault(c => c.CustomerID == "-----");
+            customer = db.Query<Customer>().OrderBy(c => c.CustomerID).LastOrDefault(c => c.CustomerID == "-----");
 
             Assert.IsNull(customer);
         }

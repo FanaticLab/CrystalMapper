@@ -69,13 +69,13 @@ namespace CrystalMapper.Linq.Expressions
 
         public IEnumerable<object> Translate(QueryInfo queryInfo, DbDataReader reader)
         {
-            if (queryInfo.ReturnType.IsSubclassOf(typeof(Entity)))
+            if (typeof(IRecord).IsAssignableFrom(queryInfo.ReturnType))
             {
                 while (reader.Read())
                 {
-                    Entity entity = (Entity)Activator.CreateInstance(queryInfo.ReturnType);
-                    entity.Read(reader);
-                    yield return entity;
+                    var record = (IRecord)Activator.CreateInstance(queryInfo.ReturnType);
+                    record.Read(reader);
+                    yield return record;
                 }
             }
             else if (queryInfo.ReturnType.IsPrimitive || queryInfo.ReturnType == typeof(DateTime))
@@ -91,7 +91,7 @@ namespace CrystalMapper.Linq.Expressions
                     }
                 }
             }
-            else if (queryInfo.ReturnType == typeof(string) 
+            else if (queryInfo.ReturnType == typeof(string)
                  || (queryInfo.ReturnType.IsGenericType && queryInfo.ReturnType.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
                 while (reader.Read())
@@ -156,7 +156,7 @@ namespace CrystalMapper.Linq.Expressions
                 return System.Convert.ChangeType(reader[index++], type);
             }
 
-            if (type.IsSubclassOf(typeof(Entity)))
+            if (typeof(IRecord).IsAssignableFrom(type))
             {
                 object entity = Activator.CreateInstance(type);
                 TableMetadata entityMetadata = MetadataProvider.GetMetadata(type);

@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: CustomerDemographic
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class CustomerDemographic : Entity< CustomerDemographic>  
+    public partial class CustomerDemographic : IRecord 
     {		
 		#region Table Schema
 		
@@ -64,57 +61,57 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_CUSTOMERTYPEID, PARAM_CUSTOMERTYPEID )]
-                              public virtual string CustomerTypeID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_CUSTOMERTYPEID, PARAM_CUSTOMERTYPEID )]
+        public virtual string CustomerTypeID 
         {
             get { return this.customertypeid; }
 			set	{ 
                   if(this.customertypeid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerTypeID"));  
+                        this.OnPropertyChanging("CustomerTypeID");  
                         this.customertypeid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerTypeID"));
+                        this.OnPropertyChanged("CustomerTypeID");
                     }   
                 }
         }	
 		
-        [Column( COL_CUSTOMERDESC, PARAM_CUSTOMERDESC )]
-                              public virtual string CustomerDesc 
+        [Column(COL_CUSTOMERDESC, PARAM_CUSTOMERDESC )]
+        public virtual string CustomerDesc 
         {
             get { return this.customerdesc; }
 			set	{ 
                   if(this.customerdesc != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CustomerDesc"));  
+                        this.OnPropertyChanging("CustomerDesc");  
                         this.customerdesc = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CustomerDesc"));
+                        this.OnPropertyChanged("CustomerDesc");
                     }   
                 }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            CustomerDemographic entity = obj as CustomerDemographic;           
+            CustomerDemographic record = obj as CustomerDemographic;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.CustomerTypeID == entity.CustomerTypeID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.CustomerTypeID == record.CustomerTypeID
                         && this.CustomerTypeID != default(string)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.customertypeid.GetHashCode();
@@ -122,41 +119,52 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.customertypeid = (string)reader[COL_CUSTOMERTYPEID];
 			this.customerdesc = DbConvert.ToString(reader[COL_CUSTOMERDESC]);
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMERDEMOGRAPHICS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CustomerDesc), PARAM_CUSTOMERDESC));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERDESC, DbConvert.DbValue(this.CustomerDesc)));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMERDEMOGRAPHICS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CustomerDesc), PARAM_CUSTOMERDESC));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERDESC, DbConvert.DbValue(this.CustomerDesc)));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMERDEMOGRAPHICS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CustomerTypeID, PARAM_CUSTOMERTYPEID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

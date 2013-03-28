@@ -4,19 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using System.Collections;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using System.Data.Common;
+using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
-    public class Query<T> : IQueryable<T>, IQueryable, IEnumerable<T>, IEnumerable, IOrderedQueryable<T>, IOrderedQueryable
+    internal class Query<T> : IQueryable<T>, IQueryable, IEnumerable<T>, IEnumerable, IOrderedQueryable<T>, IOrderedQueryable
     {
         QueryProvider provider;
         Expression expression;
-
-        internal Query()
-            : this(new QueryProvider())
-        { }
 
         internal Query(string name)
             : this(new QueryProvider(name))
@@ -26,30 +23,22 @@ namespace CrystalMapper.Linq
             : this(new QueryProvider(dataContext))
         { }
 
-        internal Query(QueryProvider provider)
+        public Query(QueryProvider provider)
         {
-            if (provider == null)
-            {
-                throw new ArgumentNullException("provider");
-            }
+            Guard.CheckNull(provider, "Query(provider)");
+
             this.provider = provider;
             this.expression = Expression.Constant(this);
         }
 
         public Query(QueryProvider provider, Expression expression)
         {
-            if (provider == null)
-            {
-                throw new ArgumentNullException("provider");
-            }
-            if (expression == null)
-            {
-                throw new ArgumentNullException("expression");
-            }
+            Guard.CheckNull(provider, "Query(provider)");
+            Guard.CheckNull(expression, "Query(expression)");
+
             if (!typeof(IQueryable<T>).IsAssignableFrom(expression.Type))
-            {
                 throw new ArgumentOutOfRangeException("expression");
-            }
+
             this.provider = provider;
             this.expression = expression;
         }

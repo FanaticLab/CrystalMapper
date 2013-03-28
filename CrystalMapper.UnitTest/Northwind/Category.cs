@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: Category
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Category : Entity< Category>  
+    public partial class Category : IRecord 
     {		
 		#region Table Schema
 		
@@ -72,85 +69,85 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_CATEGORYID, PARAM_CATEGORYID, default(int))]
-                              public virtual int CategoryID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_CATEGORYID, PARAM_CATEGORYID, default(int))]
+        public virtual int CategoryID 
         {
             get { return this.categoryid; }
 			set	{ 
                   if(this.categoryid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CategoryID"));  
+                        this.OnPropertyChanging("CategoryID");  
                         this.categoryid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CategoryID"));
+                        this.OnPropertyChanged("CategoryID");
                     }   
                 }
         }	
 		
-        [Column( COL_CATEGORYNAME, PARAM_CATEGORYNAME )]
-                              public virtual string CategoryName 
+        [Column(COL_CATEGORYNAME, PARAM_CATEGORYNAME )]
+        public virtual string CategoryName 
         {
             get { return this.categoryname; }
 			set	{ 
                   if(this.categoryname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CategoryName"));  
+                        this.OnPropertyChanging("CategoryName");  
                         this.categoryname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CategoryName"));
+                        this.OnPropertyChanged("CategoryName");
                     }   
                 }
         }	
 		
-        [Column( COL_DESCRIPTION, PARAM_DESCRIPTION )]
-                              public virtual string Description 
+        [Column(COL_DESCRIPTION, PARAM_DESCRIPTION )]
+        public virtual string Description 
         {
             get { return this.description; }
 			set	{ 
                   if(this.description != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Description"));  
+                        this.OnPropertyChanging("Description");  
                         this.description = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+                        this.OnPropertyChanged("Description");
                     }   
                 }
         }	
 		
-        [Column( COL_PICTURE, PARAM_PICTURE )]
-                              public virtual byte[] Picture 
+        [Column(COL_PICTURE, PARAM_PICTURE )]
+        public virtual byte[] Picture 
         {
             get { return this.picture; }
 			set	{ 
                   if(this.picture != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Picture"));  
+                        this.OnPropertyChanging("Picture");  
                         this.picture = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Picture"));
+                        this.OnPropertyChanged("Picture");
                     }   
                 }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Category entity = obj as Category;           
+            Category record = obj as Category;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.CategoryID == entity.CategoryID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.CategoryID == record.CategoryID
                         && this.CategoryID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.categoryid.GetHashCode();
@@ -158,47 +155,58 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.categoryid = (int)reader[COL_CATEGORYID];
 			this.categoryname = (string)reader[COL_CATEGORYNAME];
 			this.description = DbConvert.ToString(reader[COL_DESCRIPTION]);
 			this.picture = (byte[])reader[COL_PICTURE];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CATEGORIES))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.CategoryName, PARAM_CATEGORYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Description), PARAM_DESCRIPTION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Picture), PARAM_PICTURE));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYNAME, this.CategoryName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DESCRIPTION, DbConvert.DbValue(this.Description)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PICTURE, DbConvert.DbValue(this.Picture)));
                 this.CategoryID = Convert.ToInt32(command.ExecuteScalar());
                 return true;                
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CATEGORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CategoryID, PARAM_CATEGORYID));
-				command.Parameters.Add(dataContext.CreateParameter(this.CategoryName, PARAM_CATEGORYNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Description), PARAM_DESCRIPTION));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.Picture), PARAM_PICTURE));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYID, this.CategoryID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYNAME, this.CategoryName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DESCRIPTION, DbConvert.DbValue(this.Description)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PICTURE, DbConvert.DbValue(this.Picture)));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CATEGORIES))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.CategoryID, PARAM_CATEGORYID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYID, this.CategoryID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

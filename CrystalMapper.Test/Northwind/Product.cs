@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:41 PM
+ * Date:  Thursday, March 28, 2013 7:07 PM
  * 
  * Class: Product
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.Test.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Product : Entity< Product>  
+    public partial class Product : IRecord 
     {		
 		#region Table Schema
 		
@@ -100,121 +97,125 @@ namespace CrystalMapper.Test.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_PRODUCTID, PARAM_PRODUCTID, default(int))]
-                              public virtual int ProductID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_PRODUCTID, PARAM_PRODUCTID, default(int))]
+        public virtual int ProductID 
         {
             get { return this.productid; }
 			set	{ 
                   if(this.productid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ProductID"));  
+                        this.OnPropertyChanging("ProductID");  
                         this.productid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ProductID"));
+                        this.OnPropertyChanged("ProductID");
                     }   
                 }
         }	
 		
-        [Column( COL_PRODUCTNAME, PARAM_PRODUCTNAME )]
-                              public virtual string ProductName 
+        [Column(COL_PRODUCTNAME, PARAM_PRODUCTNAME )]
+        public virtual string ProductName 
         {
             get { return this.productname; }
 			set	{ 
                   if(this.productname != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ProductName"));  
+                        this.OnPropertyChanging("ProductName");  
                         this.productname = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ProductName"));
+                        this.OnPropertyChanged("ProductName");
                     }   
                 }
         }	
 		
-        [Column( COL_QUANTITYPERUNIT, PARAM_QUANTITYPERUNIT )]
-                              public virtual string QuantityPerUnit 
+        [Column(COL_QUANTITYPERUNIT, PARAM_QUANTITYPERUNIT )]
+        public virtual string QuantityPerUnit 
         {
             get { return this.quantityperunit; }
 			set	{ 
                   if(this.quantityperunit != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("QuantityPerUnit"));  
+                        this.OnPropertyChanging("QuantityPerUnit");  
                         this.quantityperunit = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("QuantityPerUnit"));
+                        this.OnPropertyChanged("QuantityPerUnit");
                     }   
                 }
         }	
 		
-        [Column( COL_UNITPRICE, PARAM_UNITPRICE )]
-                              public virtual decimal? UnitPrice 
+        [Column(COL_UNITPRICE, PARAM_UNITPRICE )]
+        public virtual decimal? UnitPrice 
         {
             get { return this.unitprice; }
 			set	{ 
                   if(this.unitprice != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("UnitPrice"));  
+                        this.OnPropertyChanging("UnitPrice");  
                         this.unitprice = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("UnitPrice"));
+                        this.OnPropertyChanged("UnitPrice");
                     }   
                 }
         }	
 		
-        [Column( COL_UNITSINSTOCK, PARAM_UNITSINSTOCK )]
-                              public virtual short? UnitsInStock 
+        [Column(COL_UNITSINSTOCK, PARAM_UNITSINSTOCK )]
+        public virtual short? UnitsInStock 
         {
             get { return this.unitsinstock; }
 			set	{ 
                   if(this.unitsinstock != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("UnitsInStock"));  
+                        this.OnPropertyChanging("UnitsInStock");  
                         this.unitsinstock = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("UnitsInStock"));
+                        this.OnPropertyChanged("UnitsInStock");
                     }   
                 }
         }	
 		
-        [Column( COL_UNITSONORDER, PARAM_UNITSONORDER )]
-                              public virtual short? UnitsOnOrder 
+        [Column(COL_UNITSONORDER, PARAM_UNITSONORDER )]
+        public virtual short? UnitsOnOrder 
         {
             get { return this.unitsonorder; }
 			set	{ 
                   if(this.unitsonorder != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("UnitsOnOrder"));  
+                        this.OnPropertyChanging("UnitsOnOrder");  
                         this.unitsonorder = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("UnitsOnOrder"));
+                        this.OnPropertyChanged("UnitsOnOrder");
                     }   
                 }
         }	
 		
-        [Column( COL_REORDERLEVEL, PARAM_REORDERLEVEL )]
-                              public virtual short? ReorderLevel 
+        [Column(COL_REORDERLEVEL, PARAM_REORDERLEVEL )]
+        public virtual short? ReorderLevel 
         {
             get { return this.reorderlevel; }
 			set	{ 
                   if(this.reorderlevel != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ReorderLevel"));  
+                        this.OnPropertyChanging("ReorderLevel");  
                         this.reorderlevel = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ReorderLevel"));
+                        this.OnPropertyChanged("ReorderLevel");
                     }   
                 }
         }	
 		
-        [Column( COL_DISCONTINUED, PARAM_DISCONTINUED, default(bool))]
-                              public virtual bool Discontinued 
+        [Column(COL_DISCONTINUED, PARAM_DISCONTINUED, default(bool))]
+        public virtual bool Discontinued 
         {
             get { return this.discontinued; }
 			set	{ 
                   if(this.discontinued != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Discontinued"));  
+                        this.OnPropertyChanging("Discontinued");  
                         this.discontinued = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Discontinued"));
+                        this.OnPropertyChanged("Discontinued");
                     }   
                 }
         }	
 		
-        [Column( COL_CATEGORYID, PARAM_CATEGORYID )]
-                              public virtual int? CategoryID                
+        [Column(COL_CATEGORYID, PARAM_CATEGORYID )]
+        public virtual int? CategoryID                
         {
             get
             {
@@ -227,17 +228,17 @@ namespace CrystalMapper.Test.Northwind
             {
                 if(this.categoryid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("CategoryID"));                    
+                    this.OnPropertyChanging("CategoryID");                    
                     this.categoryid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("CategoryID"));
+                    this.OnPropertyChanged("CategoryID");
                     
                     this.categoryRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_SUPPLIERID, PARAM_SUPPLIERID )]
-                              public virtual int? SupplierID                
+        [Column(COL_SUPPLIERID, PARAM_SUPPLIERID )]
+        public virtual int? SupplierID                
         {
             get
             {
@@ -250,9 +251,9 @@ namespace CrystalMapper.Test.Northwind
             {
                 if(this.supplierid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("SupplierID"));                    
+                    this.OnPropertyChanging("SupplierID");                    
                     this.supplierid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("SupplierID"));
+                    this.OnPropertyChanged("SupplierID");
                     
                     this.supplierRef = null;
                 }                
@@ -261,102 +262,68 @@ namespace CrystalMapper.Test.Northwind
         
         public Category CategoryRef
         {
-            get { 
-                    if(this.categoryRef == null
-                       && this.categoryid.HasValue )
+            get { return this.categoryRef; }
+			set	
+            { 
+                if(this.categoryRef != value)
+                {
+                    this.OnPropertyChanging("CategoryRef");
+                    
+                    if((this.categoryRef = value) != null) 
                     {
-                        Category categoryQuery = new Category {
-                                                        CategoryID = this.categoryid.Value  
-                                                        };
-                        
-                        Category[]  categories = categoryQuery.ToList();                        
-                        if(categories.Length == 1)
-                            this.categoryRef = categories[0];                        
+                        this.categoryid = this.categoryRef.CategoryID;
+                    }
+                    else
+                    {
+		                this.categoryid = default(int);
                     }
                     
-                    return this.categoryRef; 
-                }
-			set	{ 
-                  if(this.categoryRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("CategoryRef"));
-                        if (this.categoryRef != null)
-                            this.Parents.Remove(this.categoryRef);                            
-                        
-                        if((this.categoryRef = value) != null) 
-                        {
-                            this.Parents.Add(this.categoryRef); 
-                            this.categoryid = this.categoryRef.CategoryID;
-                        }
-                        else
-                        {
-		                    this.categoryid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("CategoryRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("CategoryRef");
+                }   
+             }
         }	
 		
         public Supplier SupplierRef
         {
-            get { 
-                    if(this.supplierRef == null
-                       && this.supplierid.HasValue )
+            get { return this.supplierRef; }
+			set	
+            { 
+                if(this.supplierRef != value)
+                {
+                    this.OnPropertyChanging("SupplierRef");
+                    
+                    if((this.supplierRef = value) != null) 
                     {
-                        Supplier supplierQuery = new Supplier {
-                                                        SupplierID = this.supplierid.Value  
-                                                        };
-                        
-                        Supplier[]  suppliers = supplierQuery.ToList();                        
-                        if(suppliers.Length == 1)
-                            this.supplierRef = suppliers[0];                        
+                        this.supplierid = this.supplierRef.SupplierID;
+                    }
+                    else
+                    {
+		                this.supplierid = default(int);
                     }
                     
-                    return this.supplierRef; 
-                }
-			set	{ 
-                  if(this.supplierRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("SupplierRef"));
-                        if (this.supplierRef != null)
-                            this.Parents.Remove(this.supplierRef);                            
-                        
-                        if((this.supplierRef = value) != null) 
-                        {
-                            this.Parents.Add(this.supplierRef); 
-                            this.supplierid = this.supplierRef.SupplierID;
-                        }
-                        else
-                        {
-		                    this.supplierid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("SupplierRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("SupplierRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Product entity = obj as Product;           
+            Product record = obj as Product;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.ProductID == entity.ProductID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.ProductID == record.ProductID
                         && this.ProductID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.productid.GetHashCode();
@@ -364,7 +331,7 @@ namespace CrystalMapper.Test.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.productid = (int)reader[COL_PRODUCTID];
 			this.productname = (string)reader[COL_PRODUCTNAME];
@@ -376,53 +343,64 @@ namespace CrystalMapper.Test.Northwind
 			this.unitsonorder = DbConvert.ToNullable< short >(reader[COL_UNITSONORDER]);
 			this.reorderlevel = DbConvert.ToNullable< short >(reader[COL_REORDERLEVEL]);
 			this.discontinued = (bool)reader[COL_DISCONTINUED];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_PRODUCTS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductName, PARAM_PRODUCTNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.SupplierID), PARAM_SUPPLIERID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CategoryID), PARAM_CATEGORYID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.QuantityPerUnit), PARAM_QUANTITYPERUNIT));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitPrice), PARAM_UNITPRICE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitsInStock), PARAM_UNITSINSTOCK));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitsOnOrder), PARAM_UNITSONORDER));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ReorderLevel), PARAM_REORDERLEVEL));
-				command.Parameters.Add(dataContext.CreateParameter(this.Discontinued, PARAM_DISCONTINUED));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTNAME, this.ProductName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SUPPLIERID, DbConvert.DbValue(this.SupplierID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYID, DbConvert.DbValue(this.CategoryID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_QUANTITYPERUNIT, DbConvert.DbValue(this.QuantityPerUnit)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITPRICE, DbConvert.DbValue(this.UnitPrice)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITSINSTOCK, DbConvert.DbValue(this.UnitsInStock)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITSONORDER, DbConvert.DbValue(this.UnitsOnOrder)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REORDERLEVEL, DbConvert.DbValue(this.ReorderLevel)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DISCONTINUED, this.Discontinued));
                 this.ProductID = Convert.ToInt32(command.ExecuteScalar());
                 return true;                
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_PRODUCTS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductID, PARAM_PRODUCTID));
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductName, PARAM_PRODUCTNAME));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.SupplierID), PARAM_SUPPLIERID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.CategoryID), PARAM_CATEGORYID));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.QuantityPerUnit), PARAM_QUANTITYPERUNIT));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitPrice), PARAM_UNITPRICE));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitsInStock), PARAM_UNITSINSTOCK));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.UnitsOnOrder), PARAM_UNITSONORDER));
-				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.ReorderLevel), PARAM_REORDERLEVEL));
-				command.Parameters.Add(dataContext.CreateParameter(this.Discontinued, PARAM_DISCONTINUED));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTID, this.ProductID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTNAME, this.ProductName));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_SUPPLIERID, DbConvert.DbValue(this.SupplierID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_CATEGORYID, DbConvert.DbValue(this.CategoryID)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_QUANTITYPERUNIT, DbConvert.DbValue(this.QuantityPerUnit)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITPRICE, DbConvert.DbValue(this.UnitPrice)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITSINSTOCK, DbConvert.DbValue(this.UnitsInStock)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITSONORDER, DbConvert.DbValue(this.UnitsOnOrder)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REORDERLEVEL, DbConvert.DbValue(this.ReorderLevel)));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DISCONTINUED, this.Discontinued));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_PRODUCTS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductID, PARAM_PRODUCTID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTID, this.ProductID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

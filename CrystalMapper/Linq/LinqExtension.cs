@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CrystalMapper.Generic;
-using CrystalMapper.Data;
 using System.Linq.Expressions;
 using System.Reflection;
 using CoreSystem.Dynamic;
+using CrystalMapper.Context;
 
 namespace CrystalMapper.Linq
 {
     public static class LinqExtension
     {
-        public static IQueryable<T> Query<T>(this DataContext dataContext) where T : Entity<T>, new()
+        public static IQueryable<T> Query<T>(this DataContext dataContext) where T : IRecord, new()
         {
             return new Query<T>(dataContext);
         }

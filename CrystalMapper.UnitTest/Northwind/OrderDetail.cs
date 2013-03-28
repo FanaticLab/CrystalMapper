@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: OrderDetail
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class OrderDetail : Entity< OrderDetail>  
+    public partial class OrderDetail : IRecord 
     {		
 		#region Table Schema
 		
@@ -80,51 +77,55 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_UNITPRICE, PARAM_UNITPRICE, typeof(decimal))]
-                              public virtual decimal UnitPrice 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_UNITPRICE, PARAM_UNITPRICE, typeof(decimal))]
+        public virtual decimal UnitPrice 
         {
             get { return this.unitprice; }
 			set	{ 
                   if(this.unitprice != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("UnitPrice"));  
+                        this.OnPropertyChanging("UnitPrice");  
                         this.unitprice = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("UnitPrice"));
+                        this.OnPropertyChanged("UnitPrice");
                     }   
                 }
         }	
 		
-        [Column( COL_QUANTITY, PARAM_QUANTITY, default(short))]
-                              public virtual short Quantity 
+        [Column(COL_QUANTITY, PARAM_QUANTITY, default(short))]
+        public virtual short Quantity 
         {
             get { return this.quantity; }
 			set	{ 
                   if(this.quantity != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Quantity"));  
+                        this.OnPropertyChanging("Quantity");  
                         this.quantity = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Quantity"));
+                        this.OnPropertyChanged("Quantity");
                     }   
                 }
         }	
 		
-        [Column( COL_DISCOUNT, PARAM_DISCOUNT, default(float))]
-                              public virtual float Discount 
+        [Column(COL_DISCOUNT, PARAM_DISCOUNT, default(float))]
+        public virtual float Discount 
         {
             get { return this.discount; }
 			set	{ 
                   if(this.discount != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("Discount"));  
+                        this.OnPropertyChanging("Discount");  
                         this.discount = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("Discount"));
+                        this.OnPropertyChanged("Discount");
                     }   
                 }
         }	
 		
-        [Column( COL_ORDERID, PARAM_ORDERID, default(int))]
-                              public virtual int OrderID                
+        [Column(COL_ORDERID, PARAM_ORDERID, default(int))]
+        public virtual int OrderID                
         {
             get
             {
@@ -137,17 +138,17 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.orderid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("OrderID"));                    
+                    this.OnPropertyChanging("OrderID");                    
                     this.orderid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("OrderID"));
+                    this.OnPropertyChanged("OrderID");
                     
                     this.orderRef = null;
                 }                
             }          
         }	
         
-        [Column( COL_PRODUCTID, PARAM_PRODUCTID, default(int))]
-                              public virtual int ProductID                
+        [Column(COL_PRODUCTID, PARAM_PRODUCTID, default(int))]
+        public virtual int ProductID                
         {
             get
             {
@@ -160,9 +161,9 @@ namespace CrystalMapper.UnitTest.Northwind
             {
                 if(this.productid != value)
                 {
-                    this.OnPropertyChanging(new PropertyChangingEventArgs("ProductID"));                    
+                    this.OnPropertyChanging("ProductID");                    
                     this.productid = value;                    
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("ProductID"));
+                    this.OnPropertyChanged("ProductID");
                     
                     this.productRef = null;
                 }                
@@ -171,104 +172,70 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Order OrderRef
         {
-            get { 
-                    if(this.orderRef == null
-                       && this.orderid != default(int)) 
+            get { return this.orderRef; }
+			set	
+            { 
+                if(this.orderRef != value)
+                {
+                    this.OnPropertyChanging("OrderRef");
+                    
+                    if((this.orderRef = value) != null) 
                     {
-                        Order orderQuery = new Order {
-                                                        OrderID = this.orderid  
-                                                        };
-                        
-                        Order[]  orders = orderQuery.ToList();                        
-                        if(orders.Length == 1)
-                            this.orderRef = orders[0];                        
+                        this.orderid = this.orderRef.OrderID;
+                    }
+                    else
+                    {
+		                this.orderid = default(int);
                     }
                     
-                    return this.orderRef; 
-                }
-			set	{ 
-                  if(this.orderRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("OrderRef"));
-                        if (this.orderRef != null)
-                            this.Parents.Remove(this.orderRef);                            
-                        
-                        if((this.orderRef = value) != null) 
-                        {
-                            this.Parents.Add(this.orderRef); 
-                            this.orderid = this.orderRef.OrderID;
-                        }
-                        else
-                        {
-		                    this.orderid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("OrderRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("OrderRef");
+                }   
+             }
         }	
 		
         public Product ProductRef
         {
-            get { 
-                    if(this.productRef == null
-                       && this.productid != default(int)) 
+            get { return this.productRef; }
+			set	
+            { 
+                if(this.productRef != value)
+                {
+                    this.OnPropertyChanging("ProductRef");
+                    
+                    if((this.productRef = value) != null) 
                     {
-                        Product productQuery = new Product {
-                                                        ProductID = this.productid  
-                                                        };
-                        
-                        Product[]  products = productQuery.ToList();                        
-                        if(products.Length == 1)
-                            this.productRef = products[0];                        
+                        this.productid = this.productRef.ProductID;
+                    }
+                    else
+                    {
+		                this.productid = default(int);
                     }
                     
-                    return this.productRef; 
-                }
-			set	{ 
-                  if(this.productRef != value)
-                    {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("ProductRef"));
-                        if (this.productRef != null)
-                            this.Parents.Remove(this.productRef);                            
-                        
-                        if((this.productRef = value) != null) 
-                        {
-                            this.Parents.Add(this.productRef); 
-                            this.productid = this.productRef.ProductID;
-                        }
-                        else
-                        {
-		                    this.productid = default(int);
-                        }
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("ProductRef"));
-                    }   
-                }
+                    this.OnPropertyChanged("ProductRef");
+                }   
+             }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            OrderDetail entity = obj as OrderDetail;           
+            OrderDetail record = obj as OrderDetail;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.OrderID == entity.OrderID
-                        && this.ProductID == entity.ProductID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.OrderID == record.OrderID
+                        && this.ProductID == record.ProductID
                         && this.OrderID != default(int)
-                        && this.ProductID != default(int)
+                                                && this.ProductID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.orderid.GetHashCode();
@@ -277,51 +244,62 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.orderid = (int)reader[COL_ORDERID];
 			this.productid = (int)reader[COL_PRODUCTID];
 			this.unitprice = (decimal)reader[COL_UNITPRICE];
 			this.quantity = (short)reader[COL_QUANTITY];
 			this.discount = (float)reader[COL_DISCOUNT];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_ORDER_DETAILS))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.OrderID, PARAM_ORDERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductID, PARAM_PRODUCTID));
-				command.Parameters.Add(dataContext.CreateParameter(this.UnitPrice, PARAM_UNITPRICE));
-				command.Parameters.Add(dataContext.CreateParameter(this.Quantity, PARAM_QUANTITY));
-				command.Parameters.Add(dataContext.CreateParameter(this.Discount, PARAM_DISCOUNT));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERID, this.OrderID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTID, this.ProductID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITPRICE, this.UnitPrice));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_QUANTITY, this.Quantity));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DISCOUNT, this.Discount));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_ORDER_DETAILS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.OrderID, PARAM_ORDERID));
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductID, PARAM_PRODUCTID));
-				command.Parameters.Add(dataContext.CreateParameter(this.UnitPrice, PARAM_UNITPRICE));
-				command.Parameters.Add(dataContext.CreateParameter(this.Quantity, PARAM_QUANTITY));
-				command.Parameters.Add(dataContext.CreateParameter(this.Discount, PARAM_DISCOUNT));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERID, this.OrderID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTID, this.ProductID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_UNITPRICE, this.UnitPrice));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_QUANTITY, this.Quantity));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_DISCOUNT, this.Discount));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_ORDER_DETAILS))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.OrderID, PARAM_ORDERID));				
-				command.Parameters.Add(dataContext.CreateParameter(this.ProductID, PARAM_PRODUCTID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_ORDERID, this.OrderID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_PRODUCTID, this.ProductID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

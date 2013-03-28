@@ -1,17 +1,15 @@
 ﻿/*
- * Author: CrystalMapper 
+ * Author: CrystalMapper (Generated)
  * 
- * Date:  Saturday, September 22, 2012 8:42 PM
+ * Date:  Thursday, March 28, 2013 7:47 PM
  * 
  * Class: Region
  * 
- * Email: mk.faraz@gmail.com
+ * Email: info@fanaticlab.com
  * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
+ * Project: http://crystalmapper.codeplex.com
  *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright 2009
+ * Copyright (c) 2013 FanaticLab
  *
 /*/
 
@@ -24,14 +22,13 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
-using CrystalMapper.Data;
+using CrystalMapper.Context;
 using CrystalMapper.Mapping;
-using CrystalMapper.Generic;
 
 namespace CrystalMapper.UnitTest.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Region : Entity< Region>  
+    public partial class Region : IRecord 
     {		
 		#region Table Schema
 		
@@ -64,57 +61,57 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
 
  		#region Properties	
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        [Column( COL_REGIONID, PARAM_REGIONID, default(int))]
-                              public virtual int RegionID 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        [Column(COL_REGIONID, PARAM_REGIONID, default(int))]
+        public virtual int RegionID 
         {
             get { return this.regionid; }
 			set	{ 
                   if(this.regionid != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("RegionID"));  
+                        this.OnPropertyChanging("RegionID");  
                         this.regionid = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("RegionID"));
+                        this.OnPropertyChanged("RegionID");
                     }   
                 }
         }	
 		
-        [Column( COL_REGIONDESCRIPTION, PARAM_REGIONDESCRIPTION )]
-                              public virtual string RegionDescription 
+        [Column(COL_REGIONDESCRIPTION, PARAM_REGIONDESCRIPTION )]
+        public virtual string RegionDescription 
         {
             get { return this.regiondescription; }
 			set	{ 
                   if(this.regiondescription != value)
                     {
-                        this.OnPropertyChanging(new PropertyChangingEventArgs("RegionDescription"));  
+                        this.OnPropertyChanging("RegionDescription");  
                         this.regiondescription = value;                        
-                        this.OnPropertyChanged(new PropertyChangedEventArgs("RegionDescription"));
+                        this.OnPropertyChanged("RegionDescription");
                     }   
                 }
         }	
 		
-        
         #endregion        
         
         #region Methods     
         
         public override bool Equals(object obj)
         {
-            Region entity = obj as Region;           
+            Region record = obj as Region;           
             
-            return (
-                    object.ReferenceEquals(this, entity)                    
-                    || (
-                        entity != null            
-                        && this.RegionID == entity.RegionID
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        && this.RegionID == record.RegionID
                         && this.RegionID != default(int)
                         )
                     );           
         }
         
         public override int GetHashCode()
-        {
-            
+        {            
             int hashCode = 7;
             
             hashCode = (11 * hashCode) + this.regionid.GetHashCode();
@@ -122,41 +119,52 @@ namespace CrystalMapper.UnitTest.Northwind
             return hashCode;          
         }
         
-		public override void Read(DbDataReader reader)
+		void IRecord.Read(DbDataReader reader)
 		{       
 			this.regionid = (int)reader[COL_REGIONID];
 			this.regiondescription = (string)reader[COL_REGIONDESCRIPTION];
-            base.Read(reader);
 		}
 		
-		public override bool Create(DataContext dataContext)
+		bool IRecord.Create(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_REGION))
             {	
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionID, PARAM_REGIONID));
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionDescription, PARAM_REGIONDESCRIPTION));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONID, this.RegionID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONDESCRIPTION, this.RegionDescription));
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Update(DataContext dataContext)
+		bool IRecord.Update(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_REGION))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionID, PARAM_REGIONID));
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionDescription, PARAM_REGIONDESCRIPTION));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONID, this.RegionID));
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONDESCRIPTION, this.RegionDescription));
 			
                 return (command.ExecuteNonQuery() == 1);
             }
         }
 
-		public override bool Delete(DataContext dataContext)
+		bool IRecord.Delete(DataContext dataContext)
         {
             using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_REGION))
             {							
-				command.Parameters.Add(dataContext.CreateParameter(this.RegionID, PARAM_REGIONID));				
+				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGIONID, this.RegionID));
                 return (command.ExecuteNonQuery() == 1);
             }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.PropertyChanging != null)
+                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
