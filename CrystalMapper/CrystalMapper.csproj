@@ -82,7 +82,6 @@
   <ItemGroup>
     <Compile Include="Context\DataContext.cs" />
     <Compile Include="Context\DbContext.cs" />
-    <Compile Include="Helper\EntityQueryHelper.cs" />
     <Compile Include="IRecord.cs" />
     <Compile Include="Lang\PgSqlLang.cs" />
     <Compile Include="Lang\MySqlLang.cs" />

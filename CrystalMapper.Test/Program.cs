@@ -7,7 +7,6 @@ using System.Data;
 using System.Diagnostics;
 using CoreSystem.Data;
 using System.Data.SqlClient;
-using CrystalMapper.Policy;
 using System.Threading;
 using CrystalMapper.Test.Northwind;
 using CrystalMapper.Linq;
