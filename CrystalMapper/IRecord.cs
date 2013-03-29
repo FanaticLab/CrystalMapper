@@ -7,14 +7,41 @@ using CrystalMapper.Context;
 
 namespace CrystalMapper
 {
-    public interface IRecord
+    /// <summary>
+    /// Interface for CRUD operations
+    /// </summary>
+    public interface IRecord 
     {
+        /// <summary>
+        /// Database query provider used to load this record
+        /// </summary>
+        IQueryProvider Provider { get; set; }
+
+        /// <summary>
+        /// Load column values from data reader
+        /// </summary>
+        /// <param name="reader">Specific row to load data from</param>
         void Read(DbDataReader reader);
 
+        /// <summary>
+        /// Update a single record in database
+        /// </summary>
+        /// <param name="dataContext"></param>
+        /// <returns>True if updates a single record</returns>
         bool Update(DataContext dataContext);
 
+        /// <summary>
+        /// Create a new record in database
+        /// </summary>
+        /// <param name="dataContext">Database connection</param>
+        /// <returns>True if creates a single record</returns>
         bool Create(DataContext dataContext);
 
+        /// <summary>
+        /// Delete a single record in database
+        /// </summary>
+        /// <param name="dataContext">Database connection</param>
+        /// <returns>True if deletes a single record</returns>
         bool Delete(DataContext dataContext);
     }
 }

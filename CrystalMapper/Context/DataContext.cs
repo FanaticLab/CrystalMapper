@@ -36,6 +36,11 @@ namespace CrystalMapper.Context
         private DbTransaction transaction;
 
         /// <summary>
+        /// True if object is disposed
+        /// </summary>
+        internal bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Open database connection from "Default-Db" connection string
         /// </summary>
         public DataContext()
@@ -248,8 +253,7 @@ namespace CrystalMapper.Context
         /// Execute specified query and return result in list from current database connection
         /// </summary>
         /// <typeparam name="T">Record entity type</typeparam>
-        /// <param name="sqlQuery">SQL query to execute in database</param>
-        /// <param name="parameters">SQL parameters</param>
+        /// <param name="command">Execute reader command</param>
         /// <returns>Result of query from current database connection</returns>
         public static List<T> ToList<T>(DbCommand command) where T : IRecord, new()
         {
@@ -386,6 +390,8 @@ namespace CrystalMapper.Context
 
                 if (this.disposeConnection)
                     this.connection.Dispose();
+
+                this.IsDisposed = true;
             }
         }
     }
