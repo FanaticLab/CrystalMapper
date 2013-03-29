@@ -38,6 +38,7 @@
 /*/
 
 using System;
+using System.Linq;
 using System.Data.Common;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -46,13 +47,14 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
+using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
 namespace <%= BusinessNamespace %>
 {
 	[Table(TABLE_NAME)]
-    public partial class <%= GetClassName(SourceTable) %> : IRecord 
+    public partial class <%= GetClassName(SourceTable) %> : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
@@ -79,7 +81,7 @@ namespace <%= BusinessNamespace %>
         #endregion
         	  	
         #region Declarations
-        
+
 		<% // Primitives %>
 		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
 		<% if (column.AllowDBNull && column.SystemType.IsValueType) { %>
@@ -93,13 +95,27 @@ namespace <%= BusinessNamespace %>
 		protected <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassVarName(keySchema) %>;
 	
 		<% } %>
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
         #endregion
 
- 		#region Properties	
+ 		#region Properties
         
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event PropertyChangingEventHandler PropertyChanging;
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
+        
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
 
 		<% foreach(ColumnSchema column in SourceTable.NonForeignKeyColumns) { %>
         <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %>
@@ -145,7 +161,23 @@ namespace <%= BusinessNamespace %>
         <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
         public <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassPropName(keySchema) %>
         {
-            get { return this.<%= GetForeignKeyClassVarName(keySchema)  %>; }
+            get 
+            { 
+                if(this.<%= GetForeignKeyClassVarName(keySchema)  %> == null)
+                    <% if(keySchema.PrimaryKeyMemberColumns.Count == 1) { %>
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = this.CreateQuery<<%= GetClassName(keySchema.PrimaryKeyTable) %>>().First(p => p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[0].Column) %> == this.<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[0].Column) %>);
+                    <% } else { %>                
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = this.CreateQuery<<%= GetClassName(keySchema.PrimaryKeyTable) %>>()
+                                                                            .Where(p => p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[0].Column) %> == this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[0].Column) %>
+                                                                             <% for(int i = 1; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) { %>
+                                                                                        && p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %> == this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %>
+                                                                             <% } %>
+                                                                             )
+                                                                             .First();
+                    <% } %> 
+                
+                return this.<%= GetForeignKeyClassVarName(keySchema)  %>; 
+            }
 			set	
             { 
                 if(this.<%= GetForeignKeyClassVarName(keySchema) %> != value)
@@ -175,7 +207,29 @@ namespace <%= BusinessNamespace %>
              }
         }	
 		
-        <% } %>        
+        <% } %>
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
+        public IQueryable<<%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %> 
+        {
+            <% if(tableKey.ForeignKeyMemberColumns.Count == 1) { %>
+            get { return this.CreateQuery<<%= GetClassName(tableKey.ForeignKeyTable) %>>().Where(r => r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[0]) %>); }
+            <% } else { %>
+            get
+            {
+                return this.CreateQuery<<%= GetClassName(tableKey.ForeignKeyTable) %>>()
+                           .Where(r => r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[0]) %>
+                           <% for(int i=1; i < tableKey.ForeignKeyMemberColumns.Count; i++) { %>
+                                       && r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[i]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[i]) %>
+                           <% } %>);
+            }
+            <% } %>
+        }
+       
+       <% } %>
+       <% } %>
+       <% } %>
         #endregion        
         
         #region Methods     
@@ -326,14 +380,14 @@ namespace <%= BusinessNamespace %>
         
         protected virtual void OnPropertyChanging(string propertyName)
         {
-            if(this.PropertyChanging != null)
-                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
         }
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if(this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

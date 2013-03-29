@@ -77,19 +77,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Northwind\Category.cs" />
     <Compile Include="Northwind\Customer.cs" />
-    <Compile Include="Northwind\CustomerCustomerDemo.cs" />
-    <Compile Include="Northwind\CustomerDemographic.cs" />
-    <Compile Include="Northwind\Employee.cs" />
-    <Compile Include="Northwind\EmployeeTerritory.cs" />
-    <Compile Include="Northwind\Order.cs" />
-    <Compile Include="Northwind\OrderDetail.cs" />
-    <Compile Include="Northwind\Product.cs" />
-    <Compile Include="Northwind\Region.cs" />
-    <Compile Include="Northwind\Shipper.cs" />
-    <Compile Include="Northwind\Supplier.cs" />
-    <Compile Include="Northwind\Territory.cs" />
+    <Compile Include="Northwind\Mapping\Category.cs" />
+    <Compile Include="Northwind\Mapping\Customer.cs" />
+    <Compile Include="Northwind\Mapping\CustomerCustomerDemo.cs" />
+    <Compile Include="Northwind\Mapping\CustomerDemographic.cs" />
+    <Compile Include="Northwind\Mapping\Employee.cs" />
+    <Compile Include="Northwind\Mapping\EmployeeTerritory.cs" />
+    <Compile Include="Northwind\Mapping\Order.cs" />
+    <Compile Include="Northwind\Mapping\OrderDetail.cs" />
+    <Compile Include="Northwind\Mapping\Product.cs" />
+    <Compile Include="Northwind\Mapping\Region.cs" />
+    <Compile Include="Northwind\Mapping\Shipper.cs" />
+    <Compile Include="Northwind\Mapping\Supplier.cs" />
+    <Compile Include="Northwind\Mapping\Territory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -171,6 +172,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

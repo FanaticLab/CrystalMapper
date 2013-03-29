@@ -23,17 +23,24 @@ namespace CrystalMapper.Linq
 
         private bool disposeDataContext = false;
 
-        private DataContext dataContext;
+        private WeakReference dataContextRef;
 
         private DataContext GetDataContext()
         {
-            if (this.dataContext == null)
+            DataContext dataContext;
+            this.disposeDataContext = false;
+
+            // Create a new data context (database connection) if:
+            // a. Data context is not provided
+            // b. It is beens collected by garbage collector
+            // c. If object is disposed
+            if (this.dataContextRef == null || (dataContext = this.dataContextRef.Target as DataContext) == null || dataContext.IsDisposed)
             {
-                this.dataContext = new DataContext(name);
-                this.disposeDataContext = true;
+                dataContext = new DataContext(name); // Creates a new database connection;
+                this.disposeDataContext = true; // Dispose after querying database
             }
 
-            return this.dataContext;
+            return dataContext;
         }
 
         public QueryProvider(string name)
@@ -45,12 +52,12 @@ namespace CrystalMapper.Linq
         public QueryProvider(DataContext dataContext)
         {
             Guard.CheckNull(dataContext, "QueryProvider(dataContext)");
-            this.dataContext = dataContext;
+            this.dataContextRef = new WeakReference(dataContext);
         }
 
         IQueryable<T> IQueryProvider.CreateQuery<T>(Expression expression)
         {
-            return new Query<T>(this, expression);
+            return expression == null ? new Query<T>(this) : new Query<T>(this, expression);
         }
 
         IQueryable IQueryProvider.CreateQuery(Expression expression)
@@ -101,8 +108,15 @@ namespace CrystalMapper.Linq
                         {
                             IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(new[] { queryInfo.ReturnType }));
 
-                            foreach (object entity in queryInfo.Projection.Translate(queryInfo, reader))
-                                list.Add(entity);
+                            if (typeof(IRecord).IsAssignableFrom(queryInfo.ReturnType))
+                                foreach (IRecord record in queryInfo.Projection.Translate(queryInfo, reader))
+                                {
+                                    record.Provider = this;
+                                    list.Add(record);
+                                }
+
+                            foreach (object record in queryInfo.Projection.Translate(queryInfo, reader))
+                                list.Add(record);
 
                             return list;
                         }
@@ -111,7 +125,12 @@ namespace CrystalMapper.Linq
                     using (DbDataReader reader = command.ExecuteReader(CommandBehavior.SingleResult))
                     {
                         foreach (object entity in queryInfo.Projection.Translate(queryInfo, reader))
+                        {
+                            if (entity is IRecord)
+                                ((IRecord)entity).Provider = this;
+
                             return entity;
+                        }
 
                         if (!queryInfo.UseDefault)
                             throw new InvalidOperationException("Query did not return any records");
@@ -128,11 +147,13 @@ namespace CrystalMapper.Linq
             finally
             {
                 if (this.disposeDataContext && dataContext != null)
-                {
                     dataContext.Dispose();
-                    this.dataContext = null;
-                }
             }
+        }
+
+        public string GetQuery(Expression expression)
+        {
+            return (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression).SqlQuery;
         }
 
         private object ExecuteToDonymous(Expression expression)
@@ -153,14 +174,11 @@ namespace CrystalMapper.Linq
             finally
             {
                 if (this.disposeDataContext && dataContext != null)
-                {
                     dataContext.Dispose();
-                    this.dataContext = null;
-                }
             }
         }
 
-        internal SqlLang GetSqlLangByProvider()
+        private SqlLang GetSqlLangByProvider()
         {
             switch (this.GetDataContext().Database.ProviderType)
             {
@@ -184,11 +202,6 @@ namespace CrystalMapper.Linq
                 default:
                     throw new NotSupportedException(string.Format("LINQ is not supported for Provider: '{0}'", this.GetDataContext().Database.DbProvider)); ;
             }
-        }
-
-        public string GetQuery(Expression expression)
-        {
-            return (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression).SqlQuery;
         }
     }
 }

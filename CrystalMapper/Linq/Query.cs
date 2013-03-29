@@ -15,11 +15,11 @@ namespace CrystalMapper.Linq
         QueryProvider provider;
         Expression expression;
 
-        internal Query(string name)
+        public Query(string name)
             : this(new QueryProvider(name))
         { }
 
-        internal Query(DataContext dataContext)
+        public Query(DataContext dataContext)
             : this(new QueryProvider(dataContext))
         { }
 

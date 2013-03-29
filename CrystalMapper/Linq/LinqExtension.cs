@@ -11,11 +11,17 @@ namespace CrystalMapper.Linq
 {
     public static class LinqExtension
     {
-        public static IQueryable<T> Query<T>(this DataContext dataContext) where T : IRecord, new()
+        public static IQueryable<T> CreateQuery<T>(this IRecord record)
         {
-            return new Query<T>(dataContext);
+            return new Query<T>(record.Provider as QueryProvider);
         }
 
+        /// <summary>
+        /// Read record with update lock in current DataContext; use same DataContext to update record
+        /// </summary>
+        /// <typeparam name="TSource">Type of record entity</typeparam>
+        /// <param name="source">Query source</param>
+        /// <returns>Record holding update lock in database</returns>
         public static TSource ForUpdate<TSource>(this IQueryable<TSource> source)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
@@ -27,6 +33,13 @@ namespace CrystalMapper.Linq
             return source.Provider.Execute<TSource>(expression);
         }
 
+        /// <summary>
+        /// Read record with update lock in current DataContext; use same DataContext to update record
+        /// </summary>
+        /// <typeparam name="TSource">Type of record entity</typeparam>
+        /// <param name="source">Query source</param>
+        /// <param name="predicate">Filter expression for record</param>
+        /// <returns>Record holding update lock in database</returns>
         public static TSource ForUpdate<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
@@ -38,6 +51,12 @@ namespace CrystalMapper.Linq
             return source.Provider.Execute<TSource>(expression);
         }
 
+        /// <summary>
+        /// Read records with update lock in current DataContext; use same DataContext to update record
+        /// </summary>
+        /// <typeparam name="TSource">Type of record entity</typeparam>
+        /// <param name="source">Query source</param>
+        /// <returns>Records holding update lock in database</returns>
         public static TSource[] ForUpdateAll<TSource>(this IQueryable<TSource> source)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
@@ -49,6 +68,13 @@ namespace CrystalMapper.Linq
             return source.Provider.Execute<TSource[]>(expression);
         }
 
+        /// <summary>
+        /// Read records with update lock in current DataContext; use same DataContext to update record
+        /// </summary>
+        /// <typeparam name="TSource">Type of record entity</typeparam>
+        /// <param name="source">Query source</param>
+        /// <param name="predicate">Filter expression for record</param>
+        /// <returns>Records holding update lock in database</returns>
         public static List<TSource> ForUpdateAll<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
             var forUpdate = (MethodInfo)MethodInfo.GetCurrentMethod();
@@ -60,6 +86,12 @@ namespace CrystalMapper.Linq
             return source.Provider.Execute<List<TSource>>(expression);
         }
 
+        /// <summary>
+        /// Return query result as dynamic objects
+        /// </summary>
+        /// <typeparam name="TSource">Type of record entity</typeparam>
+        /// <param name="source">Query source</param>
+        /// <returns>Dynamic objects</returns>
         public static List<Donymous> ToDonymous<TSource>(this IQueryable<TSource> source)
         {
             return source.Provider.Execute<List<Donymous>>(source.Expression);
