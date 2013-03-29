@@ -358,6 +358,9 @@ namespace CrystalMapper.Linq.Translator
                 MemberMetadata memberMetadata = tableMetadata.Members.FirstOrDefault(md => md.Member == m.Member);
                 if (memberMetadata != null)
                     return new DbMemberExpression(memberMetadata);
+
+                if (m.Member.MemberType == MemberTypes.Property && typeof(IQueryable).IsAssignableFrom(((PropertyInfo)m.Member).PropertyType))
+                    throw new InvalidOperationException(string.Format("Instance member '{0}' cannot be used as query source.", m.Member));
             }
 
             tableMetadata = MetadataProvider.GetMetadata(m.Member.GetMemberType());
