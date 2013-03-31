@@ -99,8 +99,8 @@ namespace CrystalMapper.Linq.Translator
 
                             return new JoinExpression(joinExpression.Outer, joinExpression.Inner, JoinType.LeftOuterJoin, joinExpression.Join, this.GetProjectionExpression(this.GetLambda(m.Arguments[2])));
                         }
-                        DbExpression outer = (DbExpression)this.Visit(m.Arguments[0]);
-                        DbExpression inner = (DbExpression)this.Visit(m.Arguments[1]);
+                        DbExpression outer = (DbExpression)this.Visit(this.RemoveQuotes(m.Arguments[0]));
+                        DbExpression inner = (DbExpression)this.Visit(this.RemoveQuotes(m.Arguments[1]));
 
                         outer = outer as SourceExpression != null ? outer : this.MakeSelect(outer);
                         inner = inner as SourceExpression != null ? inner : this.MakeSelect(inner);
@@ -342,7 +342,7 @@ namespace CrystalMapper.Linq.Translator
                 }
 
                 return (memberType.IsGenericType && memberType.GetGenericTypeDefinition() == typeof(IQueryable<>))
-                        ? this.Visit(Expression.Constant(m.Member.GetValue(constant.Value)))
+                        ? this.Visit(((IQueryable)m.Member.GetValue(constant.Value)).Expression)
                         : Expression.Constant(m.Member.GetValue(constant.Value));
             }
 
@@ -360,7 +360,7 @@ namespace CrystalMapper.Linq.Translator
                     return new DbMemberExpression(memberMetadata);
 
                 if (m.Member.MemberType == MemberTypes.Property && typeof(IQueryable).IsAssignableFrom(((PropertyInfo)m.Member).PropertyType))
-                    throw new InvalidOperationException(string.Format("Instance member '{0}' cannot be used as query source.", m.Member));
+                    throw new InvalidOperationException(string.Format("Instance member cannot be used as query source, please use join expression: {0}", m.Member));
             }
 
             tableMetadata = MetadataProvider.GetMetadata(m.Member.GetMemberType());
@@ -472,7 +472,7 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitUnary(UnaryExpression u)
         {
-            return new DbUnaryExpression((DbExpression)Visit(u.Operand), u.NodeType, u.Type);
+            return new DbUnaryExpression((DbExpression)this.Visit(u.Operand), u.NodeType, u.Type);
         }
 
         private bool IsLambda(Expression expression)
@@ -488,9 +488,8 @@ namespace CrystalMapper.Linq.Translator
         private Expression RemoveQuotes(Expression expression)
         {
             while (expression.NodeType == ExpressionType.Quote)
-            {
                 expression = ((UnaryExpression)expression).Operand;
-            }
+
             return expression;
         }
 

@@ -40,7 +40,7 @@ namespace CrystalMapper.Context
         }
 
         /// <summary>
-        /// Query object for record entity
+        /// Query object for database entity
         /// </summary>
         /// <typeparam name="T">Entity Type</typeparam>
         /// <returns>Query object for T entity</returns>
