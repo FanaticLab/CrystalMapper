@@ -1,3 +1,10 @@
+/******************************************************************
+ * Author: Faraz Masood Khan
+ * Description: Helper functions used by templates
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ ******************************************************************/
+
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -152,8 +159,6 @@ public class HelperFunctions : CodeTemplate
             query = query.TrimEnd(',') + ") RETURNING " + GetColumnName(identityColumn) + ";\"";
         else
             query = query.TrimEnd(',') + ");\"";
-
-        ColumnSchema a;
 
         return query;
     }

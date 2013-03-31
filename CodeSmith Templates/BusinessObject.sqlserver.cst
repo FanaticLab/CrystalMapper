@@ -1,0 +1,393 @@
+﻿<%-------------------------------------------------------------------
+ * Author: Faraz Masood Khan 
+ * Description: This template generate entity class for SQL Server
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+--------------------------------------------------------------------%>
+<%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Optional="False" Category="1a. Source Table" Description="The source table to generate from." %>
+<%@ Property Name="TablePrefix" Type="System.String" Default="" Optional="True" Category="1b. Database Options" Description="A prefix that will be stripped from table names when class names are generated." %>
+<%@ Property Name="ModelNamespace" Type="System.String" Default="CrystalMapper.Model" Optional="False" Category="2. Namespaces" Description="The desired Namespace for the Business Objects." %>
+
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
+<% this.tablePrefix = TablePrefix; %>
+/*********************************************************************
+ * Author: CrystalMapper (Generated)
+ * Date:  <%= DateTime.Now.ToString("f") %>
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) <%= DateTime.Now.ToString("yyyy") %> FanaticLab
+ *********************************************************************/
+
+using System;
+using System.Linq;
+using System.Data.Common;
+using System.Diagnostics;
+using System.ComponentModel;
+using System.Collections.Generic;
+
+using CoreSystem.Data;
+
+using CrystalMapper;
+using CrystalMapper.Linq;
+using CrystalMapper.Context;
+using CrystalMapper.Mapping;
+
+namespace <%= ModelNamespace %>
+{
+	[Table(TABLE_NAME)]
+    public partial class <%= GetClassName(SourceTable) %> : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
+    {		
+		#region Table Schema
+		
+        public const string TABLE_NAME = "<%= SourceTable.FullName %>";	
+     
+        <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+		public const string <%= GetConstantColumnName(column) %> = "<%= GetColumnName(column) %>";
+		<% } %>		
+		
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
+        public const string <%= GetConstantParamName(column) %> = "<%= GetParamName(column) %>";	
+	    <% } %>
+		
+        #endregion
+		
+		#region Queries
+		
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetInsertQuery(SourceTable) %>  <% if(IsIdentityColumnExists(SourceTable)) { %> + " SELECT SCOPE_IDENTITY();" <% } %>;
+		
+		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetUpdateQuery(SourceTable) %>;
+		
+		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %> = <%= GetDeleteQuery(SourceTable) %>;
+		
+        #endregion
+        	  	
+        #region Declarations
+
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
+		<% if (column.AllowDBNull && column.SystemType.IsValueType) { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>?);
+		<% } else { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %> <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>);
+		<% } %>
+	
+		<% } %>
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>	
+		protected <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassVarName(keySchema) %>;
+	
+		<% } %>
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
+        #endregion
+
+ 		#region Properties
+        
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
+        
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
+
+		<% foreach(ColumnSchema column in SourceTable.NonForeignKeyColumns) { %>
+        <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %>
+        {
+            get { return this.<%= GetPrivateVariableName(column) %>; }
+			set	{ 
+                  if(this.<%= GetPrivateVariableName(column) %> != value)
+                    {
+                        this.OnPropertyChanging("<%= GetPropertyName(column) %>");  
+                        this.<%= GetPrivateVariableName(column) %> = value;                        
+                        this.OnPropertyChanged("<%= GetPropertyName(column) %>");
+                    }   
+                }
+        }	
+		
+        <% } %>	 
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
+        <% for (int i = 0 ; i < keySchema.ForeignKeyMemberColumns.Count ; i++ ) { %>
+        <%= GetPropertyDeclaration(keySchema.ForeignKeyMemberColumns[i].Column,  SystemCSharp[keySchema.ForeignKeyMemberColumns[i].Column.SystemType.ToString()]) %>               
+        {
+            get
+            {
+                if(this.<%= GetForeignKeyClassVarName(keySchema) %> == null)
+                    return this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> ;
+                
+                return this.<%= GetForeignKeyClassVarName(keySchema) %>.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %>;            
+            }
+            set
+            {
+                if(this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> != value)
+                {
+                    this.OnPropertyChanging("<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[i].Column) %>");                    
+                    this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = value;                    
+                    this.OnPropertyChanged("<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[i].Column) %>");
+                    
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = null;
+                }                
+            }          
+        }	
+        
+		<% } %>	        
+        <% } %>	        
+        <% foreach(TableKeySchema keySchema in SourceTable.ForeignKeys) { %>
+        public <%= GetClassName(keySchema.PrimaryKeyTable) %> <%= GetForeignKeyClassPropName(keySchema) %>
+        {
+            <% if(keySchema.PrimaryKeyMemberColumns.Count == 1) { %>
+            get 
+            { 
+                if(this.<%= GetForeignKeyClassVarName(keySchema)  %> == null)
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = this.CreateQuery<<%= GetClassName(keySchema.PrimaryKeyTable) %>>().First(p => p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[0].Column) %> == this.<%= GetPropertyName(keySchema.ForeignKeyMemberColumns[0].Column) %>);                    
+                
+                return this.<%= GetForeignKeyClassVarName(keySchema)  %>; 
+            }
+			set	
+            { 
+                if(this.<%= GetForeignKeyClassVarName(keySchema) %> != value)
+                {
+                    this.OnPropertyChanging("<%= GetForeignKeyClassPropName(keySchema) %>");
+                    
+                    <% ColumnSchema column = keySchema.PrimaryKeyMemberColumns[0].Column; %>
+                    this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[0].Column) %> = (this.<%= GetForeignKeyClassVarName(keySchema)  %> = value) != null ? this.<%= GetForeignKeyClassVarName(keySchema) %>.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[0].Column) %> : <% if (column.AllowDBNull && column.SystemType.IsValueType) { %>default(<%= SystemCSharp[column.SystemType.ToString()] %>?)<% } else { %>default(<%= SystemCSharp[column.SystemType.ToString()] %>)<% } %>;                  
+                    
+                    this.OnPropertyChanged("<%= GetForeignKeyClassPropName(keySchema) %>");
+                }   
+            }
+            <% } else { %>
+            get 
+            { 
+                if(this.<%= GetForeignKeyClassVarName(keySchema)  %> == null)                    
+                    this.<%= GetForeignKeyClassVarName(keySchema)  %> = this.CreateQuery<<%= GetClassName(keySchema.PrimaryKeyTable) %>>()
+                                                                            .Where(p => p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[0].Column) %> == this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[0].Column) %>
+                                                                             <% for(int i = 1; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) { %>
+                                                                                        && p.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %> == this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %>
+                                                                             <% } %>
+                                                                             )
+                                                                             .First();                
+                return this.<%= GetForeignKeyClassVarName(keySchema)  %>; 
+            }
+			set	
+            { 
+                if(this.<%= GetForeignKeyClassVarName(keySchema) %> != value)
+                {
+                    this.OnPropertyChanging("<%= GetForeignKeyClassPropName(keySchema) %>");
+                    
+                    if((this.<%= GetForeignKeyClassVarName(keySchema)  %> = value) != null) 
+                    {
+                        <% for(int i = 0; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) { %>
+                        this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = this.<%= GetForeignKeyClassVarName(keySchema) %>.<%= GetPropertyName(keySchema.PrimaryKeyMemberColumns[i].Column) %>;
+                        <% } %>
+                    }
+                    else
+                    {
+                        <% for(int i = 0; i < keySchema.PrimaryKeyMemberColumns.Count ; i++) {
+                        ColumnSchema column = keySchema.PrimaryKeyMemberColumns[i].Column;
+                        if (column.AllowDBNull && column.SystemType.IsValueType) { %>
+                        this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>?);
+		                <% } else { %>
+		                this.<%= GetPrivateVariableName(keySchema.ForeignKeyMemberColumns[i].Column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>);
+		                <% } %>
+                        <% } %>
+                    }
+                    
+                    this.OnPropertyChanged("<%= GetForeignKeyClassPropName(keySchema) %>");
+                }   
+            }             
+            <% } %>
+        }	
+		
+        <% } %>
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
+        public IQueryable<<%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %> 
+        {
+            <% if(tableKey.ForeignKeyMemberColumns.Count == 1) { %>
+            get { return this.CreateQuery<<%= GetClassName(tableKey.ForeignKeyTable) %>>().Where(r => r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[0]) %>); }
+            <% } else { %>
+            get
+            {
+                return this.CreateQuery<<%= GetClassName(tableKey.ForeignKeyTable) %>>()
+                           .Where(r => r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[0]) %>
+                           <% for(int i=1; i < tableKey.ForeignKeyMemberColumns.Count; i++) { %>
+                                       && r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[i]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[i]) %>
+                           <% } %>);
+            }
+            <% } %>
+        }
+       
+       <% } %>
+       <% } %>
+       <% } %>
+        #endregion        
+        
+        #region Methods
+        
+        <% if (SourceTable.HasPrimaryKey) { %>
+        public override bool Equals(object obj)
+        {
+            <%= GetClassName(SourceTable) %> record = obj as <%= GetClassName(SourceTable) %>;           
+            
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        <% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>
+                        && this.<%= GetPropertyName(mcs.Column) %> == record.<%= GetPropertyName(mcs.Column) %>
+                        <% } %>
+                        <% for(int i = 0; i < SourceTable.PrimaryKey.MemberColumns.Count; i++) { %>
+                        && this.<%= GetPropertyName(SourceTable.PrimaryKey.MemberColumns[i].Column) %> != default(<%= SystemCSharp[SourceTable.PrimaryKey.MemberColumns[i].SystemType.ToString()] %><%= (SourceTable.PrimaryKey.MemberColumns[i].Column.AllowDBNull && SourceTable.PrimaryKey.MemberColumns[i].Column.SystemType.IsValueType ? "?" : "") %>)
+                        <% } %>)
+                    );           
+        }
+        <% } else { %>
+        public override bool Equals(object obj)
+        {
+            <%= GetClassName(SourceTable) %> record = obj as <%= GetClassName(SourceTable) %>;           
+            
+            return (object.ReferenceEquals(this, record)                    
+                    || (record != null            
+                        <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+                        && this.<%= GetPropertyName(column) %> == record.<%= GetPropertyName(column) %>
+                        <% } %>                       
+                        <% for(int i = 0; i < SourceTable.Columns.Count; i++) { %>
+                        && this.<%= GetPropertyName(SourceTable.Columns[i]) %> != default(<%= SystemCSharp[SourceTable.Columns[i].SystemType.ToString()] %><%= (SourceTable.Columns[i].AllowDBNull && SourceTable.Columns[i].SystemType.IsValueType ? "?" : "") %>)
+                        <% } %>)
+                    );           
+        }        
+        <% } %>   
+        
+        <% if (SourceTable.HasPrimaryKey) { %>
+        public override int GetHashCode()
+        {            
+            int hashCode = 7;
+            
+            <% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>
+            <% if(mcs.AllowDBNull) { %>
+            hashCode = (11 * hashCode) + (this.<%= GetPrivateVariableName(mcs.Column) %> == null ? 1 : this.<%= GetPropertyName(mcs.Column) %>.GetHashCode());
+            <% } else {%>
+            hashCode = (11 * hashCode) + this.<%= GetPrivateVariableName(mcs.Column) %>.GetHashCode();
+            <% } %>
+            <% } %>
+                        
+            return hashCode;          
+        }
+        <% } else { %>
+        public override int GetHashCode()
+        {
+            int hashCode = 7;
+            
+            <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+            <% if(column.AllowDBNull) { %>
+            hashCode = (11 * hashCode) + (this.<%= GetPrivateVariableName(column) %> == null ? 1 : this.<%= GetPropertyName(column) %>.GetHashCode());
+            <% } else {%>
+            hashCode = (11 * hashCode) + this.<%= GetPrivateVariableName(column) %>.GetHashCode();
+            <% } %>
+            <% } %>
+                        
+            return hashCode;           
+        }        
+        <% } %>     
+        
+		void IRecord.Read(DbDataReader reader)
+		{       
+			<% foreach(ColumnSchema column in SourceTable.Columns) {%>		
+			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToString(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else { %>
+			<% if(column.SystemType.Name == "Object") { %>
+			this.<%= GetPrivateVariableName(column) %> = reader[<%= GetConstantColumnName(column) %>];
+			<% } else { %>
+			this.<%= GetPrivateVariableName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[<%= GetConstantColumnName(column) %>];
+			<% } %>
+			<% } %>
+			<% } %>
+		}
+		
+		bool IRecord.Create(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_<%= SourceTable.Name.ToUpper().Replace(" ", "_")%>))
+            {	
+				<%foreach(ColumnSchema column in SourceTable.Columns) { %>
+                <%if(!IsIdentityColumn(column)) {%>
+				<%if(column.AllowDBNull){%>
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(column) %>, DbConvert.DbValue(this.<%= GetPropertyName(column)%>)));
+				<%}else {%>
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(column) %>, this.<%= GetPropertyName(column)%>));
+				<% } %>
+				<% } %>
+                <% } %>
+                <% if(IsIdentityColumnExists(SourceTable)) { %>
+                <%foreach(ColumnSchema column in SourceTable.Columns) { %>
+                <%if(IsIdentityColumn(column)) {%>               
+                this.<%= GetPropertyName(column) %> = Convert.To<%= SystemCSharp[column.SystemType.Name] %>(command.ExecuteScalar());
+                return true;
+                <% } %>
+                <% } %>                        
+                <% } else { %>
+                return (command.ExecuteNonQuery() == 1);
+                <% } %>
+            }
+        }
+
+		bool IRecord.Update(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_<%= SourceTable.Name.ToUpper().Replace(" ", "_")%>))
+            {							
+                <%foreach(ColumnSchema column in SourceTable.Columns) { %>			
+				<% if(column.AllowDBNull) { %>
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(column) %>, DbConvert.DbValue(this.<%= GetPropertyName(column)%>)));
+				<% } else { %>
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(column) %>, this.<%= GetPropertyName(column)%>));
+				<% } %>
+				<% } %>		
+			
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+		bool IRecord.Delete(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_<%= SourceTable.Name.ToUpper().Replace(" ", "_") %>))
+            {							
+                <%if(SourceTable.HasPrimaryKey) {
+                    foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>				
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(mcs.Column) %>, this.<%= GetPropertyName(mcs)%>));
+				<%  }
+                } else {
+                   foreach(ColumnSchema mcs in SourceTable.Columns) { %>				
+				command.Parameters.Add(dataContext.CreateParameter(<%=  GetConstantParamName(mcs) %>, this.<%= GetPropertyName(mcs)%>));	
+                <% } %>
+                <% } %>
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+        
+        protected virtual void OnPropertyChanging(string propertyName)
+        {
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
+        }
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
+}
