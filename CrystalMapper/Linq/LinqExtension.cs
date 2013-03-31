@@ -6,13 +6,21 @@ using System.Linq.Expressions;
 using System.Reflection;
 using CoreSystem.Dynamic;
 using CrystalMapper.Context;
+using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
     public static class LinqExtension
     {
+        /// <summary>
+        /// Creates a queryable object using existing record query provider attached to the record
+        /// </summary>
+        /// <typeparam name="T">Type of querable</typeparam>
+        /// <param name="record">Record to use query provider from</param>
+        /// <returns>Queryable object</returns>
         public static IQueryable<T> CreateQuery<T>(this IRecord record)
         {
+            Guard.CheckNull(record.Provider, "Record doesn't attached to a query provider, please reload record from database.");
             return new Query<T>(record.Provider as QueryProvider);
         }
 
