@@ -1,0 +1,67 @@
+﻿<%---------------------------------------------------
+ * Author: Faraz Masood Khan
+ * Description: This template generates database entity drived from DbContext
+ * Project Url: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+-----------------------------------------------------%>
+<%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
+<%@ Property Name="Database" Type="SchemaExplorer.DatabaseSchema" Optional="False" Category="1a. Database" Description="The database to generate context." %>
+<%@ Property Name="ModelNamespace" Type="System.String" Default="CrystalMapper.Model" Optional="False" Category="2. Namespaces" Description="The desired Namespace for the Business Objects." %>
+
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
+/*****************************************************************
+ * Author: CrystalMapper (Generated)
+ * Date:  <%= DateTime.Now.ToString("f") %>
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) <%= DateTime.Now.ToString("yyyy") %> FanaticLab
+ *****************************************************************/
+
+using System;
+using System.Linq;
+using CrystalMapper.Context;
+
+namespace <%= ModelNamespace %>
+{
+    /// <summary>
+    /// Query provider for "<%= Database.FullName %>" database
+    /// </summary>
+    public partial class <%= Database.Name %>Db : DbContext
+    {	
+        /// <summary>
+        /// Static instance of "<%= Database.Name %>" database
+        /// </summary>
+        public static readonly <%= Database.Name %>Db Context;
+    
+        static <%= Database.Name %>Db()
+        {
+            Context = new <%= Database.Name %>Db();
+        }
+    
+		public <%= Database.Name %>Db(): base("<%= Database.Name %>") {}
+        
+        <% foreach(TableSchema table in Database.Tables) { %>
+        /// <summary>
+        /// Queryable object for "<%= table.FullName %>"
+        /// <summary>
+        public IQueryable<<%= GetClassName(table) %>> <%= GetClassNamePlural(table) %>
+        {
+            get { return this.Query<<%= GetClassName(table) %>>(); }
+        }
+        
+        <% } %>        
+        /// <summary>
+        /// Returns a opened database connection using static instance "Context"
+        /// </summary>
+        /// <returns>Database connection wrapper</returns>
+        /// <remarks>_ to differentciates with instance GetDataContext</remarks>
+        public static DataContext _GetDataContext()
+        {
+            // Open a new database connection using static instance
+            return Context.GetDataContext();
+        }
+    }
+}

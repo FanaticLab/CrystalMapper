@@ -1,0 +1,250 @@
+﻿<%-- 
+ 
+ * Author: Faraz Masood Khan 
+ * 
+ * Email: faraz@fanaticlab.com
+ *
+ * Project Url: http://crystalmapper.codeplex.com
+ *
+ * Copyright: Faraz Masood Khan @ Copyright 2013
+
+--%>
+<%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Optional="False" Category="1a. Source Table" Description="The source table to generate from." %>
+<%@ Property Name="ExcludedTables" Type="SchemaExplorer.TableSchemaCollection" Optional="True" Category="1b. Database Options" Description="A collection of tables to be excluded during generation." %>
+<%@ Property Name="TablePrefix" Type="System.String" Default="" Optional="True" Category="1b. Database Options" Description="A prefix that will be stripped from table names when class names are generated." %>
+<%@ Property Name="VsVersion" Type="VisualStudioVersion" Default="VS_2008" Optional="False" Category="2. Versions" Description="The version of Visual Studio to generate for." %>
+<%@ Property Name="ModelNamespace" Type="System.String" Default="CrystalMapper.Generated.BusinessObjects" Optional="False" Category="2. Namespaces" Description="The desired Namespace for the Business Objects." %>
+<%@ Property Name="BaseNamespace" Type="System.String" Default="CrystalMapper.Generated.Base" Optional="False" Category="2. Namespaces" Description="The Namespace where the Base classes (BusinessBase & ManagerBase) are located." %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Map Name="SystemCSharp" Src="System-CSharpAlias" %>
+<% this.tablePrefix = TablePrefix; %>
+/*
+ * Author: CrystalMapper Templates
+ * 
+ * Date:  <%= DateTime.Now.ToString("f") %>
+ * 
+ * Class: <%= GetClassName(SourceTable) %>
+ * 
+ * Email: faraz@fanaticlab.com
+ * 
+ * Project Url: http://crystalmapper.codeplex.com
+ *
+ * Copyright: Faraz Masood Khan @ Copyright <%= DateTime.Now.ToString("yyyy") %>
+ *
+/*/
+
+using System;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Collections.Generic;
+
+using CoreSystem.Data;
+
+using CrystalMapper;
+using CrystalMapper.Context;
+using CrystalMapper.Mapping;
+
+namespace <%= ModelNamespace %>
+{
+	[Table(TABLE_NAME)]
+    public partial class <%= GetClassName(SourceTable) %> : Entity< <%= GetClassName(SourceTable) %>>
+    {		
+		#region Table Schema
+		
+        public const string TABLE_NAME = "<%= SourceTable.FullName %>";	
+     
+        <% foreach(ColumnSchema column in SourceTable.Columns) { %>
+		public const string <%= GetConstantColumnName(column) %> = "<%= GetColumnName(column) %>";
+		<% } %>		
+		
+		<% foreach(ColumnSchema column in SourceTable.Columns) { %>	
+        public const string <%= GetConstantParamName(column) %> = "<%= GetParamName(column) %>";	
+	    <% } %>
+		
+        #endregion
+		
+		#region Queries
+		
+		private const string SQL_INSERT_<%= SourceTable.Name.ToUpper() %> = <%= GetInsertQuery(SourceTable) %>;
+		
+		private const string SQL_UPDATE_<%= SourceTable.Name.ToUpper() %> = <%= GetUpdateQuery(SourceTable) %>;
+		
+		private const string SQL_DELETE_<%= SourceTable.Name.ToUpper() %> = <%= GetDeleteQuery(SourceTable) %>;
+		
+        #endregion
+        
+	    <% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+        #region Declarations
+
+		<% // Primary Keys %>
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		protected <%= SystemCSharp[mcs.SystemType.ToString()] %> <%= GetPrivateVariableName(mcs) %> = <%= GetInitialization(mcs.SystemType) %>; 	
+		<% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>	
+		<% if (column.AllowDBNull && column.SystemType.IsValueType) { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %>? <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>?);
+		<% } else { %>
+		protected <%= SystemCSharp[column.SystemType.ToString()] %> <%= GetPrivateVariableName(column) %> = default(<%= SystemCSharp[column.SystemType.ToString()] %>);
+		<% } %>
+	
+		<% } %>
+	
+		
+        #endregion
+
+ 		#region Properties	
+		
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		<%= GetPropertyDeclaration(mcs.Column,  SystemCSharp[mcs.Column.SystemType.ToString()]) %>
+        {
+            get { return this.<%= GetPrivateVariableName(mcs) %>; }
+			set { this.<%= GetPrivateVariableName(mcs) %> = value; }
+        }					
+		
+        <% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %>
+        <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %>
+        {
+            get { return this.<%= GetPrivateVariableName(column) %>; }
+			set	{ this.<%= GetPrivateVariableName(column) %> = value;}
+        }	
+		
+        <% } %>	       
+	    <% } else { %>
+        #region Properties	
+		
+		<% foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>	
+		<%= GetPropertyDeclaration(mcs.Column,  SystemCSharp[mcs.Column.SystemType.ToString()]) %> { get; set; }		
+        <% } %>
+		
+		<% // Primitives %>
+		<% foreach(ColumnSchema column in SourceTable.NonPrimaryKeyColumns) { %> 
+        
+	    <%= GetPropertyDeclaration(column,  SystemCSharp[column.SystemType.ToString()]) %> { get; set; }	      
+		<% } %>		       
+        <% } %>     
+        
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>        
+        public IEnumerable< <%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetChiledIdentifiedName(SourceTable, toManyTable, tableKey) %>
+        {
+            get {
+                  foreach(<%= GetClassName(tableKey.ForeignKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %> in <%= StringUtil.ToSingular(GetChiledIdentifiedName(SourceTable, toManyTable, tableKey)) %>List())
+                    yield return <%= StringUtil.ToCamelCase(GetClassName(tableKey.ForeignKeyTable)) %>; 
+                }
+        }
+        
+        <% } %>
+        <% } %>
+        <% } %>            
+        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
+        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
+        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { 
+        if(IsManyToMany(tableKey.ForeignKeyTable)) { 
+        foreach(TableKeySchema toManyKey in toManyTable.ForeignKeys) {
+        if(!toManyKey.Equals(tableKey)) { %>            
+        public IEnumerable< <%= GetClassName(toManyKey.PrimaryKeyTable) %>> <%= StringUtil.ToPlural(GetClassName(toManyKey.PrimaryKeyTable)) %>
+        {
+            get {                         
+                    foreach(<%= GetClassName(toManyKey.PrimaryKeyTable) %> <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %> in <%= GetClassName(toManyKey.PrimaryKeyTable) %>List())
+                        yield return <%= StringUtil.ToCamelCase(GetClassName(toManyKey.PrimaryKeyTable)) %>; 
+                }         
+        }    
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>
+        <% } %>     
+        #endregion        
+        
+        #region Methods     
+		
+		public override void Read(DbDataReader reader)
+		{
+            <% if(this.VsVersion == VisualStudioVersion.VS_2005) { %>		
+			<% foreach(ColumnSchema column in SourceTable.Columns) {%>		
+			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
+			this.<%= GetPrivateVariableName(column) %> = DbConvert.ToString(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else { %>
+			<% if(column.SystemType.Name == "Object") { %>
+			this.<%= GetPrivateVariableName(column) %> = reader[<%= GetConstantColumnName(column) %>];
+			<% } else { %>
+			this.<%= GetPrivateVariableName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[<%= GetConstantColumnName(column) %>];
+			<% } %>
+			<% } %>
+			<% } %>	
+            <% } else { %>	
+            <% foreach(ColumnSchema column in SourceTable.Columns) {%>		
+			<% if(column.AllowDBNull && column.SystemType.IsValueType) { %>
+			this.<%= GetPropertyName(column) %> = DbConvert.ToNullable< <%= SystemCSharp[column.SystemType.ToString()] %> >(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else if(column.AllowDBNull && column.SystemType.Name == "String") { %>
+			this.<%= GetPropertyName(column) %> = DbConvert.ToString(reader[<%= GetConstantColumnName(column) %>]);
+			<% } else { %>
+			<% if(column.SystemType.Name == "Object") { %>
+			this.<%= GetPropertyName(column) %> = reader[<%= GetConstantColumnName(column) %>];
+			<% } else { %>
+			this.<%= GetPropertyName(column) %> = (<%= SystemCSharp[column.SystemType.ToString()] %>)reader[<%= GetConstantColumnName(column) %>];
+			<% } %>
+			<% } %>
+			<% } %>	
+            <% } %>	
+		}
+		
+		public override bool Create(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_<%= SourceTable.Name.ToUpper()%>))
+            {	
+				<%foreach(ColumnSchema column in SourceTable.Columns) { %>             
+				<%if(column.AllowDBNull){%>
+				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.<%= GetPropertyName(column)%>), <%=  GetConstantParamName(column) %>));
+				<%}else {%>
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(column)%>, <%=  GetConstantParamName(column) %>));
+				<% } %>
+                <% } %>
+                
+                return (command.ExecuteNonQuery() == 1);                
+            }
+        }
+
+		public override bool Update(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_<%= SourceTable.Name.ToUpper()%>))
+            {							
+                <%foreach(ColumnSchema column in SourceTable.Columns) { %>			
+				<% if(column.AllowDBNull) { %>
+				command.Parameters.Add(dataContext.CreateParameter(DbConvert.DbValue(this.<%= GetPropertyName(column)%>), <%=  GetConstantParamName(column) %>));
+				<% } else { %>
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(column)%>, <%=  GetConstantParamName(column) %>));
+				<% } %>
+				<% } %>		
+			
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+		public override bool Delete(DataContext dataContext)
+        {
+            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_<%= SourceTable.Name.ToUpper()%>))
+            {							
+                <%foreach(MemberColumnSchema mcs in SourceTable.PrimaryKey.MemberColumns) { %>				
+				command.Parameters.Add(dataContext.CreateParameter(this.<%= GetPropertyName(mcs)%>, <%=  GetConstantParamName(mcs.Column) %>));				
+				<% } %>			
+                return (command.ExecuteNonQuery() == 1);
+            }
+        }
+
+        #endregion   
+    }
+}
