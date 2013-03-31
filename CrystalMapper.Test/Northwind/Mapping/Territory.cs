@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: Territory
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -144,7 +136,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.regionRef == null)
-                    this.regionRef = this.CreateQuery<Region>().First(p => p.RegionID == this.RegionID);
+                    this.regionRef = this.CreateQuery<Region>().First(p => p.RegionID == this.RegionID);                    
                 
                 return this.regionRef; 
             }
@@ -154,18 +146,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("RegionRef");
                     
-                    if((this.regionRef = value) != null) 
-                    {
-                        this.regionid = this.regionRef.RegionID;
-                    }
-                    else
-                    {
-		                this.regionid = default(int);
-                    }
+                    this.regionid = (this.regionRef = value) != null ? this.regionRef.RegionID : default(int);                  
                     
                     this.OnPropertyChanged("RegionRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<EmployeeTerritory> EmployeeTerritories 
@@ -175,7 +160,7 @@ namespace CrystalMapper.Test.Northwind
        
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {

@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: OrderDetail
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -191,7 +183,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.orderRef == null)
-                    this.orderRef = this.CreateQuery<Order>().First(p => p.OrderID == this.OrderID);
+                    this.orderRef = this.CreateQuery<Order>().First(p => p.OrderID == this.OrderID);                    
                 
                 return this.orderRef; 
             }
@@ -201,18 +193,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("OrderRef");
                     
-                    if((this.orderRef = value) != null) 
-                    {
-                        this.orderid = this.orderRef.OrderID;
-                    }
-                    else
-                    {
-		                this.orderid = default(int);
-                    }
+                    this.orderid = (this.orderRef = value) != null ? this.orderRef.OrderID : default(int);                  
                     
                     this.OnPropertyChanged("OrderRef");
                 }   
-             }
+            }
         }	
 		
         public Product ProductRef
@@ -220,7 +205,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.productRef == null)
-                    this.productRef = this.CreateQuery<Product>().First(p => p.ProductID == this.ProductID);
+                    this.productRef = this.CreateQuery<Product>().First(p => p.ProductID == this.ProductID);                    
                 
                 return this.productRef; 
             }
@@ -230,23 +215,16 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("ProductRef");
                     
-                    if((this.productRef = value) != null) 
-                    {
-                        this.productid = this.productRef.ProductID;
-                    }
-                    else
-                    {
-		                this.productid = default(int);
-                    }
+                    this.productid = (this.productRef = value) != null ? this.productRef.ProductID : default(int);                  
                     
                     this.OnPropertyChanged("ProductRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {

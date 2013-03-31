@@ -1,19 +1,12 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 9:13 PM
- * 
- * Class: Order
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:00 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
+using System.Linq;
 using System.Data.Common;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -22,6 +15,7 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
+using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
@@ -77,7 +71,7 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
         	  	
         #region Declarations
-        
+
 		protected int orderid = default(int);
 	
 		protected string customerid = default(string);
@@ -112,15 +106,27 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected Shipper shipperRef;
 	
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
         #endregion
 
- 		#region Properties	
+ 		#region Properties
         
-        public event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged;
-
-        public event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging;
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
         
-        public IQueryProvider IRecord.Provider { get; set; }
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
 
         [Column(COL_ORDERID, PARAM_ORDERID, default(int))]
         public virtual int OrderID 
@@ -347,7 +353,13 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Customer CustomerRef
         {
-            get { return this.customerRef; }
+            get 
+            { 
+                if(this.customerRef == null)
+                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);
+                
+                return this.customerRef; 
+            }
 			set	
             { 
                 if(this.customerRef != value)
@@ -370,7 +382,13 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         public Employee EmployeeRef
         {
-            get { return this.employeeRef; }
+            get 
+            { 
+                if(this.employeeRef == null)
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                
+                return this.employeeRef; 
+            }
 			set	
             { 
                 if(this.employeeRef != value)
@@ -393,7 +411,13 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         public Shipper ShipperRef
         {
-            get { return this.shipperRef; }
+            get 
+            { 
+                if(this.shipperRef == null)
+                    this.shipperRef = this.CreateQuery<Shipper>().First(p => p.ShipperID == this.ShipVia);
+                
+                return this.shipperRef; 
+            }
 			set	
             { 
                 if(this.shipperRef != value)
@@ -414,9 +438,14 @@ namespace CrystalMapper.UnitTest.Northwind
              }
         }	
 		
+        public IQueryable<OrderDetail> OrderDetails 
+        {
+            get { return this.CreateQuery<OrderDetail>().Where(r => r.OrderID == OrderID); }
+        }
+       
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -475,7 +504,7 @@ namespace CrystalMapper.UnitTest.Northwind
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPOSTALCODE, DbConvert.DbValue(this.ShipPostalCode)));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCOUNTRY, DbConvert.DbValue(this.ShipCountry)));
                 this.OrderID = Convert.ToInt32(command.ExecuteScalar());
-                return true;                
+                return true;
             }
         }
 
@@ -513,14 +542,14 @@ namespace CrystalMapper.UnitTest.Northwind
         
         protected virtual void OnPropertyChanging(string propertyName)
         {
-            if(this.PropertyChanging != null)
-                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
         }
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if(this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

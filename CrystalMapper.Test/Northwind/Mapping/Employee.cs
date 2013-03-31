@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: Employee
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -414,7 +406,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.reportstoRef == null)
-                    this.reportstoRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.ReportsTo);
+                    this.reportstoRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.ReportsTo);                    
                 
                 return this.reportstoRef; 
             }
@@ -424,18 +416,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("ReportsToRef");
                     
-                    if((this.reportstoRef = value) != null) 
-                    {
-                        this.reportsto = this.reportstoRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.reportsto = default(int);
-                    }
+                    this.reportsto = (this.reportstoRef = value) != null ? this.reportstoRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("ReportsToRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<Employee> Employees 
@@ -455,7 +440,7 @@ namespace CrystalMapper.Test.Northwind
        
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -522,7 +507,7 @@ namespace CrystalMapper.Test.Northwind
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_REPORTSTO, DbConvert.DbValue(this.ReportsTo)));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHOTOPATH, DbConvert.DbValue(this.PhotoPath)));
                 this.EmployeeID = Convert.ToInt32(command.ExecuteScalar());
-                return true;                
+                return true;
             }
         }
 

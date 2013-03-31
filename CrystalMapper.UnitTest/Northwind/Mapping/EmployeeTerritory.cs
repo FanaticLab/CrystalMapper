@@ -1,19 +1,12 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 9:13 PM
- * 
- * Class: EmployeeTerritory
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:00 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
+using System.Linq;
 using System.Data.Common;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -22,6 +15,7 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
+using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
@@ -53,7 +47,7 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
         	  	
         #region Declarations
-        
+
 		protected int employeeid = default(int);
 	
 		protected string territoryid = default(string);
@@ -62,15 +56,27 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected Territory territoryRef;
 	
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
         #endregion
 
- 		#region Properties	
+ 		#region Properties
         
-        public event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged;
-
-        public event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging;
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
         
-        public IQueryProvider IRecord.Provider { get; set; }
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
 
         [Column(COL_EMPLOYEEID, PARAM_EMPLOYEEID, default(int))]
         public virtual int EmployeeID                
@@ -120,7 +126,13 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Employee EmployeeRef
         {
-            get { return this.employeeRef; }
+            get 
+            { 
+                if(this.employeeRef == null)
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                
+                return this.employeeRef; 
+            }
 			set	
             { 
                 if(this.employeeRef != value)
@@ -143,7 +155,13 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         public Territory TerritoryRef
         {
-            get { return this.territoryRef; }
+            get 
+            { 
+                if(this.territoryRef == null)
+                    this.territoryRef = this.CreateQuery<Territory>().First(p => p.TerritoryID == this.TerritoryID);
+                
+                return this.territoryRef; 
+            }
 			set	
             { 
                 if(this.territoryRef != value)
@@ -166,7 +184,7 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -231,14 +249,14 @@ namespace CrystalMapper.UnitTest.Northwind
         
         protected virtual void OnPropertyChanging(string propertyName)
         {
-            if(this.PropertyChanging != null)
-                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
         }
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if(this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

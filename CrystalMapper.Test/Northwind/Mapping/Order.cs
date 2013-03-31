@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: Order
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -364,7 +356,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.customerRef == null)
-                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);
+                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);                    
                 
                 return this.customerRef; 
             }
@@ -374,18 +366,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("CustomerRef");
                     
-                    if((this.customerRef = value) != null) 
-                    {
-                        this.customerid = this.customerRef.CustomerID;
-                    }
-                    else
-                    {
-		                this.customerid = default(string);
-                    }
+                    this.customerid = (this.customerRef = value) != null ? this.customerRef.CustomerID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerRef");
                 }   
-             }
+            }
         }	
 		
         public Employee EmployeeRef
@@ -393,7 +378,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.employeeRef == null)
-                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);                    
                 
                 return this.employeeRef; 
             }
@@ -403,18 +388,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("EmployeeRef");
                     
-                    if((this.employeeRef = value) != null) 
-                    {
-                        this.employeeid = this.employeeRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.employeeid = default(int);
-                    }
+                    this.employeeid = (this.employeeRef = value) != null ? this.employeeRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("EmployeeRef");
                 }   
-             }
+            }
         }	
 		
         public Shipper ShipperRef
@@ -422,7 +400,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.shipperRef == null)
-                    this.shipperRef = this.CreateQuery<Shipper>().First(p => p.ShipperID == this.ShipVia);
+                    this.shipperRef = this.CreateQuery<Shipper>().First(p => p.ShipperID == this.ShipVia);                    
                 
                 return this.shipperRef; 
             }
@@ -432,18 +410,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("ShipperRef");
                     
-                    if((this.shipperRef = value) != null) 
-                    {
-                        this.shipvium = this.shipperRef.ShipperID;
-                    }
-                    else
-                    {
-		                this.shipvium = default(int);
-                    }
+                    this.shipvium = (this.shipperRef = value) != null ? this.shipperRef.ShipperID : default(int);                  
                     
                     this.OnPropertyChanged("ShipperRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<OrderDetail> OrderDetails 
@@ -453,7 +424,7 @@ namespace CrystalMapper.Test.Northwind
        
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -512,7 +483,7 @@ namespace CrystalMapper.Test.Northwind
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPPOSTALCODE, DbConvert.DbValue(this.ShipPostalCode)));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_SHIPCOUNTRY, DbConvert.DbValue(this.ShipCountry)));
                 this.OrderID = Convert.ToInt32(command.ExecuteScalar());
-                return true;                
+                return true;
             }
         }
 

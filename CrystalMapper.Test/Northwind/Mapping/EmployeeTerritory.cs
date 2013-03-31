@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: EmployeeTerritory
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -137,7 +129,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.employeeRef == null)
-                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);                    
                 
                 return this.employeeRef; 
             }
@@ -147,18 +139,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("EmployeeRef");
                     
-                    if((this.employeeRef = value) != null) 
-                    {
-                        this.employeeid = this.employeeRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.employeeid = default(int);
-                    }
+                    this.employeeid = (this.employeeRef = value) != null ? this.employeeRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("EmployeeRef");
                 }   
-             }
+            }
         }	
 		
         public Territory TerritoryRef
@@ -166,7 +151,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.territoryRef == null)
-                    this.territoryRef = this.CreateQuery<Territory>().First(p => p.TerritoryID == this.TerritoryID);
+                    this.territoryRef = this.CreateQuery<Territory>().First(p => p.TerritoryID == this.TerritoryID);                    
                 
                 return this.territoryRef; 
             }
@@ -176,23 +161,16 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("TerritoryRef");
                     
-                    if((this.territoryRef = value) != null) 
-                    {
-                        this.territoryid = this.territoryRef.TerritoryID;
-                    }
-                    else
-                    {
-		                this.territoryid = default(string);
-                    }
+                    this.territoryid = (this.territoryRef = value) != null ? this.territoryRef.TerritoryID : default(string);                  
                     
                     this.OnPropertyChanged("TerritoryRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {

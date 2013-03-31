@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: Product
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -281,7 +273,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.categoryRef == null)
-                    this.categoryRef = this.CreateQuery<Category>().First(p => p.CategoryID == this.CategoryID);
+                    this.categoryRef = this.CreateQuery<Category>().First(p => p.CategoryID == this.CategoryID);                    
                 
                 return this.categoryRef; 
             }
@@ -291,18 +283,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("CategoryRef");
                     
-                    if((this.categoryRef = value) != null) 
-                    {
-                        this.categoryid = this.categoryRef.CategoryID;
-                    }
-                    else
-                    {
-		                this.categoryid = default(int);
-                    }
+                    this.categoryid = (this.categoryRef = value) != null ? this.categoryRef.CategoryID : default(int);                  
                     
                     this.OnPropertyChanged("CategoryRef");
                 }   
-             }
+            }
         }	
 		
         public Supplier SupplierRef
@@ -310,7 +295,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.supplierRef == null)
-                    this.supplierRef = this.CreateQuery<Supplier>().First(p => p.SupplierID == this.SupplierID);
+                    this.supplierRef = this.CreateQuery<Supplier>().First(p => p.SupplierID == this.SupplierID);                    
                 
                 return this.supplierRef; 
             }
@@ -320,18 +305,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("SupplierRef");
                     
-                    if((this.supplierRef = value) != null) 
-                    {
-                        this.supplierid = this.supplierRef.SupplierID;
-                    }
-                    else
-                    {
-		                this.supplierid = default(int);
-                    }
+                    this.supplierid = (this.supplierRef = value) != null ? this.supplierRef.SupplierID : default(int);                  
                     
                     this.OnPropertyChanged("SupplierRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<OrderDetail> OrderDetails 
@@ -341,7 +319,7 @@ namespace CrystalMapper.Test.Northwind
        
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -392,7 +370,7 @@ namespace CrystalMapper.Test.Northwind
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_REORDERLEVEL, DbConvert.DbValue(this.ReorderLevel)));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_DISCONTINUED, this.Discontinued));
                 this.ProductID = Convert.ToInt32(command.ExecuteScalar());
-                return true;                
+                return true;
             }
         }
 

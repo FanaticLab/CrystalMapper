@@ -1,19 +1,12 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 9:13 PM
- * 
- * Class: CustomerDemographic
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:00 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
+using System.Linq;
 using System.Data.Common;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -22,6 +15,7 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
+using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
@@ -53,20 +47,32 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
         	  	
         #region Declarations
-        
+
 		protected string customertypeid = default(string);
 	
 		protected string customerdesc = default(string);
 	
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
         #endregion
 
- 		#region Properties	
+ 		#region Properties
         
-        public event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged;
-
-        public event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging;
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
         
-        public IQueryProvider IRecord.Provider { get; set; }
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
 
         [Column(COL_CUSTOMERTYPEID, PARAM_CUSTOMERTYPEID )]
         public virtual string CustomerTypeID 
@@ -96,9 +102,14 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
+        public IQueryable<CustomerCustomerDemo> CustomerCustomerDemos 
+        {
+            get { return this.CreateQuery<CustomerCustomerDemo>().Where(r => r.CustomerTypeID == CustomerTypeID); }
+        }
+       
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -159,14 +170,14 @@ namespace CrystalMapper.UnitTest.Northwind
         
         protected virtual void OnPropertyChanging(string propertyName)
         {
-            if(this.PropertyChanging != null)
-                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
         }
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if(this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

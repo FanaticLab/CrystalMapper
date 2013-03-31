@@ -1,17 +1,9 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 11:10 PM
- * 
- * Class: CustomerCustomerDemo
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:24 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
 using System.Linq;
@@ -137,7 +129,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.customerDemographicRef == null)
-                    this.customerDemographicRef = this.CreateQuery<CustomerDemographic>().First(p => p.CustomerTypeID == this.CustomerTypeID);
+                    this.customerDemographicRef = this.CreateQuery<CustomerDemographic>().First(p => p.CustomerTypeID == this.CustomerTypeID);                    
                 
                 return this.customerDemographicRef; 
             }
@@ -147,18 +139,11 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("CustomerDemographicRef");
                     
-                    if((this.customerDemographicRef = value) != null) 
-                    {
-                        this.customertypeid = this.customerDemographicRef.CustomerTypeID;
-                    }
-                    else
-                    {
-		                this.customertypeid = default(string);
-                    }
+                    this.customertypeid = (this.customerDemographicRef = value) != null ? this.customerDemographicRef.CustomerTypeID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerDemographicRef");
                 }   
-             }
+            }
         }	
 		
         public Customer CustomerRef
@@ -166,7 +151,7 @@ namespace CrystalMapper.Test.Northwind
             get 
             { 
                 if(this.customerRef == null)
-                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);
+                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);                    
                 
                 return this.customerRef; 
             }
@@ -176,23 +161,16 @@ namespace CrystalMapper.Test.Northwind
                 {
                     this.OnPropertyChanging("CustomerRef");
                     
-                    if((this.customerRef = value) != null) 
-                    {
-                        this.customerid = this.customerRef.CustomerID;
-                    }
-                    else
-                    {
-		                this.customerid = default(string);
-                    }
+                    this.customerid = (this.customerRef = value) != null ? this.customerRef.CustomerID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {

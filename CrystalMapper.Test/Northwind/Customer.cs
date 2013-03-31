@@ -10,12 +10,5 @@ namespace CrystalMapper.Test.Northwind
 {
     public partial class Customer
     {
-        public IQueryable<Order> Orders
-        {
-            get
-            {
-                return this.CreateQuery<Order>().Where(o => o.CustomerID == this.CustomerID);
-            }
-        }
     }
 }
