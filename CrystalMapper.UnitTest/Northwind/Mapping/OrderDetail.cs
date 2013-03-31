@@ -1,19 +1,12 @@
-﻿/*
+﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * 
- * Date:  Friday, March 29, 2013 9:13 PM
- * 
- * Class: OrderDetail
- * 
- * Email: info@fanaticlab.com
- * 
+ * Date:  Saturday, March 30, 2013 6:00 PM
  * Project: http://crystalmapper.codeplex.com
- *
  * Copyright (c) 2013 FanaticLab
- *
-/*/
+ *********************************************************************/
 
 using System;
+using System.Linq;
 using System.Data.Common;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -22,6 +15,7 @@ using System.Collections.Generic;
 using CoreSystem.Data;
 
 using CrystalMapper;
+using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
@@ -59,7 +53,7 @@ namespace CrystalMapper.UnitTest.Northwind
         #endregion
         	  	
         #region Declarations
-        
+
 		protected int orderid = default(int);
 	
 		protected int productid = default(int);
@@ -74,15 +68,27 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected Product productRef;
 	
+        
+        private event PropertyChangingEventHandler propertyChanging;
+        
+        private event PropertyChangedEventHandler propertyChanged;
         #endregion
 
- 		#region Properties	
+ 		#region Properties
         
-        public event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged;
-
-        public event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging;
+        event PropertyChangingEventHandler INotifyPropertyChanging.PropertyChanging
+        {
+            add { this.propertyChanging += value; }
+            remove { this.propertyChanging -= value; }
+        }
         
-        public IQueryProvider IRecord.Provider { get; set; }
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        { 
+            add { this.propertyChanged += value; }
+            remove { this.propertyChanged -= value; }
+        }
+        
+        IQueryProvider IRecord.Provider { get; set; }
 
         [Column(COL_UNITPRICE, PARAM_UNITPRICE, typeof(decimal))]
         public virtual decimal UnitPrice 
@@ -174,7 +180,13 @@ namespace CrystalMapper.UnitTest.Northwind
         
         public Order OrderRef
         {
-            get { return this.orderRef; }
+            get 
+            { 
+                if(this.orderRef == null)
+                    this.orderRef = this.CreateQuery<Order>().First(p => p.OrderID == this.OrderID);
+                
+                return this.orderRef; 
+            }
 			set	
             { 
                 if(this.orderRef != value)
@@ -197,7 +209,13 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         public Product ProductRef
         {
-            get { return this.productRef; }
+            get 
+            { 
+                if(this.productRef == null)
+                    this.productRef = this.CreateQuery<Product>().First(p => p.ProductID == this.ProductID);
+                
+                return this.productRef; 
+            }
 			set	
             { 
                 if(this.productRef != value)
@@ -220,7 +238,7 @@ namespace CrystalMapper.UnitTest.Northwind
 		
         #endregion        
         
-        #region Methods     
+        #region Methods
         
         public override bool Equals(object obj)
         {
@@ -294,14 +312,14 @@ namespace CrystalMapper.UnitTest.Northwind
         
         protected virtual void OnPropertyChanging(string propertyName)
         {
-            if(this.PropertyChanging != null)
-                this.PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+            if(this.propertyChanging != null)
+                this.propertyChanging(this, new PropertyChangingEventArgs(propertyName));
         }
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if(this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if(this.propertyChanged != null)
+                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

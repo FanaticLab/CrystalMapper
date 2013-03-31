@@ -22,43 +22,51 @@ namespace CrystalMapper.Test
         static void Main(string[] args)
         {
             IEnumerable result;
-            var db = new DbContext();
-           // var oCount = db.Query<Order>().Where(o => o.Freight < 100).Count();
+
+            var db = NorthwindDb.Context; // Aliasing static instance for easyness of "Northwind" database
+
+            var oCount = db.Query<Order>().Where(o => o.Freight < 100).Count();
 
             // Loading customers whole placed at least one order
             var customers = db.Query<Customer>()
                     .Where(c => db.Query<Order>()
                                   .Select(o => o.CustomerID)
                                   .Contains(c.CustomerID));
-            
-            //result = customers.ToArray();
-            //Write(result);
+
+            result = customers.ToArray();
+            Write(result);
 
             var customer = customers.First();
             var orders = customer.Orders.ToArray();
+            var customer2 = orders[0].CustomerRef;
 
-            // Loading Customer and their Orders
-            var customerOrders = (from c in db.Query<Customer>()
-                                  join o in db.Query<Order>().Select(o => new { o.CustomerID, OrderID = o.OrderID - 1000 }) on c.CustomerID equals o.CustomerID
+            Debug.Assert(customer != customer2); // Customer2 is load fresh from database
+            Debug.Assert(customer.Equals(customer2)); // Both customers are same base on their PK
+
+            // Loading Customer with their Orders            
+            var customerOrders = (from c in db.Customers
+                                  from o in db.Orders
                                   select new { Customer = c, Order = o });
 
             result = customerOrders.ToArray();
             Write(result);
 
-            // Loading
-            var customerOrders2 = (from c in db.Query<Customer>()
-                                   from o in db.Query<Order>().Where(o => o.OrderID > 100)
-                                   select new { c, o }).Take(1000);
+            //var today = DateTime.Today;
+            //// Loading todays order with their customers
+            //var customerOrders2 = (from c in db.Query<Customer>()
+            //                       from o in c.Orders
+            //                       where o.OrderDate == today
+            //                       select new { c, o }).Take(1000);
 
-            result = customerOrders2.ToArray();
-            Write(result);
+            //result = customerOrders2.ToArray();
+            //Write(result);
 
-            var groupBy = from c in db.Query<Customer>()
-                          join o in db.Query<Order>() on c.CustomerID equals o.CustomerID
-                          group o by o.CustomerID into g
-                          select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID) };
+            //var groupBy = from c in db.Query<Customer>()
+            //              join o in db.Query<Order>() on c.CustomerID equals o.CustomerID
+            //              group o by o.CustomerID into g
+            //              select new { g.Key, Count = g.Count(), Avg = g.Average(o => o.OrderID) };
 
-            Write(groupBy.ToArray());
+            //Write(groupBy.ToArray());
 
             Console.ReadLine();
         }
