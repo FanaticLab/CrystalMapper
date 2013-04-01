@@ -6,6 +6,7 @@
  ******************************************************************/
 
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Data;
 using System.Collections.Generic;
@@ -129,24 +130,14 @@ public class HelperFunctions : CodeTemplate
     public string GetInsertQuery(TableSchema table, string tablePrefix = null)
     {
         string query = "\"INSERT INTO " + GetTableName(table) +" (";
-
-        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+        
+        foreach (ColumnSchema column in table.Columns)
         {
-            foreach (ColumnSchema column in table.Columns)
-            {
-                if (!IsIdentityColumn(column))
-                    query += GetColumnName(column) + ",";
-            }
-        }
-        else
-        {
-            foreach (ColumnSchema column in table.Columns)
-                if (!IsIdentityColumn(column) && !IsComputed(column))
-                    query += " [" + GetColumnName(column) + "],";
-        }
+            if (!IsIdentityColumn(column))
+                query += GetColumnName(column) + ", ";
+        }       
 
-        query = query.TrimEnd(new char[] { ',' }) + ") VALUES (";
-
+        query = query.TrimEnd(new char[] { ',', ' ' }) + ") VALUES (";
 
         foreach (ColumnSchema column in table.Columns)
         {
@@ -165,51 +156,26 @@ public class HelperFunctions : CodeTemplate
 
     public string GetUpdateQuery(TableSchema table, string tablePrefix = null)
     {
-        string query = "\"UPDATE " + GetTableName(table) + " SET";
+        string query =   "\"UPDATE " + GetTableName(table) + " SET";
 
-        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+        foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
+            if(!IsComputed(column))
+                query += GetColumnName(column) + " = " + GetParamName(column) + ", ";
+
+        query = query.TrimEnd(new char[] { ',', ' ' }) + " WHERE ";
+
+        if (table.HasPrimaryKey)
         {
-            foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
-                if(!IsComputed(column))
-                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + ",";
-
-            query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
-
-            if (table.HasPrimaryKey)
-            {
-                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
-                    query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
-            }
-            else
-            {
-
-                foreach (ColumnSchema column in table.Columns)
-                    query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
-            }
-
+            foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
         }
         else
         {
 
-            foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
-                if(!IsComputed(column))
-                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + ",";
-
-            query = query.TrimEnd(new char[] { ',' }) + " WHERE ";
-
-            if (table.HasPrimaryKey)
-            {
-                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
-                    query += "[" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";
-            }
-            else
-            {
-
-                foreach (ColumnSchema column in table.Columns)
-                    query += "[" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND ";
-            }
+            foreach (ColumnSchema column in table.Columns)
+                query += GetColumnName(column) + " = " + GetParamName(column) + " AND ";
         }
-
+    
         return query.Substring(0, query.Length - 5) + "\"";
     }
 
@@ -217,48 +183,20 @@ public class HelperFunctions : CodeTemplate
     {
         string query = "\"DELETE FROM " + GetTableName(table) + " WHERE ";
 
-        if (table.Database.Provider.Name == "MySQLSchemaProvider" || table.Database.Provider.Name == "PostgreSQLSchemaProvider")
+        if (table.HasPrimaryKey)
         {
-            if (table.HasPrimaryKey)
-            {
-                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
-                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
-            }
-            else
-            {
-                foreach (ColumnSchema column in table.Columns)
-                    query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
-            }
-
-            query = query.Substring(0, query.Length - 3) + "\"";
-
+            foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
+                query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
         }
         else
         {
-
-            if (table.HasPrimaryKey)
-            {
-                foreach (ColumnSchema column in table.PrimaryKey.MemberColumns)
-                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND";
-            }
-            else
-            {
-                foreach (ColumnSchema column in table.Columns)
-                    query += " [" + GetColumnName(column) + "]" + " = " + GetParamName(column) + " AND";
-            }
-
-            query = query.Substring(0, query.Length - 3) + "\"";
+            foreach (ColumnSchema column in table.Columns)
+                query += " " + GetColumnName(column) + " = " + GetParamName(column) + " AND";
         }
 
+        query = query.Substring(0, query.Length - 3) + "\"";      
+
         return query;
-    }
-
-    public string GetTableName(TableSchema table, string tablePrefix = null)
-    {
-        if (tablePrefix != null)
-            return tablePrefix + table.Name;
-
-        return table.Database.Provider.Name == "PostgreSQLSchemaProvider" ? table.Name : table.FullName;
     }
 
     public ColumnSchema GetIdentityColumn(TableSchema table)
@@ -340,6 +278,11 @@ public class HelperFunctions : CodeTemplate
 
         return StringUtil.ToSingular(StringUtil.ToPascalCase(className));
     }
+    
+    public string GetDbClassName(DatabaseSchema database)
+    {
+        return StringUtil.ToPascalCase(database.Name);
+    }
 
     public string GetClassNamePlural(TableSchema table)
     {
@@ -377,6 +320,19 @@ public class HelperFunctions : CodeTemplate
     #endregion
 
     #region ManyToMany Table Methods
+    
+    public List<TableKeySchema> GetForeignKeyTables(TableSchema primaryTable)
+    {
+        var retVal = new List<TableKeySchema>();
+        
+        foreach(TableSchema foreignTable in primaryTable.Database.Tables)
+            foreach(var foreignKey in foreignTable.ForeignKeys)
+                if(foreignKey.PrimaryKeyTable.Equals(primaryTable))                    
+                    if(!retVal.Any(k => k.Name == foreignKey.Name && k.ForeignKeyTable == foreignKey.ForeignKeyTable))
+                        retVal.Add(foreignKey);
+        
+        return retVal;
+    }
 
     public TableSchema GetToManyTable(TableSchema manyToTable, TableSchema sourceTable)
     {
@@ -389,6 +345,7 @@ public class HelperFunctions : CodeTemplate
             }
         return result;
     }
+    
     public static MemberColumnSchema GetToManyTableKey(TableSchema manyToTable, TableSchema foreignTable)
     {
         MemberColumnSchema result = null;
@@ -400,6 +357,7 @@ public class HelperFunctions : CodeTemplate
             }
         return result;
     }
+    
     public bool IsManyToMany(TableSchema table)
     {
         // If there are 2 ForeignKeyColumns AND...
@@ -664,7 +622,7 @@ public class HelperFunctions : CodeTemplate
 
     public string GetColumnName(ColumnSchema column)
     {
-        return column.Name;
+        return Quote(column.Database.Provider, column.Name);
     }
 
     public string GetParamName(ColumnSchema column)
@@ -680,6 +638,34 @@ public class HelperFunctions : CodeTemplate
     public string GetConstantParamName(ColumnSchema column)
     {
         return "PARAM_" + column.Name.ToUpper().Replace(' ', '_');
+    }
+    
+    public string GetTableName(TableSchema table, string tablePrefix = null)
+    {
+        if (tablePrefix != null)
+            return tablePrefix + Quote(table.Database.Provider, table.Name);
+
+        return string.Join(".", table.FullName.Split('.').Select(n => Quote(table.Database.Provider, n)).ToArray());
+        //return Quote(table.Database.Provider, table.Database.Provider.Name == "PostgreSQLSchemaProvider" ? table.Name : table.FullName);
+    }
+    
+    public string Quote(IDbSchemaProvider provider, string name)
+    {
+        if(!name.Contains(" "))
+            return name;
+        
+        switch(provider.Name)
+        {
+            case "MySQLSchemaProvider":
+                return "`" + name + "`";
+            case "SQLiteSchemaProvider" :
+            case "PostgreSQLSchemaProvider":
+                return "\"" + name + "\"";
+            default:
+            case "SqlSchemaProvider" :
+            case "SqlCompactSchemaProvider" :
+                return "[" + name + "]";
+        }
     }
 
     public string GetPropertyDeclaration(ColumnSchema column, string csharpDataType)
