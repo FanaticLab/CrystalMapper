@@ -1,16 +1,10 @@
-﻿/*
+﻿/**********************************
  * Author: Faraz Masood Khan 
- * 
- * Date: 2013/03/28
- * 
- * Class: DataContext
- * 
- * Email: info@fanaticlab.com
- * 
- * Website: http://www.fanaticlab.com
- *
+ * Description: This class represents a live database connection 
+ *              and provides lot of CrystalMapper functions to interactive database
+ * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
- */
+ **********************************/
 
 using System;
 using System.Data;
@@ -26,7 +20,7 @@ using CoreSystem.Util;
 namespace CrystalMapper.Context
 {
     /// <summary>
-    /// Database connection wrapper class; providing various functions to interact with database
+    /// Database connection wrapper class; primary class to interact with database in CrystalMapper
     /// </summary>
     public class DataContext : IDisposable
     {

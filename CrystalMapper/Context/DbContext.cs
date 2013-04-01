@@ -1,4 +1,11 @@
-﻿using System;
+﻿/**********************************
+ * Author: Faraz Masood Khan 
+ * Description: This class represents a single database that will be used to query that database
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ **********************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +16,7 @@ using CoreSystem.Dynamic;
 namespace CrystalMapper.Context
 {
     /// <summary>
-    /// Database context; holding database connection string reference
+    /// Database connection string wrapper/context; holding database connection string reference via connection string name
     /// </summary>
     public class DbContext
     {
