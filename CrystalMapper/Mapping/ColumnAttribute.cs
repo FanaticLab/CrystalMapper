@@ -1,59 +1,67 @@
-﻿/*
+﻿/**********************************
  * Author: Faraz Masood Khan 
- * 
- * Date: 6/5/2009 2:09:52 PM
- * 
- * Class: ColumnAttribute
- * 
- * Copyright: Faraz Masood Khan @ Copyright ©  2009
- * 
- * Email: mk.faraz@gmail.com
- * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
- * 
- */
+ * Description: Table column mapping attribute
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ **********************************/
 
 using System;
 
 namespace CrystalMapper.Mapping
 {
+    /// <summary>
+    /// Property and column mapping attribute
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ColumnAttribute : Attribute
     {
-        private string columnName;
-        private string paramName;
-        private object defTypeValue;
+        /// <summary>
+        /// Name of the column to map
+        /// </summary>
+        public string ColumnName { get; private set; }
 
-        public string ColumnName
-        {
-            get { return this.columnName; }
-        }
+        /// <summary>
+        /// Parameter name to use when query database against this column
+        /// </summary>
+        public string ParamName { get; private set; }
 
-        public string ParamName
-        {
-            get { return this.paramName; }
-        }
+        /// <summary>
+        /// Default value of the property
+        /// </summary>
+        public object DefValue { get; private set; }
 
-        public object DefTypeValue
-        {
-            get { return this.defTypeValue; }
-        }
-
+        /// <summary>
+        /// Creates mapping between column and property
+        /// </summary>
+        /// <param name="columnName">Name of the column to map</param>
+        /// <param name="paramName">Name of the parameter to use in mapping</param>
         public ColumnAttribute(string columnName, string paramName)
             : this(columnName, paramName, (object)null)
         {
 
         }
-        
-        public ColumnAttribute(string columnName, string paramName, object defTypeValue)
+
+        /// <summary>
+        /// Creates mapping between column and property
+        /// </summary>
+        /// <param name="columnName">Name of the column to map</param>
+        /// <param name="paramName">Name of the parameter to use in mapping</param>
+        /// <param name="defValue">Default value of the property</param>
+        public ColumnAttribute(string columnName, string paramName, object defValue)
         {
-            this.columnName = columnName;
-            this.paramName = paramName;
-            this.defTypeValue = defTypeValue;
+            this.ColumnName = columnName;
+            this.ParamName = paramName;
+            this.DefValue = defValue;
         }
 
-        public ColumnAttribute(string columnName, string paramName, Type type)
-            : this(columnName, paramName, Activator.CreateInstance(type))
+        /// <summary>
+        /// Creates mapping between column and property
+        /// </summary>
+        /// <param name="columnName">Name of the column to map</param>
+        /// <param name="paramName">Name of the parameter to use in mapping</param>
+        /// <param name="defValueType">Creates default value from type</param>
+        public ColumnAttribute(string columnName, string paramName, Type defValueType)
+            : this(columnName, paramName, Activator.CreateInstance(defValueType))
         { }
     }
 }

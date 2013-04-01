@@ -1,35 +1,32 @@
-﻿/*
+﻿/**********************************
  * Author: Faraz Masood Khan 
- * 
- * Date: 6/5/2009 2:09:52 PM
- * 
- * Class: TableAttribute
- * 
- * Copyright: Faraz Masood Khan @ Copyright ©  2009
- * 
- * Email: mk.faraz@gmail.com
- * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
- * 
- */
+ * Description: Table mapping attribute
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ **********************************/
 
 using System;
 
 namespace CrystalMapper.Mapping
 {
+    /// <summary>
+    /// Class and table mapping attribute
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute
     {
-        private string tableName;
+        /// <summary>
+        /// Name of the table this class maps to
+        /// </summary>
+        public string TableName { get; private set; }
 
-        public string TableName
-        {
-            get { return this.tableName; }
-        }
-
+        /// <summary>
+        /// Creates mapping between class and table mapping
+        /// </summary>
+        /// <param name="tableName">Name of the table class maps to</param>
         public TableAttribute(string tableName)
         {
-            this.tableName = tableName;
+            this.TableName = tableName;
         }
     }
 }

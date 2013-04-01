@@ -130,7 +130,6 @@
     <Compile Include="Linq\Translator\ExpressionVisitor.cs" />
     <Compile Include="Linq\Translator\QueryTranslator.cs" />
     <Compile Include="Linq\Helper\TypeSystem.cs" />
-    <Compile Include="Mapping\LoadOption.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
