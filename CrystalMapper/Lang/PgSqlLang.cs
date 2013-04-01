@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CrystalMapper.Lang
 {
+    // Overrides SQL language operators for PostgreSQL
     internal class PgSqlLang : SqlLang
     {
         public override SqlLangType SqlLangType

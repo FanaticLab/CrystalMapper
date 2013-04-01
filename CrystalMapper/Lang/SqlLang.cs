@@ -16,6 +16,7 @@ namespace CrystalMapper.Lang
         PgSql = 16
     }
 
+    // Base class for SQL languague operators
     internal abstract class SqlLang
     {
         public abstract SqlLangType SqlLangType { get; }

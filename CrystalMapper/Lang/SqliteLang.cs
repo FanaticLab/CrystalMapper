@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CrystalMapper.Lang
 {
+    // Overrides SQL language operators for SQLite
     internal class SqliteLang : SqlLang
     {
         public override SqlLangType SqlLangType
