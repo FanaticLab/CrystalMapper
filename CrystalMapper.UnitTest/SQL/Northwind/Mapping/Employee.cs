@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Employee : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -70,11 +70,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_EMPLOYEES = "INSERT INTO dbo.Employees ( [LastName], [FirstName], [Title], [TitleOfCourtesy], [BirthDate], [HireDate], [Address], [City], [Region], [PostalCode], [Country], [HomePhone], [Extension], [Photo], [Notes], [ReportsTo], [PhotoPath]) VALUES ( @LastName, @FirstName, @Title, @TitleOfCourtesy, @BirthDate, @HireDate, @Address, @City, @Region, @PostalCode, @Country, @HomePhone, @Extension, @Photo, @Notes, @ReportsTo, @PhotoPath);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_EMPLOYEES = "INSERT INTO dbo.Employees (LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath) VALUES ( @LastName, @FirstName, @Title, @TitleOfCourtesy, @BirthDate, @HireDate, @Address, @City, @Region, @PostalCode, @Country, @HomePhone, @Extension, @Photo, @Notes, @ReportsTo, @PhotoPath);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_EMPLOYEES = "UPDATE dbo.Employees SET [LastName] = @LastName, [FirstName] = @FirstName, [Title] = @Title, [TitleOfCourtesy] = @TitleOfCourtesy, [BirthDate] = @BirthDate, [HireDate] = @HireDate, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [HomePhone] = @HomePhone, [Extension] = @Extension, [Photo] = @Photo, [Notes] = @Notes, [ReportsTo] = @ReportsTo, [PhotoPath] = @PhotoPath WHERE [EmployeeID] = @EmployeeID";
+		private const string SQL_UPDATE_EMPLOYEES = "UPDATE dbo.Employees SETLastName = @LastName, FirstName = @FirstName, Title = @Title, TitleOfCourtesy = @TitleOfCourtesy, BirthDate = @BirthDate, HireDate = @HireDate, Address = @Address, City = @City, Region = @Region, PostalCode = @PostalCode, Country = @Country, HomePhone = @HomePhone, Extension = @Extension, Photo = @Photo, Notes = @Notes, ReportsTo = @ReportsTo, PhotoPath = @PhotoPath WHERE EmployeeID = @EmployeeID";
 		
-		private const string SQL_DELETE_EMPLOYEES = "DELETE FROM dbo.Employees WHERE  [EmployeeID] = @EmployeeID ";
+		private const string SQL_DELETE_EMPLOYEES = "DELETE FROM dbo.Employees WHERE  EmployeeID = @EmployeeID ";
 		
         #endregion
         	  	
@@ -406,7 +406,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.reportstoRef == null)
-                    this.reportstoRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.ReportsTo);
+                    this.reportstoRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.ReportsTo);                    
                 
                 return this.reportstoRef; 
             }
@@ -416,18 +416,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("ReportsToRef");
                     
-                    if((this.reportstoRef = value) != null) 
-                    {
-                        this.reportsto = this.reportstoRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.reportsto = default(int);
-                    }
+                    this.reportsto = (this.reportstoRef = value) != null ? this.reportstoRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("ReportsToRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<Employee> Employees 

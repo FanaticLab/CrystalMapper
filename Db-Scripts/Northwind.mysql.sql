@@ -1,4 +1,4 @@
-﻿# ---------------------------------------------------------------------- #
+# ---------------------------------------------------------------------- #
 # Target DBMS:           MySQL 5                                         #
 # Project name:          Northwind                                       #
 # Author:                Valon Hoti                                      #
@@ -28,23 +28,23 @@ CREATE TABLE `Categories` (
 CREATE INDEX `CategoryName` ON `Categories` (`CategoryName`);
 
 # ---------------------------------------------------------------------- #
-# Add table "CustomerCustomerDemo"                                       #
+# Add table "Customer_Customer_Demo"                                       #
 # ---------------------------------------------------------------------- #
 
-CREATE TABLE `CustomerCustomerDemo` (
+CREATE TABLE `Customer_Customer_Demo` (
     `CustomerID` VARCHAR(5) NOT NULL,
     `CustomerTypeID` VARCHAR(10) NOT NULL,
-    CONSTRAINT `PK_CustomerCustomerDemo` PRIMARY KEY (`CustomerID`, `CustomerTypeID`)
+    CONSTRAINT `PK_Customer_Customer_Demo` PRIMARY KEY (`CustomerID`, `CustomerTypeID`)
 );
 
 # ---------------------------------------------------------------------- #
-# Add table "CustomerDemographics"                                       #
+# Add table "Customer_Demographics"                                       #
 # ---------------------------------------------------------------------- #
 
-CREATE TABLE `CustomerDemographics` (
+CREATE TABLE `Customer_Demographics` (
     `CustomerTypeID` VARCHAR(10) NOT NULL,
     `CustomerDesc` MEDIUMTEXT,
-    CONSTRAINT `PK_CustomerDemographics` PRIMARY KEY (`CustomerTypeID`)
+    CONSTRAINT `PK_Customer_Demographics` PRIMARY KEY (`CustomerTypeID`)
 );
 
 # ---------------------------------------------------------------------- #
@@ -106,13 +106,13 @@ CREATE INDEX `LastName` ON `Employees` (`LastName`);
 CREATE INDEX `PostalCode` ON `Employees` (`PostalCode`);
 
 # ---------------------------------------------------------------------- #
-# Add table "EmployeeTerritories"                                        #
+# Add table "Employee_Territories"                                        #
 # ---------------------------------------------------------------------- #
 
-CREATE TABLE `EmployeeTerritories` (
+CREATE TABLE `Employee_Territories` (
     `EmployeeID` INTEGER NOT NULL,
     `TerritoryID` VARCHAR(20) NOT NULL,
-    CONSTRAINT `PK_EmployeeTerritories` PRIMARY KEY (`EmployeeID`, `TerritoryID`)
+    CONSTRAINT `PK_Employee_Territories` PRIMARY KEY (`EmployeeID`, `TerritoryID`)
 );
 
 # ---------------------------------------------------------------------- #
@@ -465,107 +465,107 @@ INSERT INTO Employees VALUES(null,'Dodsworth','Anne','Sales Representative','Ms.
 ,'http://accweb/emmployees/davolio.bmp','2333.33');
 
 # ---------------------------------------------------------------------- #
-# Add info into "EmployeeTerritories"                                    #
+# Add info into "Employee_Territories"                                    #
 # ---------------------------------------------------------------------- #
 
-TRUNCATE TABLE EmployeeTerritories;
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+TRUNCATE TABLE Employee_Territories;
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(1, '06897');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(1, '19713');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '01581');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '01730');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '01833');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '02116');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '02139');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '02184');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(2, '40222');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(3, '30346');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(3, '31406');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(3, '32859');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(3, '33607');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(4, '20852');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(4, '27403');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(4, '27511');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '02903');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '07960');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '08837');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '10019');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '10038');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '11747');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(5, '14450');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(6, '85014');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(6, '85251');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(6, '98004');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(6, '98052');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(6, '98104');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '60179');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '60601');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '80202');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '80909');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '90405');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '94025');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '94105');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '95008');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '95054');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(7, '95060');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(8, '19428');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(8, '44122');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(8, '45839');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(8, '53404');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '03049');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '03801');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '48075');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '48084');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '48304');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '55113');
-INSERT INTO EmployeeTerritories (EmployeeID, TerritoryID)
+INSERT INTO Employee_Territories (EmployeeID, TerritoryID)
 VALUES(9, '55439');
 
 # ---------------------------------------------------------------------- #
@@ -3912,19 +3912,19 @@ VALUES('98104', 'Seattle                                           ', 2);
 # Foreign key constraints                                                #
 # ---------------------------------------------------------------------- #
 
-ALTER TABLE `CustomerCustomerDemo` ADD CONSTRAINT `FK_CustomerCustomerDemo` 
-    FOREIGN KEY (`CustomerTypeID`) REFERENCES `CustomerDemographics` (`CustomerTypeID`);
+ALTER TABLE `Customer_Customer_Demo` ADD CONSTRAINT `FK_Customer_Customer_Demo` 
+    FOREIGN KEY (`CustomerTypeID`) REFERENCES `Customer_Demographics` (`CustomerTypeID`);
 
-ALTER TABLE `CustomerCustomerDemo` ADD CONSTRAINT `FK_CustomerCustomerDemo_Customers` 
+ALTER TABLE `Customer_Customer_Demo` ADD CONSTRAINT `FK_Customer_Customer_Demo_Customers` 
     FOREIGN KEY (`CustomerID`) REFERENCES `Customers` (`CustomerID`);
 
 ALTER TABLE `Employees` ADD CONSTRAINT `FK_Employees_Employees` 
     FOREIGN KEY (`ReportsTo`) REFERENCES `Employees` (`EmployeeID`);
 
-ALTER TABLE `EmployeeTerritories` ADD CONSTRAINT `FK_EmployeeTerritories_Employees` 
+ALTER TABLE `Employee_Territories` ADD CONSTRAINT `FK_Employee_Territories_Employees` 
     FOREIGN KEY (`EmployeeID`) REFERENCES `Employees` (`EmployeeID`);
 
-ALTER TABLE `EmployeeTerritories` ADD CONSTRAINT `FK_EmployeeTerritories_Territories` 
+ALTER TABLE `Employee_Territories` ADD CONSTRAINT `FK_Employee_Territories_Territories` 
     FOREIGN KEY (`TerritoryID`) REFERENCES `Territories` (`TerritoryID`);
 
 ALTER TABLE `Order Details` ADD CONSTRAINT `FK_Order_Details_Orders` 

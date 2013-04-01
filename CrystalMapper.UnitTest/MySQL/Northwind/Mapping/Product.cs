@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Product : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Products";	
+        public const string TABLE_NAME = "products";	
      
 		public const string COL_PRODUCTID = "ProductID";
 		public const string COL_PRODUCTNAME = "ProductName";
@@ -54,11 +54,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_PRODUCTS = "INSERT INTO dbo.Products ( [ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder], [ReorderLevel], [Discontinued]) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_PRODUCTS = "INSERT INTO products (ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + " SELECT LAST_INSERT_ID();" ;
 		
-		private const string SQL_UPDATE_PRODUCTS = "UPDATE dbo.Products SET [ProductName] = @ProductName, [SupplierID] = @SupplierID, [CategoryID] = @CategoryID, [QuantityPerUnit] = @QuantityPerUnit, [UnitPrice] = @UnitPrice, [UnitsInStock] = @UnitsInStock, [UnitsOnOrder] = @UnitsOnOrder, [ReorderLevel] = @ReorderLevel, [Discontinued] = @Discontinued WHERE [ProductID] = @ProductID";
+		private const string SQL_UPDATE_PRODUCTS = "UPDATE products SETProductName = @ProductName, SupplierID = @SupplierID, CategoryID = @CategoryID, QuantityPerUnit = @QuantityPerUnit, UnitPrice = @UnitPrice, UnitsInStock = @UnitsInStock, UnitsOnOrder = @UnitsOnOrder, ReorderLevel = @ReorderLevel, Discontinued = @Discontinued WHERE ProductID = @ProductID";
 		
-		private const string SQL_DELETE_PRODUCTS = "DELETE FROM dbo.Products WHERE  [ProductID] = @ProductID ";
+		private const string SQL_DELETE_PRODUCTS = "DELETE FROM products WHERE  ProductID = @ProductID ";
 		
         #endregion
         	  	
@@ -82,11 +82,11 @@ namespace CrystalMapper.UnitTest.Northwind
 	
 		protected short? reorderlevel = default(short?);
 	
-		protected bool discontinued = default(bool);
-	
-		protected Category categoryRef;
+		protected ushort discontinued = default(ushort);
 	
 		protected Supplier supplierRef;
+	
+		protected Category categoryRef;
 	
         
         private event PropertyChangingEventHandler propertyChanging;
@@ -208,8 +208,8 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        [Column(COL_DISCONTINUED, PARAM_DISCONTINUED, default(bool))]
-        public virtual bool Discontinued 
+        [Column(COL_DISCONTINUED, PARAM_DISCONTINUED, default(ushort))]
+        public virtual ushort Discontinued 
         {
             get { return this.discontinued; }
 			set	{ 
@@ -222,29 +222,6 @@ namespace CrystalMapper.UnitTest.Northwind
                 }
         }	
 		
-        [Column(COL_CATEGORYID, PARAM_CATEGORYID )]
-        public virtual int? CategoryID                
-        {
-            get
-            {
-                if(this.categoryRef == null)
-                    return this.categoryid ;
-                
-                return this.categoryRef.CategoryID;            
-            }
-            set
-            {
-                if(this.categoryid != value)
-                {
-                    this.OnPropertyChanging("CategoryID");                    
-                    this.categoryid = value;                    
-                    this.OnPropertyChanged("CategoryID");
-                    
-                    this.categoryRef = null;
-                }                
-            }          
-        }	
-        
         [Column(COL_SUPPLIERID, PARAM_SUPPLIERID )]
         public virtual int? SupplierID                
         {
@@ -268,41 +245,35 @@ namespace CrystalMapper.UnitTest.Northwind
             }          
         }	
         
-        public Category CategoryRef
+        [Column(COL_CATEGORYID, PARAM_CATEGORYID )]
+        public virtual int? CategoryID                
         {
-            get 
-            { 
+            get
+            {
                 if(this.categoryRef == null)
-                    this.categoryRef = this.CreateQuery<Category>().First(p => p.CategoryID == this.CategoryID);
+                    return this.categoryid ;
                 
-                return this.categoryRef; 
+                return this.categoryRef.CategoryID;            
             }
-			set	
-            { 
-                if(this.categoryRef != value)
+            set
+            {
+                if(this.categoryid != value)
                 {
-                    this.OnPropertyChanging("CategoryRef");
+                    this.OnPropertyChanging("CategoryID");                    
+                    this.categoryid = value;                    
+                    this.OnPropertyChanged("CategoryID");
                     
-                    if((this.categoryRef = value) != null) 
-                    {
-                        this.categoryid = this.categoryRef.CategoryID;
-                    }
-                    else
-                    {
-		                this.categoryid = default(int);
-                    }
-                    
-                    this.OnPropertyChanged("CategoryRef");
-                }   
-             }
+                    this.categoryRef = null;
+                }                
+            }          
         }	
-		
+        
         public Supplier SupplierRef
         {
             get 
             { 
                 if(this.supplierRef == null)
-                    this.supplierRef = this.CreateQuery<Supplier>().First(p => p.SupplierID == this.SupplierID);
+                    this.supplierRef = this.CreateQuery<Supplier>().First(p => p.SupplierID == this.SupplierID);                    
                 
                 return this.supplierRef; 
             }
@@ -312,25 +283,40 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("SupplierRef");
                     
-                    if((this.supplierRef = value) != null) 
-                    {
-                        this.supplierid = this.supplierRef.SupplierID;
-                    }
-                    else
-                    {
-		                this.supplierid = default(int);
-                    }
+                    this.supplierid = (this.supplierRef = value) != null ? this.supplierRef.SupplierID : default(int);                  
                     
                     this.OnPropertyChanged("SupplierRef");
                 }   
-             }
+            }
+        }	
+		
+        public Category CategoryRef
+        {
+            get 
+            { 
+                if(this.categoryRef == null)
+                    this.categoryRef = this.CreateQuery<Category>().First(p => p.CategoryID == this.CategoryID);                    
+                
+                return this.categoryRef; 
+            }
+			set	
+            { 
+                if(this.categoryRef != value)
+                {
+                    this.OnPropertyChanging("CategoryRef");
+                    
+                    this.categoryid = (this.categoryRef = value) != null ? this.categoryRef.CategoryID : default(int);                  
+                    
+                    this.OnPropertyChanged("CategoryRef");
+                }   
+            }
         }	
 		
         public IQueryable<OrderDetail> OrderDetails 
-        {
+        { 
             get { return this.CreateQuery<OrderDetail>().Where(r => r.ProductID == ProductID); }
         }
-       
+        
         #endregion        
         
         #region Methods
@@ -367,7 +353,7 @@ namespace CrystalMapper.UnitTest.Northwind
 			this.unitsinstock = DbConvert.ToNullable< short >(reader[COL_UNITSINSTOCK]);
 			this.unitsonorder = DbConvert.ToNullable< short >(reader[COL_UNITSONORDER]);
 			this.reorderlevel = DbConvert.ToNullable< short >(reader[COL_REORDERLEVEL]);
-			this.discontinued = (bool)reader[COL_DISCONTINUED];
+			this.discontinued = (ushort)reader[COL_DISCONTINUED];
 		}
 		
 		bool IRecord.Create(DataContext dataContext)

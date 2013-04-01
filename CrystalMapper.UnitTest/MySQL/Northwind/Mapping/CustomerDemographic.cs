@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class CustomerDemographic : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.CustomerDemographics";	
+        public const string TABLE_NAME = "customer_demographics";	
      
 		public const string COL_CUSTOMERTYPEID = "CustomerTypeID";
 		public const string COL_CUSTOMERDESC = "CustomerDesc";
@@ -38,11 +38,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERDEMOGRAPHICS = "INSERT INTO dbo.CustomerDemographics ( [CustomerTypeID], [CustomerDesc]) VALUES ( @CustomerTypeID, @CustomerDesc);"  ;
+		private const string SQL_INSERT_CUSTOMER_DEMOGRAPHICS = "INSERT INTO customer_demographics (CustomerTypeID, CustomerDesc) VALUES ( @CustomerTypeID, @CustomerDesc);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERDEMOGRAPHICS = "UPDATE dbo.CustomerDemographics SET [CustomerDesc] = @CustomerDesc WHERE [CustomerTypeID] = @CustomerTypeID";
+		private const string SQL_UPDATE_CUSTOMER_DEMOGRAPHICS = "UPDATE customer_demographics SETCustomerDesc = @CustomerDesc WHERE CustomerTypeID = @CustomerTypeID";
 		
-		private const string SQL_DELETE_CUSTOMERDEMOGRAPHICS = "DELETE FROM dbo.CustomerDemographics WHERE  [CustomerTypeID] = @CustomerTypeID ";
+		private const string SQL_DELETE_CUSTOMER_DEMOGRAPHICS = "DELETE FROM customer_demographics WHERE  CustomerTypeID = @CustomerTypeID ";
 		
         #endregion
         	  	
@@ -103,10 +103,10 @@ namespace CrystalMapper.UnitTest.Northwind
         }	
 		
         public IQueryable<CustomerCustomerDemo> CustomerCustomerDemos 
-        {
+        { 
             get { return this.CreateQuery<CustomerCustomerDemo>().Where(r => r.CustomerTypeID == CustomerTypeID); }
         }
-       
+        
         #endregion        
         
         #region Methods
@@ -140,7 +140,7 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		bool IRecord.Create(DataContext dataContext)
         {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMERDEMOGRAPHICS))
+            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMER_DEMOGRAPHICS))
             {	
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERDESC, DbConvert.DbValue(this.CustomerDesc)));
@@ -150,7 +150,7 @@ namespace CrystalMapper.UnitTest.Northwind
 
 		bool IRecord.Update(DataContext dataContext)
         {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMERDEMOGRAPHICS))
+            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMER_DEMOGRAPHICS))
             {							
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERDESC, DbConvert.DbValue(this.CustomerDesc)));
@@ -161,7 +161,7 @@ namespace CrystalMapper.UnitTest.Northwind
 
 		bool IRecord.Delete(DataContext dataContext)
         {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMERDEMOGRAPHICS))
+            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMER_DEMOGRAPHICS))
             {							
 				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERTYPEID, this.CustomerTypeID));
                 return (command.ExecuteNonQuery() == 1);

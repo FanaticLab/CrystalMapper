@@ -1,6 +1,6 @@
 ﻿/*****************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *****************************************************************/
@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using CrystalMapper.Context;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
     /// <summary>
     /// Query provider for "Northwind" database

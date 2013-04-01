@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Territory : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Territories";	
+        public const string TABLE_NAME = "territories";	
      
 		public const string COL_TERRITORYID = "TerritoryID";
 		public const string COL_TERRITORYDESCRIPTION = "TerritoryDescription";
@@ -40,11 +40,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_TERRITORIES = "INSERT INTO dbo.Territories ( [TerritoryID], [TerritoryDescription], [RegionID]) VALUES ( @TerritoryID, @TerritoryDescription, @RegionID);"  ;
+		private const string SQL_INSERT_TERRITORIES = "INSERT INTO territories (TerritoryID, TerritoryDescription, RegionID) VALUES ( @TerritoryID, @TerritoryDescription, @RegionID);"  ;
 		
-		private const string SQL_UPDATE_TERRITORIES = "UPDATE dbo.Territories SET [TerritoryDescription] = @TerritoryDescription, [RegionID] = @RegionID WHERE [TerritoryID] = @TerritoryID";
+		private const string SQL_UPDATE_TERRITORIES = "UPDATE territories SETTerritoryDescription = @TerritoryDescription, RegionID = @RegionID WHERE TerritoryID = @TerritoryID";
 		
-		private const string SQL_DELETE_TERRITORIES = "DELETE FROM dbo.Territories WHERE  [TerritoryID] = @TerritoryID ";
+		private const string SQL_DELETE_TERRITORIES = "DELETE FROM territories WHERE  TerritoryID = @TerritoryID ";
 		
         #endregion
         	  	
@@ -136,7 +136,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.regionRef == null)
-                    this.regionRef = this.CreateQuery<Region>().First(p => p.RegionID == this.RegionID);
+                    this.regionRef = this.CreateQuery<Region>().First(p => p.RegionID == this.RegionID);                    
                 
                 return this.regionRef; 
             }
@@ -146,25 +146,18 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("RegionRef");
                     
-                    if((this.regionRef = value) != null) 
-                    {
-                        this.regionid = this.regionRef.RegionID;
-                    }
-                    else
-                    {
-		                this.regionid = default(int);
-                    }
+                    this.regionid = (this.regionRef = value) != null ? this.regionRef.RegionID : default(int);                  
                     
                     this.OnPropertyChanged("RegionRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<EmployeeTerritory> EmployeeTerritories 
-        {
+        { 
             get { return this.CreateQuery<EmployeeTerritory>().Where(r => r.TerritoryID == TerritoryID); }
         }
-       
+        
         #endregion        
         
         #region Methods
