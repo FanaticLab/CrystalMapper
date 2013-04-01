@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CrystalMapper.Lang
 {
+    // Overrides SQL language operators for MySQL
     internal class MySqlLang : SqlLang
     {
         public override SqlLangType SqlLangType

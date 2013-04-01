@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CrystalMapper.Lang
 {
+    // Overrides SQL language operators for Oracle
     internal class PSqlLang : SqlLang
     {
         public override SqlLangType SqlLangType

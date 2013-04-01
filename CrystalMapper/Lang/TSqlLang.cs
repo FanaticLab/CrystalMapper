@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CrystalMapper.Lang
 {
+    // Overrides SQL language operators for SQL Server
     internal class TSqlLang : SqlLang
     {
         public override SqlLangType SqlLangType
