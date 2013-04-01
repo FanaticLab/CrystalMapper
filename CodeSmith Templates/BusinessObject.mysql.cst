@@ -1,6 +1,6 @@
 ﻿<%-------------------------------------------------------------------
  * Author: Faraz Masood Khan 
- * Description: This template generate entity class for SQL Server
+ * Description: This template generate entity class for MySQL
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
 --------------------------------------------------------------------%>
