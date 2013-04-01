@@ -43,7 +43,7 @@ namespace <%= ModelNamespace %>
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "<%= SourceTable.FullName %>";	
+        public const string TABLE_NAME = "<%= GetTableName(SourceTable) %>";	
      
         <% foreach(ColumnSchema column in SourceTable.Columns) { %>
 		public const string <%= GetConstantColumnName(column) %> = "<%= GetColumnName(column) %>";
@@ -210,11 +210,9 @@ namespace <%= ModelNamespace %>
         }	
 		
         <% } %>
-        <% foreach(TableSchema toManyTable in SourceTable.Database.Tables) {
-        foreach(TableKeySchema tableKey in toManyTable.ForeignKeys) {  
-        if(tableKey.PrimaryKeyTable.Equals(SourceTable)) { %>  
+        <% foreach(TableKeySchema tableKey in GetForeignKeyTables(SourceTable)) { %>  
         public IQueryable<<%= GetClassName(tableKey.ForeignKeyTable) %>> <%= GetUniqueCollectionPropName(tableKey.ForeignKeyTable, tableKey) %> 
-        {
+        { 
             <% if(tableKey.ForeignKeyMemberColumns.Count == 1) { %>
             get { return this.CreateQuery<<%= GetClassName(tableKey.ForeignKeyTable) %>>().Where(r => r.<%= GetPropertyName(tableKey.ForeignKeyMemberColumns[0]) %> == <%= this.GetPropertyName(tableKey.PrimaryKeyMemberColumns[0]) %>); }
             <% } else { %>
@@ -228,10 +226,8 @@ namespace <%= ModelNamespace %>
             }
             <% } %>
         }
-       
-       <% } %>
-       <% } %>
-       <% } %>
+        
+        <% } %>
         #endregion        
         
         #region Methods

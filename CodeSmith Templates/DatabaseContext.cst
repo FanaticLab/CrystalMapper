@@ -29,19 +29,19 @@ namespace <%= ModelNamespace %>
     /// <summary>
     /// Query provider for "<%= Database.FullName %>" database
     /// </summary>
-    public partial class <%= Database.Name %>Db : DbContext
+    public partial class <%= GetDbClassName(Database) %>Db : DbContext
     {	
         /// <summary>
         /// Static instance of "<%= Database.Name %>" database
         /// </summary>
-        public static readonly <%= Database.Name %>Db Context;
+        public static readonly <%= GetDbClassName(Database) %>Db Context;
     
-        static <%= Database.Name %>Db()
+        static <%= GetDbClassName(Database) %>Db()
         {
-            Context = new <%= Database.Name %>Db();
+            Context = new <%= GetDbClassName(Database) %>Db();
         }
     
-		public <%= Database.Name %>Db(): base("<%= Database.Name %>") {}
+		public <%= GetDbClassName(Database) %>Db(): base("<%= Database %>") {}
         
         <% foreach(TableSchema table in Database.Tables) { %>
         /// <summary>
