@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Region : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Region";	
+        public const string TABLE_NAME = "region";	
      
 		public const string COL_REGIONID = "RegionID";
 		public const string COL_REGIONDESCRIPTION = "RegionDescription";
@@ -38,11 +38,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_REGION = "INSERT INTO dbo.Region ( [RegionID], [RegionDescription]) VALUES ( @RegionID, @RegionDescription);"  ;
+		private const string SQL_INSERT_REGION = "INSERT INTO region (RegionID, RegionDescription) VALUES ( @RegionID, @RegionDescription);"  ;
 		
-		private const string SQL_UPDATE_REGION = "UPDATE dbo.Region SET [RegionDescription] = @RegionDescription WHERE [RegionID] = @RegionID";
+		private const string SQL_UPDATE_REGION = "UPDATE region SETRegionDescription = @RegionDescription WHERE RegionID = @RegionID";
 		
-		private const string SQL_DELETE_REGION = "DELETE FROM dbo.Region WHERE  [RegionID] = @RegionID ";
+		private const string SQL_DELETE_REGION = "DELETE FROM region WHERE  RegionID = @RegionID ";
 		
         #endregion
         	  	
@@ -103,10 +103,10 @@ namespace CrystalMapper.UnitTest.Northwind
         }	
 		
         public IQueryable<Territory> Territories 
-        {
+        { 
             get { return this.CreateQuery<Territory>().Where(r => r.RegionID == RegionID); }
         }
-       
+        
         #endregion        
         
         #region Methods

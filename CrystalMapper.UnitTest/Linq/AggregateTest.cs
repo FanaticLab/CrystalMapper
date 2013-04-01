@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CrystalMapper.UnitTest.Northwind;
+using CrystalMapper.UnitTest.SQL.Northwind;
 using System.Data.SqlClient;
 using System.Configuration;
 using CrystalMapper.Context;

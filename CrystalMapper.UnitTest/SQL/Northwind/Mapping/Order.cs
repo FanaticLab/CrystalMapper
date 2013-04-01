@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Order : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -62,11 +62,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_ORDERS = "INSERT INTO dbo.Orders ( [CustomerID], [EmployeeID], [OrderDate], [RequiredDate], [ShippedDate], [ShipVia], [Freight], [ShipName], [ShipAddress], [ShipCity], [ShipRegion], [ShipPostalCode], [ShipCountry]) VALUES ( @CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_ORDERS = "INSERT INTO dbo.Orders (CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry) VALUES ( @CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_ORDERS = "UPDATE dbo.Orders SET [CustomerID] = @CustomerID, [EmployeeID] = @EmployeeID, [OrderDate] = @OrderDate, [RequiredDate] = @RequiredDate, [ShippedDate] = @ShippedDate, [ShipVia] = @ShipVia, [Freight] = @Freight, [ShipName] = @ShipName, [ShipAddress] = @ShipAddress, [ShipCity] = @ShipCity, [ShipRegion] = @ShipRegion, [ShipPostalCode] = @ShipPostalCode, [ShipCountry] = @ShipCountry WHERE [OrderID] = @OrderID";
+		private const string SQL_UPDATE_ORDERS = "UPDATE dbo.Orders SETCustomerID = @CustomerID, EmployeeID = @EmployeeID, OrderDate = @OrderDate, RequiredDate = @RequiredDate, ShippedDate = @ShippedDate, ShipVia = @ShipVia, Freight = @Freight, ShipName = @ShipName, ShipAddress = @ShipAddress, ShipCity = @ShipCity, ShipRegion = @ShipRegion, ShipPostalCode = @ShipPostalCode, ShipCountry = @ShipCountry WHERE OrderID = @OrderID";
 		
-		private const string SQL_DELETE_ORDERS = "DELETE FROM dbo.Orders WHERE  [OrderID] = @OrderID ";
+		private const string SQL_DELETE_ORDERS = "DELETE FROM dbo.Orders WHERE  OrderID = @OrderID ";
 		
         #endregion
         	  	
@@ -356,7 +356,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.customerRef == null)
-                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);
+                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);                    
                 
                 return this.customerRef; 
             }
@@ -366,18 +366,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("CustomerRef");
                     
-                    if((this.customerRef = value) != null) 
-                    {
-                        this.customerid = this.customerRef.CustomerID;
-                    }
-                    else
-                    {
-		                this.customerid = default(string);
-                    }
+                    this.customerid = (this.customerRef = value) != null ? this.customerRef.CustomerID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerRef");
                 }   
-             }
+            }
         }	
 		
         public Employee EmployeeRef
@@ -385,7 +378,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.employeeRef == null)
-                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);                    
                 
                 return this.employeeRef; 
             }
@@ -395,18 +388,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("EmployeeRef");
                     
-                    if((this.employeeRef = value) != null) 
-                    {
-                        this.employeeid = this.employeeRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.employeeid = default(int);
-                    }
+                    this.employeeid = (this.employeeRef = value) != null ? this.employeeRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("EmployeeRef");
                 }   
-             }
+            }
         }	
 		
         public Shipper ShipperRef
@@ -414,7 +400,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.shipperRef == null)
-                    this.shipperRef = this.CreateQuery<Shipper>().First(p => p.ShipperID == this.ShipVia);
+                    this.shipperRef = this.CreateQuery<Shipper>().First(p => p.ShipperID == this.ShipVia);                    
                 
                 return this.shipperRef; 
             }
@@ -424,18 +410,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("ShipperRef");
                     
-                    if((this.shipperRef = value) != null) 
-                    {
-                        this.shipvium = this.shipperRef.ShipperID;
-                    }
-                    else
-                    {
-		                this.shipvium = default(int);
-                    }
+                    this.shipvium = (this.shipperRef = value) != null ? this.shipperRef.ShipperID : default(int);                  
                     
                     this.OnPropertyChanged("ShipperRef");
                 }   
-             }
+            }
         }	
 		
         public IQueryable<OrderDetail> OrderDetails 

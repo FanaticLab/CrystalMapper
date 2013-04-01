@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class CustomerCustomerDemo : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -38,11 +38,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERCUSTOMERDEMO = "INSERT INTO dbo.CustomerCustomerDemo ( [CustomerID], [CustomerTypeID]) VALUES ( @CustomerID, @CustomerTypeID);"  ;
+		private const string SQL_INSERT_CUSTOMERCUSTOMERDEMO = "INSERT INTO dbo.CustomerCustomerDemo (CustomerID, CustomerTypeID) VALUES ( @CustomerID, @CustomerTypeID);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERCUSTOMERDEMO = "UPDATE dbo.CustomerCustomerDemo SET WHERE [CustomerID] = @CustomerID AND [CustomerTypeID] = @CustomerTypeID";
+		private const string SQL_UPDATE_CUSTOMERCUSTOMERDEMO = "UPDATE dbo.CustomerCustomerDemo SET WHERE CustomerID = @CustomerID AND CustomerTypeID = @CustomerTypeID";
 		
-		private const string SQL_DELETE_CUSTOMERCUSTOMERDEMO = "DELETE FROM dbo.CustomerCustomerDemo WHERE  [CustomerID] = @CustomerID AND [CustomerTypeID] = @CustomerTypeID ";
+		private const string SQL_DELETE_CUSTOMERCUSTOMERDEMO = "DELETE FROM dbo.CustomerCustomerDemo WHERE  CustomerID = @CustomerID AND CustomerTypeID = @CustomerTypeID ";
 		
         #endregion
         	  	
@@ -129,7 +129,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.customerDemographicRef == null)
-                    this.customerDemographicRef = this.CreateQuery<CustomerDemographic>().First(p => p.CustomerTypeID == this.CustomerTypeID);
+                    this.customerDemographicRef = this.CreateQuery<CustomerDemographic>().First(p => p.CustomerTypeID == this.CustomerTypeID);                    
                 
                 return this.customerDemographicRef; 
             }
@@ -139,18 +139,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("CustomerDemographicRef");
                     
-                    if((this.customerDemographicRef = value) != null) 
-                    {
-                        this.customertypeid = this.customerDemographicRef.CustomerTypeID;
-                    }
-                    else
-                    {
-		                this.customertypeid = default(string);
-                    }
+                    this.customertypeid = (this.customerDemographicRef = value) != null ? this.customerDemographicRef.CustomerTypeID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerDemographicRef");
                 }   
-             }
+            }
         }	
 		
         public Customer CustomerRef
@@ -158,7 +151,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.customerRef == null)
-                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);
+                    this.customerRef = this.CreateQuery<Customer>().First(p => p.CustomerID == this.CustomerID);                    
                 
                 return this.customerRef; 
             }
@@ -168,18 +161,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("CustomerRef");
                     
-                    if((this.customerRef = value) != null) 
-                    {
-                        this.customerid = this.customerRef.CustomerID;
-                    }
-                    else
-                    {
-		                this.customerid = default(string);
-                    }
+                    this.customerid = (this.customerRef = value) != null ? this.customerRef.CustomerID : default(string);                  
                     
                     this.OnPropertyChanged("CustomerRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        

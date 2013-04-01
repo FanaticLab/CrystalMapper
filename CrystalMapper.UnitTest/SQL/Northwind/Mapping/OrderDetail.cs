@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class OrderDetail : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Order Details";	
+        public const string TABLE_NAME = "dbo.[Order Details]";	
      
 		public const string COL_ORDERID = "OrderID";
 		public const string COL_PRODUCTID = "ProductID";
@@ -44,11 +44,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_ORDER_DETAILS = "INSERT INTO dbo.Order Details ( [OrderID], [ProductID], [UnitPrice], [Quantity], [Discount]) VALUES ( @OrderID, @ProductID, @UnitPrice, @Quantity, @Discount);"  ;
+		private const string SQL_INSERT_ORDER_DETAILS = "INSERT INTO dbo.[Order Details] (OrderID, ProductID, UnitPrice, Quantity, Discount) VALUES ( @OrderID, @ProductID, @UnitPrice, @Quantity, @Discount);"  ;
 		
-		private const string SQL_UPDATE_ORDER_DETAILS = "UPDATE dbo.Order Details SET [UnitPrice] = @UnitPrice, [Quantity] = @Quantity, [Discount] = @Discount WHERE [OrderID] = @OrderID AND [ProductID] = @ProductID";
+		private const string SQL_UPDATE_ORDER_DETAILS = "UPDATE dbo.[Order Details] SETUnitPrice = @UnitPrice, Quantity = @Quantity, Discount = @Discount WHERE OrderID = @OrderID AND ProductID = @ProductID";
 		
-		private const string SQL_DELETE_ORDER_DETAILS = "DELETE FROM dbo.Order Details WHERE  [OrderID] = @OrderID AND [ProductID] = @ProductID ";
+		private const string SQL_DELETE_ORDER_DETAILS = "DELETE FROM dbo.[Order Details] WHERE  OrderID = @OrderID AND ProductID = @ProductID ";
 		
         #endregion
         	  	
@@ -183,7 +183,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.orderRef == null)
-                    this.orderRef = this.CreateQuery<Order>().First(p => p.OrderID == this.OrderID);
+                    this.orderRef = this.CreateQuery<Order>().First(p => p.OrderID == this.OrderID);                    
                 
                 return this.orderRef; 
             }
@@ -193,18 +193,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("OrderRef");
                     
-                    if((this.orderRef = value) != null) 
-                    {
-                        this.orderid = this.orderRef.OrderID;
-                    }
-                    else
-                    {
-		                this.orderid = default(int);
-                    }
+                    this.orderid = (this.orderRef = value) != null ? this.orderRef.OrderID : default(int);                  
                     
                     this.OnPropertyChanged("OrderRef");
                 }   
-             }
+            }
         }	
 		
         public Product ProductRef
@@ -212,7 +205,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.productRef == null)
-                    this.productRef = this.CreateQuery<Product>().First(p => p.ProductID == this.ProductID);
+                    this.productRef = this.CreateQuery<Product>().First(p => p.ProductID == this.ProductID);                    
                 
                 return this.productRef; 
             }
@@ -222,18 +215,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("ProductRef");
                     
-                    if((this.productRef = value) != null) 
-                    {
-                        this.productid = this.productRef.ProductID;
-                    }
-                    else
-                    {
-		                this.productid = default(int);
-                    }
+                    this.productid = (this.productRef = value) != null ? this.productRef.ProductID : default(int);                  
                     
                     this.OnPropertyChanged("ProductRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        

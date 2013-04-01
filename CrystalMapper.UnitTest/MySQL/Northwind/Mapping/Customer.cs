@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Customer : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Customers";	
+        public const string TABLE_NAME = "customers";	
      
 		public const string COL_CUSTOMERID = "CustomerID";
 		public const string COL_COMPANYNAME = "CompanyName";
@@ -56,11 +56,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO dbo.Customers ( [CustomerID], [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax]) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
+		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO customers (CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERS = "UPDATE dbo.Customers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax WHERE [CustomerID] = @CustomerID";
+		private const string SQL_UPDATE_CUSTOMERS = "UPDATE customers SETCompanyName = @CompanyName, ContactName = @ContactName, ContactTitle = @ContactTitle, Address = @Address, City = @City, Region = @Region, PostalCode = @PostalCode, Country = @Country, Phone = @Phone, Fax = @Fax WHERE CustomerID = @CustomerID";
 		
-		private const string SQL_DELETE_CUSTOMERS = "DELETE FROM dbo.Customers WHERE  [CustomerID] = @CustomerID ";
+		private const string SQL_DELETE_CUSTOMERS = "DELETE FROM customers WHERE  CustomerID = @CustomerID ";
 		
         #endregion
         	  	
@@ -265,15 +265,15 @@ namespace CrystalMapper.UnitTest.Northwind
         }	
 		
         public IQueryable<CustomerCustomerDemo> CustomerCustomerDemos 
-        {
+        { 
             get { return this.CreateQuery<CustomerCustomerDemo>().Where(r => r.CustomerID == CustomerID); }
         }
-       
+        
         public IQueryable<Order> Orders 
-        {
+        { 
             get { return this.CreateQuery<Order>().Where(r => r.CustomerID == CustomerID); }
         }
-       
+        
         #endregion        
         
         #region Methods

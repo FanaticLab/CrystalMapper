@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 8:25 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,14 +19,14 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.MySQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Category : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Categories";	
+        public const string TABLE_NAME = "categories";	
      
 		public const string COL_CATEGORYID = "CategoryID";
 		public const string COL_CATEGORYNAME = "CategoryName";
@@ -42,11 +42,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CATEGORIES = "INSERT INTO dbo.Categories ( [CategoryName], [Description], [Picture]) VALUES ( @CategoryName, @Description, @Picture);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_CATEGORIES = "INSERT INTO categories (CategoryName, Description, Picture) VALUES ( @CategoryName, @Description, @Picture);"   + " SELECT LAST_INSERT_ID();" ;
 		
-		private const string SQL_UPDATE_CATEGORIES = "UPDATE dbo.Categories SET [CategoryName] = @CategoryName, [Description] = @Description, [Picture] = @Picture WHERE [CategoryID] = @CategoryID";
+		private const string SQL_UPDATE_CATEGORIES = "UPDATE categories SETCategoryName = @CategoryName, Description = @Description, Picture = @Picture WHERE CategoryID = @CategoryID";
 		
-		private const string SQL_DELETE_CATEGORIES = "DELETE FROM dbo.Categories WHERE  [CategoryID] = @CategoryID ";
+		private const string SQL_DELETE_CATEGORIES = "DELETE FROM categories WHERE  CategoryID = @CategoryID ";
 		
         #endregion
         	  	
@@ -139,10 +139,10 @@ namespace CrystalMapper.UnitTest.Northwind
         }	
 		
         public IQueryable<Product> Products 
-        {
+        { 
             get { return this.CreateQuery<Product>().Where(r => r.CategoryID == CategoryID); }
         }
-       
+        
         #endregion        
         
         #region Methods

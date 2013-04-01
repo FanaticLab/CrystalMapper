@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Supplier : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -58,11 +58,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO dbo.Suppliers ( [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax], [HomePage]) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO dbo.Suppliers (CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SUPPLIERS = "UPDATE dbo.Suppliers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax, [HomePage] = @HomePage WHERE [SupplierID] = @SupplierID";
+		private const string SQL_UPDATE_SUPPLIERS = "UPDATE dbo.Suppliers SETCompanyName = @CompanyName, ContactName = @ContactName, ContactTitle = @ContactTitle, Address = @Address, City = @City, Region = @Region, PostalCode = @PostalCode, Country = @Country, Phone = @Phone, Fax = @Fax, HomePage = @HomePage WHERE SupplierID = @SupplierID";
 		
-		private const string SQL_DELETE_SUPPLIERS = "DELETE FROM dbo.Suppliers WHERE  [SupplierID] = @SupplierID ";
+		private const string SQL_DELETE_SUPPLIERS = "DELETE FROM dbo.Suppliers WHERE  SupplierID = @SupplierID ";
 		
         #endregion
         	  	

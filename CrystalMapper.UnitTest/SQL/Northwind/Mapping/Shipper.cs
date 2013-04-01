@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class Shipper : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -40,11 +40,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SHIPPERS = "INSERT INTO dbo.Shippers ( [CompanyName], [Phone]) VALUES ( @CompanyName, @Phone);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SHIPPERS = "INSERT INTO dbo.Shippers (CompanyName, Phone) VALUES ( @CompanyName, @Phone);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SHIPPERS = "UPDATE dbo.Shippers SET [CompanyName] = @CompanyName, [Phone] = @Phone WHERE [ShipperID] = @ShipperID";
+		private const string SQL_UPDATE_SHIPPERS = "UPDATE dbo.Shippers SETCompanyName = @CompanyName, Phone = @Phone WHERE ShipperID = @ShipperID";
 		
-		private const string SQL_DELETE_SHIPPERS = "DELETE FROM dbo.Shippers WHERE  [ShipperID] = @ShipperID ";
+		private const string SQL_DELETE_SHIPPERS = "DELETE FROM dbo.Shippers WHERE  ShipperID = @ShipperID ";
 		
         #endregion
         	  	

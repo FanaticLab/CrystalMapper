@@ -1,6 +1,6 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
- * Date:  Saturday, March 30, 2013 6:00 PM
+ * Date:  Monday, April 01, 2013 7:10 PM
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
@@ -19,7 +19,7 @@ using CrystalMapper.Linq;
 using CrystalMapper.Context;
 using CrystalMapper.Mapping;
 
-namespace CrystalMapper.UnitTest.Northwind
+namespace CrystalMapper.UnitTest.SQL.Northwind
 {
 	[Table(TABLE_NAME)]
     public partial class EmployeeTerritory : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
@@ -38,11 +38,11 @@ namespace CrystalMapper.UnitTest.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_EMPLOYEETERRITORIES = "INSERT INTO dbo.EmployeeTerritories ( [EmployeeID], [TerritoryID]) VALUES ( @EmployeeID, @TerritoryID);"  ;
+		private const string SQL_INSERT_EMPLOYEETERRITORIES = "INSERT INTO dbo.EmployeeTerritories (EmployeeID, TerritoryID) VALUES ( @EmployeeID, @TerritoryID);"  ;
 		
-		private const string SQL_UPDATE_EMPLOYEETERRITORIES = "UPDATE dbo.EmployeeTerritories SET WHERE [EmployeeID] = @EmployeeID AND [TerritoryID] = @TerritoryID";
+		private const string SQL_UPDATE_EMPLOYEETERRITORIES = "UPDATE dbo.EmployeeTerritories SET WHERE EmployeeID = @EmployeeID AND TerritoryID = @TerritoryID";
 		
-		private const string SQL_DELETE_EMPLOYEETERRITORIES = "DELETE FROM dbo.EmployeeTerritories WHERE  [EmployeeID] = @EmployeeID AND [TerritoryID] = @TerritoryID ";
+		private const string SQL_DELETE_EMPLOYEETERRITORIES = "DELETE FROM dbo.EmployeeTerritories WHERE  EmployeeID = @EmployeeID AND TerritoryID = @TerritoryID ";
 		
         #endregion
         	  	
@@ -129,7 +129,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.employeeRef == null)
-                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);
+                    this.employeeRef = this.CreateQuery<Employee>().First(p => p.EmployeeID == this.EmployeeID);                    
                 
                 return this.employeeRef; 
             }
@@ -139,18 +139,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("EmployeeRef");
                     
-                    if((this.employeeRef = value) != null) 
-                    {
-                        this.employeeid = this.employeeRef.EmployeeID;
-                    }
-                    else
-                    {
-		                this.employeeid = default(int);
-                    }
+                    this.employeeid = (this.employeeRef = value) != null ? this.employeeRef.EmployeeID : default(int);                  
                     
                     this.OnPropertyChanged("EmployeeRef");
                 }   
-             }
+            }
         }	
 		
         public Territory TerritoryRef
@@ -158,7 +151,7 @@ namespace CrystalMapper.UnitTest.Northwind
             get 
             { 
                 if(this.territoryRef == null)
-                    this.territoryRef = this.CreateQuery<Territory>().First(p => p.TerritoryID == this.TerritoryID);
+                    this.territoryRef = this.CreateQuery<Territory>().First(p => p.TerritoryID == this.TerritoryID);                    
                 
                 return this.territoryRef; 
             }
@@ -168,18 +161,11 @@ namespace CrystalMapper.UnitTest.Northwind
                 {
                     this.OnPropertyChanging("TerritoryRef");
                     
-                    if((this.territoryRef = value) != null) 
-                    {
-                        this.territoryid = this.territoryRef.TerritoryID;
-                    }
-                    else
-                    {
-		                this.territoryid = default(string);
-                    }
+                    this.territoryid = (this.territoryRef = value) != null ? this.territoryRef.TerritoryID : default(string);                  
                     
                     this.OnPropertyChanged("TerritoryRef");
                 }   
-             }
+            }
         }	
 		
         #endregion        
