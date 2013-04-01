@@ -1,4 +1,11 @@
-﻿using System;
+﻿/**********************************
+ * Author: Faraz Masood Khan 
+ * Description: This interface provides CRUD database operations, it should be implemented by all mapping classes
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ **********************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
