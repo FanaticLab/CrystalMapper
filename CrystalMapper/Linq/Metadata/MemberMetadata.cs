@@ -25,7 +25,7 @@ namespace CrystalMapper.Linq.Metadata
             {
                 this.ColumnName = columnAttributes[0].ColumnName;
                 this.ParamName = columnAttributes[0].ParamName;
-                this.DefTypeValue = columnAttributes[0].DefTypeValue;    
+                this.DefTypeValue = columnAttributes[0].DefValue;    
             }
             else
             {
