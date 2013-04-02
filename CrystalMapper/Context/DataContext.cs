@@ -309,6 +309,67 @@ namespace CrystalMapper.Context
             return records;
         }
 
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <returns>Scalar query result</returns>
+        public object ToScalar(string cmdText)
+        {
+            return this.ToScalar(cmdText, null);
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <param name="parameters">SQL parameters</param>
+        /// <returns>Scalar query result</returns>
+        public object ToScalar(string cmdText, Dictionary<string, object> parameters)
+        {            
+            using (var command = this.CreateCommand(cmdText))
+            {
+                if (parameters != null)
+                    foreach (string param in parameters.Keys)
+                        command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
+
+                return DbConvert.CLRValue(command.ExecuteScalar());
+            }
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <typeparam name="T">Cast scalar value to type</typeparam>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <returns>Scalar query result</returns>
+        public T ToScalar<T>(string cmdText)
+        {
+            return this.ToScalar<T>(cmdText, null);
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <typeparam name="T">Cast scalar value to type</typeparam>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <param name="parameters">SQL parameters</param>
+        /// <returns>Scalar query result</returns>
+        public T ToScalar<T>(string cmdText, Dictionary<string, object> parameters)
+        {
+            Type typeOfT = typeof(T);
+            if (typeOfT.IsGenericType && typeOfT.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                object value = this.ToScalar(cmdText, parameters);
+                if (value != null)
+                    return (T)Convert.ChangeType(value, typeOfT.GetGenericArguments()[0]);
+
+                return (T)Activator.CreateInstance(typeOfT);
+            }
+
+            return (T)Convert.ChangeType(this.ToScalar(cmdText, parameters), typeof(T));
+        }
+
         #region Transaction functions
 
         /// <summary>
