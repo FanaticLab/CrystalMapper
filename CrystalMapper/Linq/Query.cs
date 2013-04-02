@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*******************************************************
+ * Author: Faraz Masood Khan 
+ * Description: Implements IQueryable for CrystalMapper
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ *******************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +17,10 @@ using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
+    /// <summary>
+    /// Queryable object for CrystalMapper 
+    /// </summary>
+    /// <typeparam name="T">Type of querable object</typeparam>
     internal class Query<T> : IQueryable<T>, IQueryable, IEnumerable<T>, IEnumerable, IOrderedQueryable<T>, IOrderedQueryable
     {
         QueryProvider provider;

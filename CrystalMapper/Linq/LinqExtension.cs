@@ -1,4 +1,11 @@
-﻿using System;
+﻿/**********************************
+ * Author: Faraz Masood Khan 
+ * Description: Extendening LINQ IQueryable through extension functions
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ **********************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +17,9 @@ using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
+    /// <summary>
+    /// Constains extension functions for LINQ
+    /// </summary>
     public static class LinqExtension
     {
         /// <summary>

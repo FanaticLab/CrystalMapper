@@ -1,4 +1,11 @@
-﻿using System;
+﻿/***************************************************
+ * Author: Faraz Masood Khan 
+ * Description: Query provider for LINQ expressions
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ ***************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,43 +24,38 @@ using CoreSystem.Util;
 
 namespace CrystalMapper.Linq
 {
+    /// <summary>
+    /// Execute LINQ expression against database and obtain result
+    /// </summary>
     internal class QueryProvider : IQueryProvider
     {
         private string name;
 
         private bool disposeDataContext = false;
 
-        private WeakReference dataContextRef;
+        private WeakReference dataContextRef;    
 
-        private DataContext GetDataContext()
-        {
-            DataContext dataContext;
-            this.disposeDataContext = false;
-
-            // Create a new data context (database connection) if:
-            // a. Data context is not provided
-            // b. It is beens collected by garbage collector
-            // c. If object is disposed
-            if (this.dataContextRef == null || (dataContext = this.dataContextRef.Target as DataContext) == null || dataContext.IsDisposed)
-            {
-                dataContext = new DataContext(name); // Creates a new database connection;
-                this.disposeDataContext = true; // Dispose after querying database
-            }
-
-            return dataContext;
-        }
-
+        /// <summary>
+        /// Creates a new QueryProvider with the name of database connection string
+        /// </summary>
+        /// <param name="name"></param>
         public QueryProvider(string name)
         {
             Guard.CheckNullOrWhiteSpace(name, "QueryProvider(name)");
             this.name = name;
         }
 
+        /// <summary>
+        /// Creates a new QueryProvider and attached existing DataContext
+        /// </summary>
+        /// <param name="dataContext"></param>
         public QueryProvider(DataContext dataContext)
         {
             Guard.CheckNull(dataContext, "QueryProvider(dataContext)");
             this.dataContextRef = new WeakReference(dataContext);
         }
+
+        #region IQueryable<T>
 
         IQueryable<T> IQueryProvider.CreateQuery<T>(Expression expression)
         {
@@ -87,6 +89,13 @@ namespace CrystalMapper.Linq
             return this.Execute(expression);
         }
 
+        #endregion
+
+        /// <summary>
+        /// Translate and execute LINQ expression and return query result
+        /// </summary>
+        /// <param name="expression">LINQ expression</param>
+        /// <returns>LINQ query result</returns>
         public object Execute(Expression expression)
         {
             var queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
@@ -141,21 +150,33 @@ namespace CrystalMapper.Linq
             }
             catch (DbException ex)
             {
-                ex.Data.Add("SqlQuery", queryInfo.SqlQuery);
+                // Attaching SQL run against database
+                ex.Data.Add("SQLQuery", queryInfo.SqlQuery);
                 throw ex;
             }
             finally
             {
+                // Disposing DataContext if created
                 if (this.disposeDataContext && dataContext != null)
                     dataContext.Dispose();
             }
         }
 
+        /// <summary>
+        /// Returns compiled SQL for LINQ expression
+        /// </summary>
+        /// <param name="expression">LINQ expression</param>
+        /// <returns>SQL query</returns>
         public string GetQuery(Expression expression)
         {
             return (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression).SqlQuery;
         }
 
+        /// <summary>
+        /// Execute LINQ expression and return result set into dynamic objects
+        /// </summary>
+        /// <param name="expression">LINQ expression</param>
+        /// <returns>Dynamic objects</returns>
         private object ExecuteToDonymous(Expression expression)
         {
             var queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
@@ -178,9 +199,38 @@ namespace CrystalMapper.Linq
             }
         }
 
+        /// <summary>
+        /// Returns provided DataContext or creates a new DataContext one.
+        /// </summary>
+        /// <returns>DataContext</returns>
+        private DataContext GetDataContext()
+        {
+            DataContext dataContext;
+            this.disposeDataContext = false;
+
+            // Create a new data context (database connection) if:
+            // a. Data context is not provided
+            // b. It is beens collected by garbage collector
+            // c. If object is disposed
+            if (this.dataContextRef == null || (dataContext = this.dataContextRef.Target as DataContext) == null || dataContext.IsDisposed)
+            {
+                dataContext = new DataContext(name); // Creates a new database connection;
+                this.disposeDataContext = true; // Dispose after querying database
+            }
+
+            return dataContext;
+        }
+
+        /// <summary>
+        /// Returns SQL language of database based on DbProviderType
+        /// </summary>
+        /// <returns>SqlLang drived for that database</returns>
         private SqlLang GetSqlLangByProvider()
         {
-            switch (this.GetDataContext().Database.ProviderType)
+            var dataContext = this.dataContextRef != null ? (DataContext)this.dataContextRef.Target : null;
+            var dbProviderType = dataContext != null && !dataContext.IsDisposed ? dataContext.Database.ProviderType : DbFactory.GetDatabase(this.name).ProviderType;
+
+            switch (dbProviderType)
             {
                 case CoreSystem.Data.DbProviderType.Oracle:
                     return SqlLang.GetSqlLang(SqlLangType.PSql);

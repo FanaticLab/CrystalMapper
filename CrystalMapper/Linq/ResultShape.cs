@@ -1,14 +1,35 @@
-﻿using System;
+﻿/***********************************************
+ * Author: Faraz Masood Khan 
+ * Description: Result type return by sql query
+ * Project: http://crystalmapper.codeplex.com
+ * Copyright (c) 2013 FanaticLab
+ ***********************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace CrystalMapper.Linq
 {
+    /// <summary>
+    /// Shape of query result
+    /// </summary>
     public enum ResultShape
     {
-        None,       // it means that the query is not expected to have a return value
-        Singleton,  // it returns a single element
-        Sequence    // it returns a sequence of elements
+        /// <summary>
+        /// Query is not expected to have a return value return no result
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// It returns a scalar value
+        /// </summary>
+        Singleton,
+
+        /// <summary>
+        /// It returns a sequence of elements
+        /// </summary>
+        Sequence
     }
 }
