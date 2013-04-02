@@ -1,4 +1,4 @@
-### CrystalMapper is object relation mapping library for C#, that is fast, simple and encourages rapid development for database driven applications
+## CrystalMapper is object relation mapping library for C#, that is fast, simple and encourages rapid development for database driven applications
 
 ## Why CrystalMapper?
 
@@ -6,7 +6,7 @@ Developed for high performance large scale financial systems, used in number of 
 
 You are ready? read the [docs...](https://bitbucket.org/fanaticlab/crystalmapper/wiki/)
 
-### Speed ###
+## Speed
 
 It competes directly with ADO.NET DataSet, following are some stats for MySQL database. It proves to be faster than other leading ORMs
 
@@ -14,7 +14,7 @@ It competes directly with ADO.NET DataSet, following are some stats for MySQL da
 * Crystal Mapper			**15.782 sec**
 * Crystal Mapper & LINQ	    **19.261 sec**
  
-### Getting Started ###
+## Getting Started
 
 * Download lastest release from the download page.
 * Open CrystalMapper solution under Implementation folder.
