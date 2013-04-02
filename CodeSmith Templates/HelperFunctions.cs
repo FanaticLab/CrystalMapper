@@ -1,7 +1,7 @@
 /******************************************************************
  * Author: Faraz Masood Khan
  * Description: Helper functions used by templates
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  ******************************************************************/
 

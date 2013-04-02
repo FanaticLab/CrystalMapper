@@ -3,7 +3,7 @@ High performance and easy to use object relational mapping library very large sc
 
 CodeSmith templates helps you generate classes quickly, each class correspond to single table in database. It helps to maintain clean separation of database interfacing code with business logic. I also like to recommend [Application Architecture](http://codestand.feedbook.org/2011/02/application-architecture.html "Application Architecture") that will ensure reusability using MVC pattern.
 
-[http://crystalmapper.codeplex.com/documentation](http://crystalmapper.codeplex.com/documentation "Documentation")
+[http://www.fanaticlab.com/projects/crystalmapper//documentation](http://www.fanaticlab.com/projects/crystalmapper//documentation "Documentation")
 
 Templates are integral part of ORM. you can download Generator from http://www.codesmithtools.com. 
 

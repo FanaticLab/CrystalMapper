@@ -1,7 +1,7 @@
 ﻿/**********************************************************************************
  * Author: Faraz Masood Khan 
  * Description: This class holds SQL query info after translating LINQ expressions
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  **********************************************************************************/
 

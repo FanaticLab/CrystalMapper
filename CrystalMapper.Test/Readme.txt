@@ -14,5 +14,5 @@
 
 This project contains few Linq query tests.
 
-For any queries don't hesitate to email or report issue on http://crystalmapper.codeplex.com
+For any queries don't hesitate to email or report issue on http://www.fanaticlab.com/projects/crystalmapper/
 

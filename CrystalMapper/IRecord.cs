@@ -2,7 +2,7 @@
  * Author: Faraz Masood Khan 
  * Description: This interface provides CRUD database operations, 
  *              it should be implemented by all mapping classes
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  ****************************************************************/
 

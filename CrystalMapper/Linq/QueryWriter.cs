@@ -1,7 +1,7 @@
 ﻿/***************************************************************
  * Author: Faraz Masood Khan 
  * Description: Helper to write beautifully indented SQL queries
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  ***************************************************************/
 

@@ -1,7 +1,7 @@
 ﻿/************************************************************************************************
  * Author: Faraz Masood Khan 
  * Description: This class represents a single database that will be used to query that database
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  ************************************************************************************************/
 

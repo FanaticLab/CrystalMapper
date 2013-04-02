@@ -1,7 +1,7 @@
 ﻿/*********************************************************************
  * Author: CrystalMapper (Generated)
  * Date:  Monday, April 01, 2013 8:25 PM
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  *********************************************************************/
 

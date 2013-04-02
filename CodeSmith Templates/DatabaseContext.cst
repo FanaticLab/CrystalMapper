@@ -1,7 +1,7 @@
 ﻿<%---------------------------------------------------
  * Author: Faraz Masood Khan
  * Description: This template generates database entity drived from DbContext
- * Project Url: http://crystalmapper.codeplex.com
+ * Project Url: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
 -----------------------------------------------------%>
 <%@ CodeTemplate Language="C#" Src="HelperFunctions.cs" Inherits="HelperFunctions" TargetLanguage="C#" Debug="False" Description="Generates a Business Object for Custom DAL." %>
@@ -16,7 +16,7 @@
 /*****************************************************************
  * Author: CrystalMapper (Generated)
  * Date:  <%= DateTime.Now.ToString("f") %>
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) <%= DateTime.Now.ToString("yyyy") %> FanaticLab
  *****************************************************************/
 

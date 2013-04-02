@@ -1,7 +1,7 @@
 ﻿/***************************************************
  * Author: Faraz Masood Khan 
  * Description: Query provider for LINQ expressions
- * Project: http://crystalmapper.codeplex.com
+ * Project: http://www.fanaticlab.com/projects/crystalmapper/
  * Copyright (c) 2013 FanaticLab
  ***************************************************/
 
