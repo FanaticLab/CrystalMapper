@@ -1,10 +1,10 @@
-﻿/**********************************
+﻿/***********************************************************************************
  * Author: Faraz Masood Khan 
  * Description: This class represents a live database connection 
  *              and provides lot of CrystalMapper functions to interactive database
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
- **********************************/
+ ***********************************************************************************/
 
 using System;
 using System.Data;
@@ -129,7 +129,8 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <typeparam name="T">Type of record entity</typeparam>
         /// <returns>Query object for T entity</returns>
-        public IQueryable<T> Query<T>()
+        public IQueryable<T> Query<T>() 
+            where T : IRecord, new()
         {
             return new Query<T>(this);
         }

@@ -1,9 +1,10 @@
-﻿/**********************************
+﻿/****************************************************************
  * Author: Faraz Masood Khan 
- * Description: This interface provides CRUD database operations, it should be implemented by all mapping classes
+ * Description: This interface provides CRUD database operations, 
+ *              it should be implemented by all mapping classes
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
- **********************************/
+ ****************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using CrystalMapper.Context;
 namespace CrystalMapper
 {
     /// <summary>
-    /// Interface for CRUD operations
+    /// Interface for CRUD operations for single record
     /// </summary>
     public interface IRecord 
     {

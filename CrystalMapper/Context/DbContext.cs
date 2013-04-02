@@ -1,9 +1,9 @@
-﻿/**********************************
+﻿/************************************************************************************************
  * Author: Faraz Masood Khan 
  * Description: This class represents a single database that will be used to query that database
  * Project: http://crystalmapper.codeplex.com
  * Copyright (c) 2013 FanaticLab
- **********************************/
+ ************************************************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <typeparam name="T">Entity Type</typeparam>
         /// <returns>Query object for T entity</returns>
-        public IQueryable<T> Query<T>() where T : IRecord
+        public IQueryable<T> Query<T>() where T : IRecord, new()
         {
             return new Query<T>(this.Name);
         }
