@@ -540,7 +540,7 @@
             <param name="retVal">DataSet in which result should be reflected</param>
             <returns>DataSet with results of each query</returns>
         </member>
-        <member name="M:CoreSystem.Data.Database.ExecuteToDonymous(System.String,System.Data.Common.DbConnection)">
+        <member name="M:CoreSystem.Data.Database.ExecuteToDynamic(System.String,System.Data.Common.DbConnection)">
             <summary>
             Execute query string
             </summary>
@@ -548,7 +548,7 @@
             <param name="connection">Database connection</param>
             <returns>Result in a new List of Donymous objects</returns>
         </member>
-        <member name="M:CoreSystem.Data.Database.ExecuteToDonymous(System.String,System.Data.Common.DbTransaction)">
+        <member name="M:CoreSystem.Data.Database.ExecuteToDynamic(System.String,System.Data.Common.DbTransaction)">
             <summary>
             Execute query string in transaction
             </summary>
@@ -556,21 +556,21 @@
             <param name="transaction">Database transaction</param>
             <returns>Result in a new List of Donymous objects</returns>
         </member>
-        <member name="M:CoreSystem.Data.Database.ExecuteToDonymous(System.Data.Common.DbCommand)">
+        <member name="M:CoreSystem.Data.Database.ExecuteToDynamic(System.Data.Common.DbCommand)">
             <summary>
             Execute query string
             </summary>
             <param name="command">Database command object</param>
             <returns>Result in a new List of Donymous objects</returns>
         </member>
-        <member name="M:CoreSystem.Data.Database.ExecuteToDonymous(System.Data.Common.DbDataReader)">
+        <member name="M:CoreSystem.Data.Database.ExecuteToDynamic(System.Data.Common.DbDataReader)">
             <summary>
             Execute query string
             </summary>
-            <param name="command">Database command object</param>
+            <param name="reader">DbDataReader to create Donymous object</param>
             <returns>Result in a new List of Donymous objects</returns>
         </member>
-        <member name="M:CoreSystem.Data.Database.ExecuteToDonymous(System.String)">
+        <member name="M:CoreSystem.Data.Database.ExecuteToDynamic(System.String)">
             <summary>
             Execute query string
             </summary>
