@@ -188,12 +188,12 @@ namespace CrystalMapper.Context
         /// Execute specified query in current connection and return list of dynamic objects
         /// </summary>
         /// <param name="cmdText">SQL query to execute in current connection</param>
-        /// <returns>Result of query</returns>
-        public List<Donymous> ToDonymous(string cmdText)
+        /// <returns>List of Donymous objects</returns>
+        public List<dynamic> ToDynamic(string cmdText)
         {
             using (var dataContext = this.GetDataContext())
             {
-                return dataContext.ToDonymous(cmdText);
+                return dataContext.ToDynamic(cmdText);
             }
         }
 
@@ -202,12 +202,12 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <param name="cmdText">SQL query to execute in current connection</param>
         /// <param name="parameters">SQL parameters</param>
-        /// <returns>Result of query</returns>
-        public List<Donymous> ToDonymous(string cmdText, Dictionary<string, object> parameters)
+        /// <returns>List of Donymous objects</returns>
+        public List<dynamic> ToDynamic(string cmdText, Dictionary<string, object> parameters)
         {
             using (var dataContext = this.GetDataContext())
             {
-                return dataContext.ToDonymous(cmdText, parameters);
+                return dataContext.ToDynamic(cmdText, parameters);
             }
         }
 

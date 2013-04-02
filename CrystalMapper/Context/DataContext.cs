@@ -267,10 +267,10 @@ namespace CrystalMapper.Context
         /// Execute specified query in current connection and return list of dynamic objects
         /// </summary>
         /// <param name="cmdText">SQL query to execute in current connection</param>
-        /// <returns>Result of query</returns>
-        public List<Donymous> ToDonymous(string cmdText)
+        /// <returns>List of Donymous objects</returns>
+        public List<dynamic> ToDynamic(string cmdText)
         {
-            return this.ToDonymous(cmdText, null);
+            return this.ToDynamic(cmdText, null);
         }
 
         /// <summary>
@@ -278,16 +278,16 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <param name="cmdText">SQL query to execute in current connection</param>
         /// <param name="parameters">SQL parameters</param>
-        /// <returns>Result of query</returns>
-        public List<Donymous> ToDonymous(string cmdText, Dictionary<string, object> parameters)
-        {
+        /// <returns>List of Donymous objects</returns>
+        public List<dynamic> ToDynamic(string cmdText, Dictionary<string, object> parameters)
+        {            
             using (var command = this.CreateCommand(cmdText))
             {
                 if (parameters != null)
                     foreach (string param in parameters.Keys)
                         command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
 
-                return DataContext.ToDonymous(command);
+                return DataContext.ToDynamic(command);
             }
         }
 
@@ -295,10 +295,10 @@ namespace CrystalMapper.Context
         /// Execute specified query in current connection and return list of dynamic objects
         /// </summary>
         /// <param name="command">SQL command</param>
-        /// <returns>Result of SQL command</returns>
-        public static List<Donymous> ToDonymous(DbCommand command)
+        /// <returns>List of Donymous objects</returns>
+        public static List<dynamic> ToDynamic(DbCommand command)
         {
-            var records = new List<Donymous>();
+            var records = new List<dynamic>();
 
             using (var reader = command.ExecuteReader())
             {
