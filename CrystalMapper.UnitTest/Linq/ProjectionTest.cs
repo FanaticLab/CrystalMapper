@@ -22,7 +22,7 @@ namespace CrystalMapper.UnitTest.Linq
             var customers = (from c in db.Query<Customer>()
                              select new { c.CustomerID, CustomerName = c.ContactName }).ToList();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar("SELECT COUNT(*) FROM CUSTOMERS"), customers.Count);
+            Assert.AreEqual(db.ToScalar("SELECT COUNT(*) FROM CUSTOMERS"), customers.Count);
 
             foreach (var customer in db.ToList<Customer>())
             {
@@ -42,7 +42,7 @@ namespace CrystalMapper.UnitTest.Linq
                           select new { c.CustomerName, OrderID = o.OrderID }).ToList();
 
 
-            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*)
+            Assert.AreEqual(db.ToScalar(@"SELECT COUNT(*)
                                                       FROM (SELECT CUSTOMERID, CONTACTNAME AS CUSTOMERNAME
                                                             FROM CUSTOMERS) C
                                                       INNER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID")
@@ -56,7 +56,7 @@ namespace CrystalMapper.UnitTest.Linq
             var orders = (from o in db.Query<Order>()
                           select new { o.CustomerID, OrderID = o.OrderID + 1000 }).ToList();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS"), orders.Count);
+            Assert.AreEqual(db.ToScalar("SELECT COUNT(*) FROM ORDERS"), orders.Count);
 
             foreach (Order order in db.ToList<Order>())
             {
@@ -72,7 +72,7 @@ namespace CrystalMapper.UnitTest.Linq
                            select new { Customer = c, Order = o }).ToList();
 
 
-            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
+            Assert.AreEqual(db.ToScalar(@"SELECT COUNT(*) 
                                                        FROM CUSTOMERS C 
                                                        INNER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID")
                             , results.Count);

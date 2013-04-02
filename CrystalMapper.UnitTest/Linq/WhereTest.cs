@@ -61,7 +61,7 @@ namespace CrystalMapper.UnitTest.Linq
         public void WhereGreaterThen()
         {
             Assert.AreEqual(
-                            TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT > 100")
+                            db.ToScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT > 100")
                             , db.Query<Order>().Where(o => o.Freight > 100).Count());
         }
 
@@ -69,7 +69,7 @@ namespace CrystalMapper.UnitTest.Linq
         public void WhereLessThen()
         {
             Assert.AreEqual(
-                          TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT < 100")
+                          db.ToScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT < 100")
                           , db.Query<Order>().Where(o => o.Freight < 100).Count());
         }
 
@@ -77,7 +77,7 @@ namespace CrystalMapper.UnitTest.Linq
         public void WhereGreaterThenAndEqualTo()
         {
             Assert.AreEqual(
-                            TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT >= 100")
+                            db.ToScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT >= 100")
                             , db.Query<Order>().Where(o => o.Freight > 100).Count());
         }
 
@@ -85,7 +85,7 @@ namespace CrystalMapper.UnitTest.Linq
         public void WhereLessThenAndEqualTo()
         {
             Assert.AreEqual(
-                          TestHelper.ExecuteScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT <= 100")
+                          db.ToScalar("SELECT COUNT(*) FROM ORDERS WHERE FREIGHT <= 100")
                           , db.Query<Order>().Where(o => o.Freight < 100).Count());
         }
     }

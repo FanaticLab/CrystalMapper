@@ -30,7 +30,7 @@ namespace CrystalMapper.UnitTest.Linq
                          from o in db.Query<Order>()
                          select new { Customer = c, Order = o }).Count();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar("SELECT COUNT(*) FROM CUSTOMERS CROSS JOIN ORDERS"), count);
+            Assert.AreEqual(db.ToScalar("SELECT COUNT(*) FROM CUSTOMERS CROSS JOIN ORDERS"), count);
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace CrystalMapper.UnitTest.Linq
                          join o in db.Query<Order>() on c.CustomerID equals o.CustomerID
                          select new { Customer = c, Order = o }).Count();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
+            Assert.AreEqual(db.ToScalar(@"SELECT COUNT(*) 
                                                       FROM CUSTOMERS C
                                                       INNER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID"), count);
         }
@@ -53,7 +53,7 @@ namespace CrystalMapper.UnitTest.Linq
                          from ol in l.DefaultIfEmpty()
                          select new { Customer = c, Order = ol }).Count();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar(@"SELECT COUNT(*) 
+            Assert.AreEqual(db.ToScalar(@"SELECT COUNT(*) 
                                                       FROM CUSTOMERS C
                                                       LEFT OUTER JOIN ORDERS O ON C.CUSTOMERID = O.CUSTOMERID"), count);
         }
