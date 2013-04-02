@@ -129,7 +129,7 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <typeparam name="T">Type of record entity</typeparam>
         /// <returns>Query object for T entity</returns>
-        public IQueryable<T> Query<T>() 
+        public IQueryable<T> Query<T>()
             where T : IRecord, new()
         {
             return new Query<T>(this);
@@ -218,10 +218,7 @@ namespace CrystalMapper.Context
         /// <returns>All records</returns>
         public List<T> ToList<T>(string cmdText) where T : IRecord, new()
         {
-            using (var command = this.CreateCommand(cmdText))
-            {
-                return DataContext.ToList<T>(command);
-            }
+            return this.ToList<T>(cmdText, null);
         }
 
         /// <summary>
@@ -233,12 +230,11 @@ namespace CrystalMapper.Context
         /// <returns>Result of query from current database connection</returns>
         public List<T> ToList<T>(string cmdText, Dictionary<string, object> parameters) where T : IRecord, new()
         {
-            Guard.CheckNull(parameters, "ToList(parameters)");
-
             using (DbCommand command = this.CreateCommand(cmdText))
             {
-                foreach (string param in parameters.Keys)
-                    command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
+                if (parameters != null)
+                    foreach (string param in parameters.Keys)
+                        command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
 
                 return DataContext.ToList<T>(command);
             }
@@ -274,10 +270,7 @@ namespace CrystalMapper.Context
         /// <returns>Result of query</returns>
         public List<Donymous> ToDonymous(string cmdText)
         {
-            using (var command = this.CreateCommand(cmdText))
-            {
-                return DataContext.ToDonymous(command);
-            }
+            return this.ToDonymous(cmdText, null);
         }
 
         /// <summary>
@@ -288,12 +281,11 @@ namespace CrystalMapper.Context
         /// <returns>Result of query</returns>
         public List<Donymous> ToDonymous(string cmdText, Dictionary<string, object> parameters)
         {
-            Guard.CheckNull(parameters, "ToDonymous(parameters)");
-
             using (var command = this.CreateCommand(cmdText))
             {
-                foreach (string param in parameters.Keys)
-                    command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
+                if (parameters != null)
+                    foreach (string param in parameters.Keys)
+                        command.Parameters.Add(this.CreateParameter(param, DbConvert.DbValue(parameters[param])));
 
                 return DataContext.ToDonymous(command);
             }
