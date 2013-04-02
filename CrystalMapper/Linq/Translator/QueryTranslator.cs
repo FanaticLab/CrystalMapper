@@ -359,7 +359,7 @@ namespace CrystalMapper.Linq.Translator
                 if (memberMetadata != null)
                     return new DbMemberExpression(memberMetadata);
 
-                if (m.Member.MemberType == MemberTypes.Property && typeof(IQueryable).IsAssignableFrom(((PropertyInfo)m.Member).PropertyType))
+                if (typeof(IQueryable).IsAssignableFrom(m.Member.GetMemberType()))
                     throw new InvalidOperationException(string.Format("Instance member cannot be used as query source, please use join expression: {0}", m.Member));
             }
 
