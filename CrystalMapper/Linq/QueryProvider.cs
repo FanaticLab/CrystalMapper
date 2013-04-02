@@ -189,7 +189,7 @@ namespace CrystalMapper.Linq
                     foreach (string parameter in queryInfo.ParamValues.Keys)
                         command.Parameters.Add(dataContext.CreateParameter(parameter, DbConvert.DbValue(queryInfo.ParamValues[parameter])));
 
-                    return DataContext.ToDonymous(command);
+                    return DataContext.ToDynamic(command);
                 }
             }
             finally
