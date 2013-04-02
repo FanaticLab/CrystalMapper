@@ -211,6 +211,57 @@ namespace CrystalMapper.Context
             }
         }
 
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <returns>Scalar query result</returns>
+        public object ToScalar(string cmdText)
+        {
+            return this.ToScalar(cmdText, null);
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <param name="parameters">SQL parameters</param>
+        /// <returns>Scalar query result</returns>
+        public object ToScalar(string cmdText, Dictionary<string, object> parameters)
+        {
+            using (var dataContext = this.GetDataContext())
+            {
+                return dataContext.ToScalar(cmdText, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <typeparam name="T">Cast scalar value to type</typeparam>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <returns>Scalar query result</returns>
+        public T ToScalar<T>(string cmdText)
+        {
+            return this.ToScalar<T>(cmdText, null);
+        }
+
+        /// <summary>
+        /// Execute SQL query and returns scalar value
+        /// </summary>
+        /// <typeparam name="T">Cast scalar value to type</typeparam>
+        /// <param name="cmdText">SQL command to execute</param>
+        /// <param name="parameters">SQL parameters</param>
+        /// <returns>Scalar query result</returns>
+        public T ToScalar<T>(string cmdText, Dictionary<string, object> parameters)
+        {
+            using (var dataContext = this.GetDataContext())
+            {
+                return dataContext.ToScalar<T>(cmdText, parameters);
+            }
+        }
+
         /// <summary>
         /// Returns and opened database connection
         /// </summary>
