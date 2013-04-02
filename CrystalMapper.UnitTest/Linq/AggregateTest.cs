@@ -22,34 +22,34 @@ namespace CrystalMapper.UnitTest.Linq
         public void Sum()
         {
 
-            Assert.AreEqual(TestHelper.ExecuteScalar<decimal?>("SELECT SUM(FREIGHT) FROM ORDERS")
+            Assert.AreEqual(db.ToScalar<decimal?>("SELECT SUM(FREIGHT) FROM ORDERS")
                             , db.Query<Order>().Sum(o => o.Freight));
         }
 
         [TestMethod]
         public void Average()
         {
-            Assert.AreEqual(TestHelper.ExecuteScalar<decimal?>("SELECT AVG(FREIGHT) FROM ORDERS")
+            Assert.AreEqual(db.ToScalar<decimal?>("SELECT AVG(FREIGHT) FROM ORDERS")
                             , db.Query<Order>().Average(o => o.Freight));
         }
 
         [TestMethod]
         public void Max()
         {
-            Assert.AreEqual(TestHelper.ExecuteScalar<decimal?>("SELECT MAX(FREIGHT) FROM ORDERS")
+            Assert.AreEqual(db.ToScalar<decimal?>("SELECT MAX(FREIGHT) FROM ORDERS")
                             , db.Query<Order>().Max(o => o.Freight));
         }
 
         [TestMethod]
         public void Min()
         {
-            Assert.AreEqual(TestHelper.ExecuteScalar<decimal?>("SELECT MIN(FREIGHT) FROM ORDERS"), db.Query<Order>().Min(o => o.Freight));
+            Assert.AreEqual(db.ToScalar<decimal?>("SELECT MIN(FREIGHT) FROM ORDERS"), db.Query<Order>().Min(o => o.Freight));
         }
 
         [TestMethod]
         public void Count()
         {
-            Assert.AreEqual(TestHelper.ExecuteScalar<int>("SELECT COUNT(*) FROM ORDERS"), db.Query<Order>().Count());
+            Assert.AreEqual(db.ToScalar<int>("SELECT COUNT(*) FROM ORDERS"), db.Query<Order>().Count());
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace CrystalMapper.UnitTest.Linq
         {
             var longcount = db.Query<Order>().LongCount();
 
-            Assert.AreEqual(TestHelper.ExecuteScalar<long>("SELECT COUNT(*) FROM ORDERS"), longcount);
+            Assert.AreEqual(db.ToScalar<long>("SELECT COUNT(*) FROM ORDERS"), longcount);
             Assert.AreEqual(typeof(long), longcount.GetType());
         }
     }
