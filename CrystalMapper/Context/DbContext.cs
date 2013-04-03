@@ -113,6 +113,34 @@ namespace CrystalMapper.Context
         }
 
         /// <summary>
+        /// Delete a record in database
+        /// </summary>
+        /// <param name="record">Record to delete</param>
+        public void Delete(IRecord record)
+        {
+            using (var dataContext = this.GetDataContext())
+            {
+                dataContext.Delete(record);
+            }
+        }
+
+        /// <summary>
+        /// Delete records in a transaction
+        /// </summary>
+        /// <param name="records">Records to delete</param>
+        public void Delte(IEnumerable<IRecord> records)
+        {
+            using (var dataContext = this.GetDataContext())
+            {
+                dataContext.BeginTransaction();
+
+                dataContext.Delete(records);
+
+                dataContext.CommitTransaction();
+            } 
+        }
+
+        /// <summary>
         /// Returns all records of T entity in array from database
         /// </summary>
         /// <typeparam name="T">Record entity type</typeparam>
