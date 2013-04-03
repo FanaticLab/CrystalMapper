@@ -156,7 +156,7 @@ public class HelperFunctions : CodeTemplate
 
     public string GetUpdateQuery(TableSchema table, string tablePrefix = null)
     {
-        string query =   "\"UPDATE " + GetTableName(table) + " SET";
+        string query =   "\"UPDATE " + GetTableName(table) + " SET ";
 
         foreach (ColumnSchema column in table.NonPrimaryKeyColumns)
             if(!IsComputed(column))
