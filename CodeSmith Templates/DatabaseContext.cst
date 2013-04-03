@@ -34,11 +34,11 @@ namespace <%= ModelNamespace %>
         /// <summary>
         /// Static instance of "<%= Database.Name %>" database
         /// </summary>
-        public static readonly <%= GetDbClassName(Database) %>Db Context;
+        public static readonly <%= GetDbClassName(Database) %>Db Default;
     
         static <%= GetDbClassName(Database) %>Db()
         {
-            Context = new <%= GetDbClassName(Database) %>Db();
+            Default = new <%= GetDbClassName(Database) %>Db();
         }
     
 		public <%= GetDbClassName(Database) %>Db(): base("<%= Database %>") {}
@@ -54,14 +54,14 @@ namespace <%= ModelNamespace %>
         
         <% } %>        
         /// <summary>
-        /// Returns a opened database connection using static instance "Context"
+        /// Returns an open database connection using static instance "Default"
         /// </summary>
         /// <returns>Database connection wrapper</returns>
         /// <remarks>_ to differentciates with instance GetDataContext</remarks>
         public static DataContext _GetDataContext()
         {
             // Open a new database connection using static instance
-            return Context.GetDataContext();
+            return Default.GetDataContext();
         }
     }
 }
