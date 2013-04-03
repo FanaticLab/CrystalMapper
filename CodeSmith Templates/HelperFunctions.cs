@@ -622,7 +622,7 @@ public class HelperFunctions : CodeTemplate
 
     public string GetColumnName(ColumnSchema column)
     {
-        return Quote(column.Database.Provider, column.Name);
+        return column.Name; // Quote(column.Database.Provider, column.Name);
     }
 
     public string GetParamName(ColumnSchema column)
@@ -650,10 +650,7 @@ public class HelperFunctions : CodeTemplate
     }
     
     public string Quote(IDbSchemaProvider provider, string name)
-    {
-        if(!name.Contains(" "))
-            return name;
-        
+    {        
         switch(provider.Name)
         {
             case "MySQLSchemaProvider":
