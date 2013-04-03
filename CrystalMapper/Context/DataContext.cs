@@ -142,7 +142,7 @@ namespace CrystalMapper.Context
         public void Create(IRecord record)
         {
             if (!record.Create(this))
-                throw new InvalidOperationException(string.Format("Failed to create entity '{0}' in database", record));
+                throw new InvalidOperationException(string.Format("Failed to a create record '{0}' in database", record));
         }
 
         /// <summary>
@@ -151,8 +151,8 @@ namespace CrystalMapper.Context
         /// <param name="records">New records</param>
         public void Create(IEnumerable<IRecord> records)
         {
-            foreach (var entity in records)
-                this.Create(entity);
+            foreach (var record in records)
+                this.Create(record);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace CrystalMapper.Context
         public void Update(IRecord record)
         {
             if (!record.Update(this))
-                throw new InvalidOperationException(string.Format("Failed to create entity '{0}' in database", record));
+                throw new InvalidOperationException(string.Format("Failed to update a record '{0}' in database", record));
         }
 
         /// <summary>
@@ -171,8 +171,28 @@ namespace CrystalMapper.Context
         /// <param name="records">Records to update</param>
         public void Update(IEnumerable<IRecord> records)
         {
-            foreach (var entity in records)
-                this.Update(entity);
+            foreach (var record in records)
+                this.Update(record);
+        }
+
+        /// <summary>
+        /// Delete a record in current database connection
+        /// </summary>
+        /// <param name="record">Record to delete</param>
+        public void Delete(IRecord record)
+        {
+            if (!record.Delete(this))
+                throw new InvalidOperationException(string.Format("Failed to delete a record '{0}' in database", record));
+        }
+
+        /// <summary>
+        /// Delete records in current database connection
+        /// </summary>
+        /// <param name="records">Records to delete</param>
+        public void Delete(IEnumerable<IRecord> records)
+        {
+            foreach (var record in records)
+                this.Delete(record);
         }
 
         /// <summary>
