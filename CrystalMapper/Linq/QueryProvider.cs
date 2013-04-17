@@ -78,8 +78,8 @@ namespace CrystalMapper.Linq
 
         T IQueryProvider.Execute<T>(Expression expression)
         {
-            if (typeof(T) == typeof(List<Donymous>))
-                return (T)ExecuteToDonymous(expression);
+            if (typeof(T) == typeof(List<dynamic>))
+                return (T)ExecuteToDynamic(expression);
 
             return (T)Execute(expression);
         }
@@ -177,7 +177,7 @@ namespace CrystalMapper.Linq
         /// </summary>
         /// <param name="expression">LINQ expression</param>
         /// <returns>Dynamic objects</returns>
-        private object ExecuteToDonymous(Expression expression)
+        private object ExecuteToDynamic(Expression expression)
         {
             var queryInfo = (new QueryTranslator()).Translate(this.GetSqlLangByProvider(), expression);
             DataContext dataContext = this.GetDataContext();

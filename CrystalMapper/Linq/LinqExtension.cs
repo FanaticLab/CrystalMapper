@@ -110,9 +110,9 @@ namespace CrystalMapper.Linq
         /// <typeparam name="TSource">Type of record entity</typeparam>
         /// <param name="source">Query source</param>
         /// <returns>Dynamic objects</returns>
-        public static List<Donymous> ToDonymous<TSource>(this IQueryable<TSource> source)
+        public static List<dynamic> ToDynamic<TSource>(this IQueryable<TSource> source)
         {
-            return source.Provider.Execute<List<Donymous>>(source.Expression);
+            return source.Provider.Execute<List<dynamic>>(source.Expression);
         }
     }
 }
