@@ -472,7 +472,9 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitUnary(UnaryExpression u)
         {
-            return new DbUnaryExpression((DbExpression)this.Visit(u.Operand), u.NodeType, u.Type);
+            return DbUnaryExpression.IsOperatorSupported(u)
+                   ? new DbUnaryExpression((DbExpression)this.Visit(u.Operand), u.NodeType, u.Type)
+                   : this.Visit(u.Operand);
         }
 
         private bool IsLambda(Expression expression)

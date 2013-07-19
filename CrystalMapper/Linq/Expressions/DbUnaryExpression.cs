@@ -52,5 +52,10 @@ namespace CrystalMapper.Linq.Expressions
                     return "";
             }
         }
+
+        public static bool IsOperatorSupported(UnaryExpression u)
+        {
+            return u.NodeType == ExpressionType.Not;
+        }
     }
 }
