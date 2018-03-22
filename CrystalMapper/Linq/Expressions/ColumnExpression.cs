@@ -17,7 +17,7 @@ namespace CrystalMapper.Linq.Expressions
         public string ColumnAlias { get; private set; }
 
         public ColumnExpression(MemberMetadata member, DbExpression column, string columnAlias)
-            : base(DbExpressionType.Column, member.Member.DeclaringType)
+            : base(DbExpressionType.Column, column.Type)
         {
             this.Member = member;
             this.Column = column;

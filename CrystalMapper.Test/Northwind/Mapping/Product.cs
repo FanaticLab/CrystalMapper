@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Products";	
+        public const string TABLE_NAME = "Products";	
      
 		public const string COL_PRODUCTID = "ProductID";
 		public const string COL_PRODUCTNAME = "ProductName";
@@ -54,11 +54,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_PRODUCTS = "INSERT INTO dbo.Products ( [ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder], [ReorderLevel], [Discontinued]) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_PRODUCTS = "INSERT INTO Products ( [ProductName], [SupplierID], [CategoryID], [QuantityPerUnit], [UnitPrice], [UnitsInStock], [UnitsOnOrder], [ReorderLevel], [Discontinued]) VALUES ( @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_PRODUCTS = "UPDATE dbo.Products SET [ProductName] = @ProductName, [SupplierID] = @SupplierID, [CategoryID] = @CategoryID, [QuantityPerUnit] = @QuantityPerUnit, [UnitPrice] = @UnitPrice, [UnitsInStock] = @UnitsInStock, [UnitsOnOrder] = @UnitsOnOrder, [ReorderLevel] = @ReorderLevel, [Discontinued] = @Discontinued WHERE [ProductID] = @ProductID";
+		private const string SQL_UPDATE_PRODUCTS = "UPDATE Products SET [ProductName] = @ProductName, [SupplierID] = @SupplierID, [CategoryID] = @CategoryID, [QuantityPerUnit] = @QuantityPerUnit, [UnitPrice] = @UnitPrice, [UnitsInStock] = @UnitsInStock, [UnitsOnOrder] = @UnitsOnOrder, [ReorderLevel] = @ReorderLevel, [Discontinued] = @Discontinued WHERE [ProductID] = @ProductID";
 		
-		private const string SQL_DELETE_PRODUCTS = "DELETE FROM dbo.Products WHERE  [ProductID] = @ProductID ";
+		private const string SQL_DELETE_PRODUCTS = "DELETE FROM Products WHERE  [ProductID] = @ProductID ";
 		
         #endregion
         	  	

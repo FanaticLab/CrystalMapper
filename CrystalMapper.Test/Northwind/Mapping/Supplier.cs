@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Suppliers";	
+        public const string TABLE_NAME = "Suppliers";	
      
 		public const string COL_SUPPLIERID = "SupplierID";
 		public const string COL_COMPANYNAME = "CompanyName";
@@ -58,11 +58,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO dbo.Suppliers ( [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax], [HomePage]) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SUPPLIERS = "INSERT INTO Suppliers ( [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax], [HomePage]) VALUES ( @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax, @HomePage);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SUPPLIERS = "UPDATE dbo.Suppliers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax, [HomePage] = @HomePage WHERE [SupplierID] = @SupplierID";
+		private const string SQL_UPDATE_SUPPLIERS = "UPDATE Suppliers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax, [HomePage] = @HomePage WHERE [SupplierID] = @SupplierID";
 		
-		private const string SQL_DELETE_SUPPLIERS = "DELETE FROM dbo.Suppliers WHERE  [SupplierID] = @SupplierID ";
+		private const string SQL_DELETE_SUPPLIERS = "DELETE FROM Suppliers WHERE  [SupplierID] = @SupplierID ";
 		
         #endregion
         	  	

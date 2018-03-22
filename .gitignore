@@ -7,3 +7,6 @@ CrystalMapper.suo
 CrystalMapper/bin/
 CrystalMapper/obj/
 TestResults/
+
+.DS_Store
+.vs

@@ -104,8 +104,6 @@ namespace CrystalMapper.Linq.Expressions
             {
                 int index = 0;
                 var constructor = this.Type.GetConstructors()[0];
-                List<object> parameters = new List<object>();
-                PropertyInfo[] members = this.Type.GetProperties();
 
                 if (this.Bindings != null)
                 {
@@ -118,12 +116,13 @@ namespace CrystalMapper.Linq.Expressions
 
                         yield return value;
 
-                        index = 0;
-                        parameters.Clear();
+                        index = 0; 
                     }
                 }
-                else
+                else if (this.Type.Name.Contains("AnonymousType") && this.Type.IsClass)
                 {
+                    List<object> parameters = new List<object>();
+                    PropertyInfo[] members = this.Type.GetProperties();
                     while (reader.Read())
                     {
                         foreach (PropertyInfo prop in members)
@@ -135,7 +134,29 @@ namespace CrystalMapper.Linq.Expressions
                         parameters.Clear();
                     }
                 }
+                else
+                {
+                    while (reader.Read())
+                    {
+                        var record = constructor.Invoke(null);
 
+                        ColumnExpression column = null;
+                        for (index = 0 ; index < reader.FieldCount; index++)
+                            try
+                            {
+                                column = this.Columns[index];
+                                column.Member.Member.SetValue(record, DbConvert.CLRValue(reader[index]));
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception($"Cannot assign value for column: {column} at index: {index}", ex);
+                            }
+
+                        yield return record;
+
+                        index = 0;
+                    }
+                }
             }
             else
                 throw new InvalidOperationException(string.Format("Cannot translate result into type '{0}'", queryInfo.ReturnType));

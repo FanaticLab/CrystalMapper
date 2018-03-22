@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Region";	
+        public const string TABLE_NAME = "Region";	
      
 		public const string COL_REGIONID = "RegionID";
 		public const string COL_REGIONDESCRIPTION = "RegionDescription";
@@ -38,11 +38,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_REGION = "INSERT INTO dbo.Region ( [RegionID], [RegionDescription]) VALUES ( @RegionID, @RegionDescription);"  ;
+		private const string SQL_INSERT_REGION = "INSERT INTO Region ( [RegionID], [RegionDescription]) VALUES ( @RegionID, @RegionDescription);"  ;
 		
-		private const string SQL_UPDATE_REGION = "UPDATE dbo.Region SET [RegionDescription] = @RegionDescription WHERE [RegionID] = @RegionID";
+		private const string SQL_UPDATE_REGION = "UPDATE Region SET [RegionDescription] = @RegionDescription WHERE [RegionID] = @RegionID";
 		
-		private const string SQL_DELETE_REGION = "DELETE FROM dbo.Region WHERE  [RegionID] = @RegionID ";
+		private const string SQL_DELETE_REGION = "DELETE FROM Region WHERE  [RegionID] = @RegionID ";
 		
         #endregion
         	  	

@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Customers";	
+        public const string TABLE_NAME = "Customers";	
      
 		public const string COL_CUSTOMERID = "CustomerID";
 		public const string COL_COMPANYNAME = "CompanyName";
@@ -56,11 +56,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO dbo.Customers ( [CustomerID], [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax]) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
+		private const string SQL_INSERT_CUSTOMERS = "INSERT INTO Customers ( [CustomerID], [CompanyName], [ContactName], [ContactTitle], [Address], [City], [Region], [PostalCode], [Country], [Phone], [Fax]) VALUES ( @CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax);"  ;
 		
-		private const string SQL_UPDATE_CUSTOMERS = "UPDATE dbo.Customers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax WHERE [CustomerID] = @CustomerID";
+		private const string SQL_UPDATE_CUSTOMERS = "UPDATE Customers SET [CompanyName] = @CompanyName, [ContactName] = @ContactName, [ContactTitle] = @ContactTitle, [Address] = @Address, [City] = @City, [Region] = @Region, [PostalCode] = @PostalCode, [Country] = @Country, [Phone] = @Phone, [Fax] = @Fax WHERE [CustomerID] = @CustomerID";
 		
-		private const string SQL_DELETE_CUSTOMERS = "DELETE FROM dbo.Customers WHERE  [CustomerID] = @CustomerID ";
+		private const string SQL_DELETE_CUSTOMERS = "DELETE FROM Customers WHERE  [CustomerID] = @CustomerID ";
 		
         #endregion
         	  	

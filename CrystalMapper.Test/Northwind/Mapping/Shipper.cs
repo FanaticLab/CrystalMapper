@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Shippers";	
+        public const string TABLE_NAME = "Shippers";	
      
 		public const string COL_SHIPPERID = "ShipperID";
 		public const string COL_COMPANYNAME = "CompanyName";
@@ -40,11 +40,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_SHIPPERS = "INSERT INTO dbo.Shippers ( [CompanyName], [Phone]) VALUES ( @CompanyName, @Phone);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_SHIPPERS = "INSERT INTO Shippers ( [CompanyName], [Phone]) VALUES ( @CompanyName, @Phone);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_SHIPPERS = "UPDATE dbo.Shippers SET [CompanyName] = @CompanyName, [Phone] = @Phone WHERE [ShipperID] = @ShipperID";
+		private const string SQL_UPDATE_SHIPPERS = "UPDATE Shippers SET [CompanyName] = @CompanyName, [Phone] = @Phone WHERE [ShipperID] = @ShipperID";
 		
-		private const string SQL_DELETE_SHIPPERS = "DELETE FROM dbo.Shippers WHERE  [ShipperID] = @ShipperID ";
+		private const string SQL_DELETE_SHIPPERS = "DELETE FROM Shippers WHERE  [ShipperID] = @ShipperID ";
 		
         #endregion
         	  	

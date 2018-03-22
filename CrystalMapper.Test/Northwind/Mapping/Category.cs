@@ -26,7 +26,7 @@ namespace CrystalMapper.Test.Northwind
     {		
 		#region Table Schema
 		
-        public const string TABLE_NAME = "dbo.Categories";	
+        public const string TABLE_NAME = "Categories";	
      
 		public const string COL_CATEGORYID = "CategoryID";
 		public const string COL_CATEGORYNAME = "CategoryName";
@@ -42,11 +42,11 @@ namespace CrystalMapper.Test.Northwind
 		
 		#region Queries
 		
-		private const string SQL_INSERT_CATEGORIES = "INSERT INTO dbo.Categories ( [CategoryName], [Description], [Picture]) VALUES ( @CategoryName, @Description, @Picture);"   + " SELECT SCOPE_IDENTITY();" ;
+		private const string SQL_INSERT_CATEGORIES = "INSERT INTO Categories ( [CategoryName], [Description], [Picture]) VALUES ( @CategoryName, @Description, @Picture);"   + " SELECT SCOPE_IDENTITY();" ;
 		
-		private const string SQL_UPDATE_CATEGORIES = "UPDATE dbo.Categories SET [CategoryName] = @CategoryName, [Description] = @Description, [Picture] = @Picture WHERE [CategoryID] = @CategoryID";
+		private const string SQL_UPDATE_CATEGORIES = "UPDATE Categories SET [CategoryName] = @CategoryName, [Description] = @Description, [Picture] = @Picture WHERE [CategoryID] = @CategoryID";
 		
-		private const string SQL_DELETE_CATEGORIES = "DELETE FROM dbo.Categories WHERE  [CategoryID] = @CategoryID ";
+		private const string SQL_DELETE_CATEGORIES = "DELETE FROM Categories WHERE  [CategoryID] = @CategoryID ";
 		
         #endregion
         	  	

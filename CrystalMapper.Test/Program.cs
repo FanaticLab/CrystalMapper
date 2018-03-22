@@ -14,6 +14,7 @@ using CrystalMapper.Context;
 using System.Collections;
 using CoreSystem.Dynamic;
 using System.Data.Common;
+using CrystalMapper.Test.Chinook;
 
 namespace CrystalMapper.Test
 {
@@ -23,9 +24,24 @@ namespace CrystalMapper.Test
         {
             IEnumerable result;
 
+            //var sqDb = ChinookDb.Context;
+            //try
+            //{
+            //    var playlists = from p in sqDb.Query<Playlists>()
+            //                    select new { p.PlaylistId };
+               
+            //    var query = playlists.ToString();
+            //    var playlistsresult = playlists.ToArray();
+            //}
+            //catch (Exception ex)
+            //{
+
+            //}
+
             var db = NorthwindDb.Context; // Aliasing static instance for easyness of "Northwind" database
 
-            var oCount = db.Query<Order>().Where(o => o.Freight < 100).Count();
+            var q = db.Query<Order>().Where(o => o.Freight < 100);
+            var oCount = q.Count();
 
             // Loading customers whole placed at least one order
             var customers = db.Query<Customer>()

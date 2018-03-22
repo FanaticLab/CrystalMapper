@@ -307,11 +307,7 @@ namespace CrystalMapper.Linq.Translator
                 Type type = c.Type.GetGenericArguments()[0];
 
                 TableMetadata tableMetadata = MetadataProvider.GetMetadata(type);
-
-                if (tableMetadata != null)
-                    return new TableExpression(this.GetNextTableAlias(), tableMetadata);
-
-                return this.Visit(((IQueryable)c.Value).Expression);
+                return new TableExpression(this.GetNextTableAlias(), tableMetadata);
             }
 
             DbParameterExpression dbParameter = new DbParameterExpression(this.GetNextParameter(), c.Value);

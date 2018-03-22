@@ -29,7 +29,7 @@ namespace CrystalMapper.Test.Northwind
 		public NorthwindDb(): base("Northwind") {}
         
         /// <summary>
-        /// Queryable object for "dbo.Categories"
+        /// Queryable object for "Categories"
         /// <summary>
         public IQueryable<Category> Categories
         {
@@ -37,7 +37,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.CustomerCustomerDemo"
+        /// Queryable object for "CustomerCustomerDemo"
         /// <summary>
         public IQueryable<CustomerCustomerDemo> CustomerCustomerDemos
         {
@@ -45,7 +45,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.CustomerDemographics"
+        /// Queryable object for "CustomerDemographics"
         /// <summary>
         public IQueryable<CustomerDemographic> CustomerDemographics
         {
@@ -53,7 +53,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Customers"
+        /// Queryable object for "Customers"
         /// <summary>
         public IQueryable<Customer> Customers
         {
@@ -61,7 +61,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Employees"
+        /// Queryable object for "Employees"
         /// <summary>
         public IQueryable<Employee> Employees
         {
@@ -69,7 +69,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.EmployeeTerritories"
+        /// Queryable object for "EmployeeTerritories"
         /// <summary>
         public IQueryable<EmployeeTerritory> EmployeeTerritories
         {
@@ -77,7 +77,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Order Details"
+        /// Queryable object for "Order Details"
         /// <summary>
         public IQueryable<OrderDetail> OrderDetails
         {
@@ -85,7 +85,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Orders"
+        /// Queryable object for "Orders"
         /// <summary>
         public IQueryable<Order> Orders
         {
@@ -93,7 +93,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Products"
+        /// Queryable object for "Products"
         /// <summary>
         public IQueryable<Product> Products
         {
@@ -101,7 +101,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Region"
+        /// Queryable object for "Region"
         /// <summary>
         public IQueryable<Region> Regions
         {
@@ -109,7 +109,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Shippers"
+        /// Queryable object for "Shippers"
         /// <summary>
         public IQueryable<Shipper> Shippers
         {
@@ -117,7 +117,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Suppliers"
+        /// Queryable object for "Suppliers"
         /// <summary>
         public IQueryable<Supplier> Suppliers
         {
@@ -125,7 +125,7 @@ namespace CrystalMapper.Test.Northwind
         }
         
         /// <summary>
-        /// Queryable object for "dbo.Territories"
+        /// Queryable object for "Territories"
         /// <summary>
         public IQueryable<Territory> Territories
         {

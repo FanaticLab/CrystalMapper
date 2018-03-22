@@ -51,7 +51,7 @@ namespace CrystalMapper.Context
         /// </summary>
         /// <typeparam name="T">Entity Type</typeparam>
         /// <returns>Query object for T entity</returns>
-        public IQueryable<T> Query<T>() where T : IRecord, new()
+        public IQueryable<T> Query<T>() where T : new()
         {
             return new Query<T>(this.Name);
         }
@@ -137,7 +137,7 @@ namespace CrystalMapper.Context
                 dataContext.Delete(records);
 
                 dataContext.CommitTransaction();
-            } 
+            }
         }
 
         /// <summary>
