@@ -132,6 +132,7 @@
     <Compile Include="Linq\Translator\QueryTranslator.cs" />
     <Compile Include="Linq\Helper\TypeSystem.cs" />
     <Compile Include="Mapping\ColumnAttribute.cs" />
+    <Compile Include="Mapping\ExcludeAttribute.cs" />
     <Compile Include="Mapping\TableAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ObjectModel\ReadOnlyExtension.cs" />

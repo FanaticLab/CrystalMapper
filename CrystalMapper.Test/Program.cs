@@ -24,21 +24,31 @@ namespace CrystalMapper.Test
         {
             IEnumerable result;
 
-            //var sqDb = ChinookDb.Context;
-            //try
-            //{
-            //    var playlists = from p in sqDb.Query<Playlists>()
-            //                    select new { p.PlaylistId };
-               
-            //    var query = playlists.ToString();
-            //    var playlistsresult = playlists.ToArray();
-            //}
-            //catch (Exception ex)
-            //{
-
-            //}
+            var sqDb = ChinookDb.Context;
 
             var db = NorthwindDb.Context; // Aliasing static instance for easyness of "Northwind" database
+
+            try
+            {
+                var playlists = db.Query<Order>().Where(o => o.OrderID == -1);
+
+                //var playlistsresult = playlists.ToArray();
+
+                var stopwatch = Stopwatch.StartNew();
+                for (int i=0; i < 500; i++)
+                {
+                    //playlistsresult = playlists.ToArray();
+                    var query = playlists.ToString();
+                }
+                stopwatch.Stop();
+                Console.WriteLine(stopwatch.ElapsedMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
 
             var q = db.Query<Order>().Where(o => o.Freight < 100);
             var oCount = q.Count();
@@ -53,11 +63,8 @@ namespace CrystalMapper.Test
             Write(result);
 
             var customer = customers.First();
-            var orders = customer.Orders.ToArray();
-            var customer2 = orders[0].CustomerRef;
 
-            Debug.Assert(customer != customer2); // Customer2 is load fresh from database
-            Debug.Assert(customer.Equals(customer2)); // Both customers are same base on their PK
+
 
             // Loading Customer with their Orders            
             var customerOrders = (from c in db.Customers

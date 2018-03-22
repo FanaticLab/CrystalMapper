@@ -131,9 +131,9 @@ namespace CrystalMapper.Linq.Expressions
             this.AssignAlias();
         }
 
-        public override string GetAlias(Type type)
+        public override string GetAlias(MemberInfo memberInfo)
         {
-            return this.ReturnType == type ? this.Alias : (string.IsNullOrEmpty(this.From.GetAlias(type)) ? null : this.Alias);
+            return this.ReturnType == memberInfo.DeclaringType ? this.Alias : (string.IsNullOrEmpty(this.From.GetAlias(memberInfo)) ? null : this.Alias);
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
@@ -330,7 +330,7 @@ namespace CrystalMapper.Linq.Expressions
         {
             var dbMembers = this.Projection.GetNodes().Where(e => e.DbNodeType == DbExpressionType.Member).Select(e => (DbMemberExpression)e).ToList();
 
-            dbMembers.ForEach(e => e.TableAlias = this.From.GetAlias(e.MemberMetadata.Member.DeclaringType));
+            dbMembers.ForEach(e => e.TableAlias = this.From.GetAlias(e.MemberMetadata.Member));
 
             if (this.Where != null)
             {

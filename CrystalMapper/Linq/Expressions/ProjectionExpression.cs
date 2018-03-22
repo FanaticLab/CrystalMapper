@@ -116,44 +116,14 @@ namespace CrystalMapper.Linq.Expressions
 
                         yield return value;
 
-                        index = 0; 
-                    }
-                }
-                else if (this.Type.Name.Contains("AnonymousType") && this.Type.IsClass)
-                {
-                    List<object> parameters = new List<object>();
-                    PropertyInfo[] members = this.Type.GetProperties();
-                    while (reader.Read())
-                    {
-                        foreach (PropertyInfo prop in members)
-                            parameters.Add(GetObject(prop.PropertyType, reader, ref index));
-
-                        yield return constructor.Invoke(parameters.ToArray());
-
                         index = 0;
-                        parameters.Clear();
                     }
                 }
                 else
                 {
                     while (reader.Read())
                     {
-                        var record = constructor.Invoke(null);
-
-                        ColumnExpression column = null;
-                        for (index = 0 ; index < reader.FieldCount; index++)
-                            try
-                            {
-                                column = this.Columns[index];
-                                column.Member.Member.SetValue(record, DbConvert.CLRValue(reader[index]));
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception($"Cannot assign value for column: {column} at index: {index}", ex);
-                            }
-
-                        yield return record;
-
+                        yield return this.GetObject(this.Type, reader, ref index);
                         index = 0;
                     }
                 }
@@ -171,10 +141,17 @@ namespace CrystalMapper.Linq.Expressions
         {
             if (IsMemberType(type))
             {
-                if (type.IsAssignableFrom(reader.GetFieldType(index)))
-                    return DbConvert.CLRValue(reader[index++]);
+                try
+                {
+                    //if (type.IsAssignableFrom(reader.GetFieldType(index)))
+                        return DbConvert.CLRValue(reader[index++]);
 
-                return System.Convert.ChangeType(reader[index++], type);
+                    return System.Convert.ChangeType(reader[index++], type);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Cannot assign value for column: {reader.GetName(index - 1)} at index: {index - 1}", ex);
+                }
             }
 
             if (typeof(IRecord).IsAssignableFrom(type))
@@ -198,16 +175,24 @@ namespace CrystalMapper.Linq.Expressions
                 //throw new InvalidOperationException(string.Format("IEnumerable<T> type cannot be projected", type.GetGenericArguments()[0]));
             }
 
-            List<object> parameters = new List<object>();
-            foreach (PropertyInfo propInfo in type.GetProperties())
+            if (type.Name.Contains("AnonymousType") && type.IsClass)
             {
-                if (IsMemberType(propInfo.PropertyType))
-                    parameters.Add(DbConvert.CLRValue(reader[index++]));
-                else
+                List<object> parameters = new List<object>();
+                foreach (PropertyInfo propInfo in type.GetProperties())
+                {
                     parameters.Add(GetObject(propInfo.PropertyType, reader, ref index));
+                }
+
+                return Activator.CreateInstance(type, parameters.ToArray());
             }
 
-            return Activator.CreateInstance(type, parameters.ToArray());
+            var record = Activator.CreateInstance(type);
+            foreach (var propInfo in this.Columns.Select(c => c.Member.Member as PropertyInfo).Where(m => m.DeclaringType == type))
+            {
+                propInfo.SetValue(record, GetObject(propInfo.PropertyType, reader, ref index));
+            }
+
+            return record;
         }
 
         private IEnumerable<ColumnExpression> GetColumns(Type type)

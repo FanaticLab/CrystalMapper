@@ -76,14 +76,7 @@ namespace CrystalMapper.Test.Northwind
             get { return this.Query<EmployeeTerritory>(); }
         }
         
-        /// <summary>
-        /// Queryable object for "Order Details"
-        /// <summary>
-        public IQueryable<OrderDetail> OrderDetails
-        {
-            get { return this.Query<OrderDetail>(); }
-        }
-        
+       
         /// <summary>
         /// Queryable object for "Orders"
         /// <summary>

@@ -311,11 +311,6 @@ namespace CrystalMapper.Test.Northwind
                 }   
             }
         }	
-		
-        public IQueryable<OrderDetail> OrderDetails 
-        {
-            get { return this.CreateQuery<OrderDetail>().Where(r => r.ProductID == ProductID); }
-        }
        
         #endregion        
         

@@ -119,11 +119,6 @@ namespace CrystalMapper.Test.Northwind
                     }   
                 }
         }	
-		
-        public IQueryable<Order> Orders 
-        {
-            get { return this.CreateQuery<Order>().Where(r => r.ShipVia == ShipperID); }
-        }
        
         #endregion        
         

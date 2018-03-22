@@ -24,12 +24,15 @@ namespace CrystalMapper.Linq.Translator
 
         private List<DbParameterExpression> parameters = new List<DbParameterExpression>();
 
+        private static Expression lastExp;
+
         public QueryInfo Translate(SqlLang sqlLang, Expression expression)
         {
-            ResultShape resultShape = GetResultShape(expression);
+            var resultShape = GetResultShape(expression);
             var dbExpression = this.Visit(expression);
-            SelectExpression selectExpression = this.MakeSelect(dbExpression as DbExpression);
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+            var selectExpression = this.MakeSelect(dbExpression as DbExpression);
+            var parameterValues = new Dictionary<string, object>();
+
             foreach (var dbParameter in this.parameters)
                 if (!dbParameter.IsDBNull)
                     parameterValues.Add(sqlLang.GetParameter(dbParameter.Parameter), dbParameter.Value);
@@ -302,12 +305,10 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitConstant(ConstantExpression c)
         {
-            if (c != null && c.Type.IsGenericType && c.Type.GetGenericTypeDefinition() == typeof(Query<>))
+            if (c.Type.IsGenericType && c.Type.GetGenericTypeDefinition() == typeof(Query<>))
             {
                 Type type = c.Type.GetGenericArguments()[0];
-
-                TableMetadata tableMetadata = MetadataProvider.GetMetadata(type);
-                return new TableExpression(this.GetNextTableAlias(), tableMetadata);
+                return  TableExpression.GetExpression(this.GetNextTableAlias(), type);
             }
 
             DbParameterExpression dbParameter = new DbParameterExpression(this.GetNextParameter(), c.Value);
@@ -341,30 +342,36 @@ namespace CrystalMapper.Linq.Translator
                         ? this.Visit(((IQueryable)m.Member.GetValue(constant.Value)).Expression)
                         : Expression.Constant(m.Member.GetValue(constant.Value));
             }
-
-            if (m.Expression is MemberExpression)
-                return this.Visit(Expression.MakeMemberAccess(this.Visit(m.Expression), m.Member));
-
-            Type declaringType = m.Member.DeclaringType;
-            // use the mapping metadata and find the name of this member in the database
-            TableMetadata tableMetadata = MetadataProvider.GetMetadata(declaringType);
-
-            if (tableMetadata != null)
+            else
             {
-                MemberMetadata memberMetadata = tableMetadata.Members.FirstOrDefault(md => md.Member == m.Member);
-                if (memberMetadata != null)
-                    return new DbMemberExpression(memberMetadata);
 
-                if (typeof(IQueryable).IsAssignableFrom(m.Member.GetMemberType()))
-                    throw new InvalidOperationException(string.Format("Instance member cannot be used as query source, please use join expression: {0}", m.Member));
+                if (m.Expression is MemberExpression)
+                    return this.Visit(Expression.MakeMemberAccess(this.Visit(m.Expression), m.Member));
+
+                Type declaringType = m.Member.DeclaringType;
+
+                if (declaringType != null)
+                {
+                    // use the mapping metadata and find the name of this member in the database
+                    var tableMetadata = MetadataProvider.GetMetadata(declaringType);
+
+                    MemberMetadata memberMetadata = tableMetadata.Members.FirstOrDefault(md => md.Member == m.Member);
+                    if (memberMetadata != null)
+                        return new DbMemberExpression(memberMetadata);
+
+                    if (typeof(IQueryable).IsAssignableFrom(m.Member.GetMemberType()))
+                        throw new InvalidOperationException(string.Format("Instance member cannot be used as query source, please use join expression: {0}", m.Member));
+                }
+
+                var memberType = m.Member.GetMemberType();
+                if (memberType != null)
+                {
+                    if (IsMemberType(memberType))
+                        return new DbMemberExpression(new MemberMetadata(m.Member));
+                }
+                else if (declaringType == null)
+                    return TableExpression.GetExpression(null, m.Member as Type);
             }
-
-            tableMetadata = MetadataProvider.GetMetadata(m.Member.GetMemberType());
-            if (tableMetadata != null)
-                return new TableExpression(null, tableMetadata);
-
-            if (IsMemberType(m.Member.GetMemberType()))
-                return new DbMemberExpression(new MemberMetadata(m.Member));
 
             return new ProjectionExpression(m.Type.GetProperties().Select(p => new ColumnExpression(new MemberMetadata(p), new DbMemberExpression(new MemberMetadata(p)))).ToReadOnly(), m.Type);
         }
@@ -446,24 +453,19 @@ namespace CrystalMapper.Linq.Translator
 
         protected override Expression VisitParameter(ParameterExpression p)
         {
-            if (p != null && typeof(IRecord).IsAssignableFrom(p.Type))
-            {
-                TableMetadata tableMetadata = MetadataProvider.GetMetadata(p.Type);
-
-                if (tableMetadata == null)
-                    throw new Exception(string.Format("It was not possible to get metadata for {0}!", p.Type.Name));
-
-                return new TableExpression(this.GetNextTableAlias(), tableMetadata);
-            }
-
             if (p.Type.IsGenericType && p.Type.GetGenericTypeDefinition() == typeof(IGrouping<,>))
                 return this.Visit(Expression.Parameter(p.Type.GetGenericArguments()[1], "g"));
 
-            List<ColumnExpression> columns = new List<ColumnExpression>();
-            foreach (var property in p.Type.GetProperties())
-                columns.Add(new ColumnExpression(new MemberMetadata(property), new DbMemberExpression(new MemberMetadata(property))));
+            if (p.Type.IsClass && p.Type.Name.Contains("AnonymousType"))
+            {
+                List<ColumnExpression> columns = new List<ColumnExpression>();
+                foreach (var property in p.Type.GetProperties())
+                    columns.Add(new ColumnExpression(new MemberMetadata(property), new DbMemberExpression(new MemberMetadata(property))));
 
-            return new ProjectionExpression(columns.ToReadOnly(), p.Type);
+                return new ProjectionExpression(columns.ToReadOnly(), p.Type);
+            }
+
+            return TableExpression.GetExpression(this.GetNextTableAlias(), p.Type);
         }
 
         protected override Expression VisitUnary(UnaryExpression u)
@@ -555,11 +557,11 @@ namespace CrystalMapper.Linq.Translator
 
         private ProjectionExpression GetSourceProjection(SourceExpression source)
         {
-            if (source is JoinExpression)
-                return source.Projection;
+            //if (source is JoinExpression)
+            return source.Projection;
 
-            var projection = source.Projection;
-            return new ProjectionExpression(projection.Columns.Select(c => new ColumnExpression(c.Member, new DbMemberExpression(c.Member))).ToReadOnly(), projection.Type, projection.ProjectionFunction, projection.Bindings);
+            //var projection = source.Projection;
+            //return new ProjectionExpression(projection.Columns.Select(c => new ColumnExpression(c.Member, new DbMemberExpression(c.Member))).ToReadOnly(), projection.Type, projection.ProjectionFunction, projection.Bindings);
         }
 
         private bool IsMemberType(Type type)

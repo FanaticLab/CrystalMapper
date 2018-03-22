@@ -228,7 +228,7 @@ namespace CrystalMapper.Linq
         private SqlLang GetSqlLangByProvider()
         {
             var dataContext = this.dataContextRef != null ? (DataContext)this.dataContextRef.Target : null;
-            var dbProviderType = dataContext != null && !dataContext.IsDisposed ? dataContext.Database.ProviderType : DbFactory.GetDatabase(this.name).ProviderType;
+            var dbProviderType = CoreSystem.Data.DbProviderType.SQLite;//dataContext != null && !dataContext.IsDisposed ? dataContext.Database.ProviderType : DbFactory.GetDatabase(this.name).ProviderType;
 
             switch (dbProviderType)
             {

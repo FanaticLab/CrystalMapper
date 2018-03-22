@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CrystalMapper.Linq.Expressions
@@ -18,6 +19,6 @@ namespace CrystalMapper.Linq.Expressions
             this.Projection = projection;
         }
 
-        public abstract string GetAlias(Type type);
+        public abstract string GetAlias(MemberInfo memberInfo);
     }
 }

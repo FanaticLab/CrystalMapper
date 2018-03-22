@@ -70,7 +70,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Data.SQLite, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
@@ -83,15 +82,12 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.108.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +102,6 @@
     <Compile Include="Northwind\Mapping\EmployeeTerritory.cs" />
     <Compile Include="Northwind\Mapping\NorthwindDb.cs" />
     <Compile Include="Northwind\Mapping\Order.cs" />
-    <Compile Include="Northwind\Mapping\OrderDetail.cs" />
     <Compile Include="Northwind\Mapping\Product.cs" />
     <Compile Include="Northwind\Mapping\Region.cs" />
     <Compile Include="Northwind\Mapping\Shipper.cs" />

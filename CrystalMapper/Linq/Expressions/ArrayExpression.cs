@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace CrystalMapper.Linq.Expressions
 {
@@ -18,7 +19,7 @@ namespace CrystalMapper.Linq.Expressions
             this.Parameters = parameters;
         }
 
-        public override string GetAlias(Type type)
+        public override string GetAlias(MemberInfo memberInfo)
         {
             return this.Alias;
         }

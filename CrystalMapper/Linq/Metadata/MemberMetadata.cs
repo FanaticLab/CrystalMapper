@@ -17,22 +17,25 @@ namespace CrystalMapper.Linq.Metadata
         {
             ColumnAttribute[] attributes = (ColumnAttribute[])memberInfo.GetCustomAttributes(typeof(ColumnAttribute), true);
 
-            this.ColumnName = attributes.Length == 0 ? memberInfo.Name : attributes[0].ColumnName;
+            this.ColumnName = attributes.Length != 0
+                ? attributes[0].ColumnName
+                : memberInfo.DeclaringType != null
+                ? memberInfo.Name
+                : "*";
+
             this.Member = memberInfo;
         }
 
         public static MemberMetadata[] GetMembersMetadata(Type type)
         {
             List<MemberMetadata> membersMetadata = new List<MemberMetadata>();
-            foreach (var memberInfo in type.GetProperties())
+            foreach (var propertyInfo in type.GetProperties())
             {
-                var propertyType = memberInfo.PropertyType;
-                if (propertyType.IsPrimitive || propertyType == typeof(string) || propertyType == typeof(DateTime) || (propertyType.IsGenericType
-                       && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>)))
-                    membersMetadata.Add(new MemberMetadata(memberInfo));
-                //ColumnAttribute[] columnAttributes;
-                //if ((columnAttributes = (ColumnAttribute[])memberInfo.GetCustomAttributes(typeof(ColumnAttribute), true)) != null && columnAttributes.Length == 1)
-                //    membersMetadata.Add(new MemberMetadata(memberInfo));
+                var propertyType = propertyInfo.PropertyType;
+                if (propertyInfo.CanRead && propertyInfo.CanWrite && !propertyInfo.IsDefined(typeof(ExcludeAttribute), true)
+                    && (propertyType.IsPrimitive || propertyType == typeof(string) || propertyType == typeof(DateTime) || propertyType.IsEnum
+                    || (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))))
+                    membersMetadata.Add(new MemberMetadata(propertyInfo));
             }
 
             return membersMetadata.ToArray();

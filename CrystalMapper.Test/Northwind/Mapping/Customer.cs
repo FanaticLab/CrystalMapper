@@ -22,7 +22,7 @@ using CrystalMapper.Mapping;
 namespace CrystalMapper.Test.Northwind
 {
 	[Table(TABLE_NAME)]
-    public partial class Customer : IRecord, INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
     {		
 		#region Table Schema
 		
@@ -108,7 +108,6 @@ namespace CrystalMapper.Test.Northwind
             remove { this.propertyChanged -= value; }
         }
         
-        IQueryProvider IRecord.Provider { get; set; }
 
         [Column(COL_CUSTOMERID, PARAM_CUSTOMERID )]
         public virtual string CustomerID 
@@ -263,16 +262,6 @@ namespace CrystalMapper.Test.Northwind
                     }   
                 }
         }	
-		
-        public IQueryable<CustomerCustomerDemo> CustomerCustomerDemos 
-        {
-            get { return this.CreateQuery<CustomerCustomerDemo>().Where(r => r.CustomerID == CustomerID); }
-        }
-       
-        public IQueryable<Order> Orders 
-        {
-            get { return this.CreateQuery<Order>().Where(r => r.CustomerID == CustomerID); }
-        }
        
         #endregion        
         
@@ -299,68 +288,6 @@ namespace CrystalMapper.Test.Northwind
             return hashCode;          
         }
         
-		void IRecord.Read(DbDataReader reader)
-		{       
-			this.customerid = (string)reader[COL_CUSTOMERID];
-			this.companyname = (string)reader[COL_COMPANYNAME];
-			this.contactname = DbConvert.ToString(reader[COL_CONTACTNAME]);
-			this.contacttitle = DbConvert.ToString(reader[COL_CONTACTTITLE]);
-			this.address = DbConvert.ToString(reader[COL_ADDRESS]);
-			this.city = DbConvert.ToString(reader[COL_CITY]);
-			this.region = DbConvert.ToString(reader[COL_REGION]);
-			this.postalcode = DbConvert.ToString(reader[COL_POSTALCODE]);
-			this.country = DbConvert.ToString(reader[COL_COUNTRY]);
-			this.phone = DbConvert.ToString(reader[COL_PHONE]);
-			this.fax = DbConvert.ToString(reader[COL_FAX]);
-		}
-		
-		bool IRecord.Create(DataContext dataContext)
-        {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_INSERT_CUSTOMERS))
-            {	
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTNAME, DbConvert.DbValue(this.ContactName)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTTITLE, DbConvert.DbValue(this.ContactTitle)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_ADDRESS, DbConvert.DbValue(this.Address)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CITY, DbConvert.DbValue(this.City)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGION, DbConvert.DbValue(this.Region)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_POSTALCODE, DbConvert.DbValue(this.PostalCode)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_COUNTRY, DbConvert.DbValue(this.Country)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_FAX, DbConvert.DbValue(this.Fax)));
-                return (command.ExecuteNonQuery() == 1);
-            }
-        }
-
-		bool IRecord.Update(DataContext dataContext)
-        {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_UPDATE_CUSTOMERS))
-            {							
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_COMPANYNAME, this.CompanyName));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTNAME, DbConvert.DbValue(this.ContactName)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CONTACTTITLE, DbConvert.DbValue(this.ContactTitle)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_ADDRESS, DbConvert.DbValue(this.Address)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CITY, DbConvert.DbValue(this.City)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_REGION, DbConvert.DbValue(this.Region)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_POSTALCODE, DbConvert.DbValue(this.PostalCode)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_COUNTRY, DbConvert.DbValue(this.Country)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_PHONE, DbConvert.DbValue(this.Phone)));
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_FAX, DbConvert.DbValue(this.Fax)));
-			
-                return (command.ExecuteNonQuery() == 1);
-            }
-        }
-
-		bool IRecord.Delete(DataContext dataContext)
-        {
-            using(DbCommand command  = dataContext.CreateCommand(SQL_DELETE_CUSTOMERS))
-            {							
-				command.Parameters.Add(dataContext.CreateParameter(PARAM_CUSTOMERID, this.CustomerID));
-                return (command.ExecuteNonQuery() == 1);
-            }
-        }
         
         protected virtual void OnPropertyChanging(string propertyName)
         {

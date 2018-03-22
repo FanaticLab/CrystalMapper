@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using CrystalMapper.Lang;
 
@@ -34,10 +35,10 @@ namespace CrystalMapper.Linq.Expressions
             this.AssignAlias();
         }
 
-        public override string GetAlias(Type type)
+        public override string GetAlias(MemberInfo memberInfo)
         {
             string alias;
-            return string.IsNullOrEmpty((alias = this.Outer.GetAlias(type))) ? this.Inner.GetAlias(type) : alias;
+            return string.IsNullOrEmpty((alias = this.Outer.GetAlias(memberInfo))) ? this.Inner.GetAlias(memberInfo) : alias;
         }
 
         public override void WriteQuery(SqlLang sqlLang, QueryWriter queryWriter)
